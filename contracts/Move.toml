@@ -5,9 +5,10 @@ license = "MIT"
 authors = ["avalias"]
 
 [dependencies]
-# Sui framework is injected automatically by the bundled CLI (sui >= 1.45).
-# If your toolchain needs it explicit, uncomment:
-# Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+# Pinned explicitly so `sui move test` is reproducible in CI (a bare CLI binary
+# does not always auto-inject the bundled framework). rev matches the toolchain
+# version in Published.toml (sui testnet v1.73.1).
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet-v1.73.1" }
 
 [addresses]
 warden = "0x0"
