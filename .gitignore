@@ -22,3 +22,4 @@ __pycache__/
 # video capture artifacts (regenerable)
 video/frames/
 video/*.mp4
+video/audio/
