@@ -30,9 +30,11 @@ each is load-bearing — remove one and the guarantee weakens.
 ## The seven layers
 
 ### L0 — Non-custodial custody
-Funds live inside a user-owned `Vault`. The **only** path that removes capital
-is the `OwnerCap`; the agent fleet can steer notional between strategies but can
-never withdraw. Freezing halts the agent — it never blocks the owner.
+Funds live inside a user-owned `Vault` as a real `Balance<T>`. The agent steers
+**real capital** between `idle` and `deployed` (NAV = `idle + deployed`, always
+conserved — funds never leave the vault object); the **only** path that *removes*
+capital is the `OwnerCap`, and it works even while the agent is frozen. Freezing
+halts the agent — it never blocks the owner.
 *Module: `vault`.*
 
 ### L1 — Authority is an object, not a key

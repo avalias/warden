@@ -53,6 +53,8 @@ The design is organized into seven composable layers under one thesis: **trust-m
   - inherit_open (L6) — https://suiscan.xyz/testnet/tx/JxYNBvnFtcBCkkDsFgoLaAVZVpANKMJVxP32N85qw91
   - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU
 - **Tests:** `cd contracts && sui move test` → 43/43.
+- **Verify the ledger hash-chain (no trust required):** `python scripts/verify_ledger.py` re-derives every entry from the on-chain `Recorded` events and prints `CHAIN INTACT`.
+- **Real capital, not a counter:** after the accepted trade the vault's `deployed` holds **10,000,000 real MIST**; the frozen trade kept the rest safe in `idle`. NAV (`idle + deployed`) is conserved — funds never leave the vault.
 
 ## Tech stack
 

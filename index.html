@@ -245,8 +245,8 @@
       <!-- L0 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L0</div><div class="ltitle">Onboarding &amp; custody — non-custodial by construction</div><div class="lsrc">module: vault</div></div>
-        <div class="ldesc">Funds live in a <b>user-owned Vault</b>; the agent gets a <b>no-withdraw boundary</b> — only the <span class="mono">OwnerCap</span> can remove capital, and it works even while the agent is frozen. A reserve floor is always held back. <i>(zkLogin/Enoki onboarding is roadmap.)</i></div>
-        <div class="chips"><span class="chip">user-owned Vault&lt;T&gt;</span><span class="chip">OwnerCap-only withdraw</span><span class="chip">no-withdraw boundary</span><span class="chip">works while frozen</span><span class="chip">reserve floor</span></div>
+        <div class="ldesc">Funds live in a <b>user-owned Vault</b> as a real <span class="mono">Balance</span>. The agent steers <b>real capital</b> between idle and deployed (NAV = idle + deployed, always conserved — funds never leave the vault); only the <span class="mono">OwnerCap</span> can <i>remove</i> capital, and it works even while the agent is frozen. A reserve floor is always held back. <i>(zkLogin/Enoki onboarding is roadmap.)</i></div>
+        <div class="chips"><span class="chip">user-owned Vault&lt;T&gt;</span><span class="chip">real-balance value plane</span><span class="chip">NAV conserved</span><span class="chip">OwnerCap-only withdraw</span><span class="chip">works while frozen</span></div>
       </div>
       <!-- L1 -->
       <div class="layer rv">

@@ -192,6 +192,19 @@ sui move test
 Test result: OK. Total tests: 43; passed: 43; failed: 0
 ```
 
+### 🔗 Verify the tamper-evidence yourself
+
+The L4 ledger is a keccak **hash chain**. Re-derive it straight from the on-chain
+events — no trust in us required:
+
+```bash
+python scripts/verify_ledger.py        # reads warden.config.json (package + vault)
+```
+
+It re-walks every `Recorded` event, recomputes each `entry_digest`, and prints
+**`CHAIN INTACT`** when the on-chain record is untampered. Self-contained
+keccak256 (self-tested, zero dependencies); runs green against the live ledger.
+
 ---
 
 ## 🚀 Build · deploy · run
