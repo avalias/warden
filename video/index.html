@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WARDEN — pitch deck</title>
+<link rel="icon" type="image/svg+xml" href="../logo.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#05080f; --card:#0c1422; --line:rgba(77,162,255,.18); --line2:rgba(77,162,255,.32);
+    --aqua:#4da2ff; --mint:#37e0ac; --amber:#ffb454; --rose:#ff6b81;
+    --tx:#eaf1fb; --dim:#9fb2cc; --dim2:#647590;
+    --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--tx);font-family:var(--sans);overflow:hidden;cursor:default}
+  .grad{background:linear-gradient(100deg,var(--aqua),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .mono{font-family:var(--mono)}
+
+  /* ambient */
+  .orb{position:fixed;border-radius:50%;filter:blur(110px);opacity:.5;pointer-events:none;z-index:0}
+  .orb.a{width:620px;height:620px;background:radial-gradient(circle,rgba(77,162,255,.55),transparent 70%);top:-200px;right:-160px;animation:f1 18s ease-in-out infinite}
+  .orb.b{width:540px;height:540px;background:radial-gradient(circle,rgba(55,224,172,.4),transparent 70%);bottom:-200px;left:-160px;animation:f2 22s ease-in-out infinite}
+  @keyframes f1{50%{transform:translate(-50px,60px)}} @keyframes f2{50%{transform:translate(60px,-50px)}}
+  .grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:62px 62px;mask-image:radial-gradient(ellipse 75% 75% at 50% 45%,#000 25%,transparent 75%);opacity:.4}
+
+  /* stage */
+  .stage{position:relative;z-index:1;height:100vh;display:grid;place-items:center;padding:6vh 7vw 16vh}
+  .scene{position:absolute;inset:0;display:grid;place-content:center;justify-items:start;padding:6vh 7vw 16vh;opacity:0;visibility:hidden;transform:translateY(26px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1);max-width:1180px;margin:0 auto;left:0;right:0}
+  .scene.active{opacity:1;visibility:visible;transform:none}
+  .eyebrow{font-family:var(--mono);font-size:clamp(12px,1.3vw,15px);font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--aqua);margin-bottom:20px;opacity:0;animation:rise .6s .05s forwards}
+  h1{font-size:clamp(34px,6.6vw,82px);font-weight:900;line-height:1.02;letter-spacing:-.025em;opacity:0;animation:rise .7s .12s forwards}
+  h2{font-size:clamp(26px,4.6vw,56px);font-weight:800;line-height:1.08;letter-spacing:-.02em;opacity:0;animation:rise .7s .12s forwards}
+  .lead{font-size:clamp(16px,2.2vw,24px);color:var(--dim);max-width:760px;margin-top:22px;opacity:0;animation:rise .7s .28s forwards}
+  .tag{font-family:var(--mono);font-size:clamp(14px,1.7vw,19px);color:var(--mint);margin-top:26px;opacity:0;animation:rise .7s .42s forwards}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .strike{position:relative;white-space:nowrap}
+  .scene.active .strike::after{content:"";position:absolute;left:-4%;right:-4%;top:54%;height:.09em;background:var(--rose);transform:scaleX(0);transform-origin:left;animation:strike .5s 1.0s forwards}
+  @keyframes strike{to{transform:scaleX(1)}}
+
+  /* inversion two-column */
+  .split{display:grid;gap:18px;margin-top:34px;width:100%;opacity:0;animation:rise .7s .3s forwards}
+  @media(min-width:780px){.split{grid-template-columns:1fr 1fr}}
+  .pc{padding:26px 28px;border-radius:18px;border:1px solid var(--line)}
+  .pc.bad{background:linear-gradient(180deg,rgba(255,107,129,.07),transparent);border-color:rgba(255,107,129,.28)}
+  .pc.good{background:linear-gradient(180deg,rgba(55,224,172,.08),transparent);border-color:rgba(55,224,172,.34)}
+  .pc h3{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+  .pc.bad h3{color:var(--rose)} .pc.good h3{color:var(--mint)}
+  .pc li{list-style:none;font-size:clamp(15px,1.8vw,19px);margin:10px 0;display:flex;gap:10px}
+  .pc .ic{flex:none;font-weight:800}
+
+  /* heart sequence */
+  .heart{width:100%;margin-top:30px;display:grid;gap:14px}
+  .step{display:flex;align-items:center;gap:16px;font-size:clamp(16px,2.2vw,26px);font-weight:700;opacity:0;transform:translateX(-18px)}
+  .scene.active.play .step{animation:stepIn .5s forwards}
+  .scene.active.play .s1{animation-delay:.5s} .scene.active.play .s2{animation-delay:1.5s} .scene.active.play .s3{animation-delay:2.6s}
+  @keyframes stepIn{to{opacity:1;transform:none}}
+  .step .lbl{font-family:var(--mono);font-size:13px;color:var(--dim2);width:120px;flex:none}
+  .claim{color:var(--dim)} .derive{color:var(--amber)} .diverge{color:var(--rose);font-weight:900;letter-spacing:.04em}
+  .stamp{margin-top:8px;display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border:3px solid var(--amber);border-radius:16px;color:var(--amber);font-size:clamp(26px,5vw,56px);font-weight:900;letter-spacing:.06em;background:rgba(255,180,84,.07);opacity:0;transform:scale(.6) rotate(-4deg)}
+  .scene.active.play .stamp{animation:slam .55s 3.6s forwards}
+  @keyframes slam{0%{opacity:0;transform:scale(1.4) rotate(-4deg)}60%{opacity:1;transform:scale(.92) rotate(-3deg)}80%{transform:scale(1.02) rotate(-3deg)}100%{opacity:1;transform:scale(1) rotate(-3deg)}}
+  .heart .cap{font-size:clamp(15px,1.9vw,21px);color:var(--dim);margin-top:14px;opacity:0}
+  .scene.active.play .heart .cap{animation:rise .6s 4.3s forwards}
+  .heart a{color:var(--aqua)}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:34px;width:100%;opacity:0;animation:rise .7s .3s forwards}
+  @media(min-width:820px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat .n{font-size:clamp(40px,7vw,74px);font-weight:900;letter-spacing:-.03em;line-height:1}
+  .stat .l{font-size:clamp(12px,1.4vw,15px);color:var(--dim);margin-top:6px}
+
+  /* layer stack */
+  .layers{display:flex;flex-direction:column-reverse;gap:8px;margin-top:30px;width:100%}
+  .ly{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:13px 18px;display:flex;align-items:center;gap:14px;opacity:0;transform:translateX(-16px)}
+  .scene.active .ly{animation:stepIn .45s forwards}
+  .scene.active .ly:nth-child(1){animation-delay:.9s}.scene.active .ly:nth-child(2){animation-delay:.8s}.scene.active .ly:nth-child(3){animation-delay:.7s}.scene.active .ly:nth-child(4){animation-delay:.6s}.scene.active .ly:nth-child(5){animation-delay:.5s}.scene.active .ly:nth-child(6){animation-delay:.4s}.scene.active .ly:nth-child(7){animation-delay:.3s}
+  .ly.heart-l{border-color:rgba(255,180,84,.45);background:linear-gradient(100deg,rgba(255,180,84,.09),var(--card))}
+  .ly .n{font-family:var(--mono);font-weight:700;color:var(--aqua);width:34px;flex:none}
+  .ly.heart-l .n{color:var(--amber)}
+  .ly .t{font-size:clamp(13px,1.7vw,18px);font-weight:600}
+  .ly .t small{color:var(--dim2);font-weight:400}
+
+  .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;opacity:0;animation:rise .7s .5s forwards}
+  .pill{font-family:var(--mono);font-size:14px;padding:10px 18px;border-radius:10px;border:1px solid var(--line2);color:var(--tx)}
+  .pill.fill{background:linear-gradient(100deg,var(--aqua),var(--mint));color:#03070e;border:0;font-weight:700}
+
+  /* controls + narration */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:14px 22px;display:flex;align-items:center;gap:14px;background:linear-gradient(0deg,rgba(5,8,15,.92),transparent);backdrop-filter:blur(6px)}
+  .dots{display:flex;gap:8px;flex:1}
+  .dot{width:34px;height:5px;border-radius:3px;background:rgba(255,255,255,.12);cursor:pointer;transition:.2s}
+  .dot.on{background:linear-gradient(90deg,var(--aqua),var(--mint))}
+  .ctl{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:9px;border:1px solid var(--line2);color:var(--tx);background:transparent;cursor:pointer;font-family:var(--sans);font-weight:600;font-size:14px}
+  .ctl:hover{background:rgba(77,162,255,.12);border-color:var(--aqua)}
+  .ctl.fill{background:linear-gradient(100deg,var(--aqua),var(--mint));color:#03070e;border:0}
+  .counter{font-family:var(--mono);font-size:13px;color:var(--dim2);min-width:64px;text-align:center}
+  .narr{position:fixed;left:0;right:0;bottom:64px;z-index:4;padding:0 22px;display:flex;justify-content:center;pointer-events:none}
+  .narr .box{max-width:1000px;background:rgba(4,7,13,.72);border:1px solid var(--line);border-radius:12px;padding:12px 20px;font-size:clamp(14px,1.7vw,18px);color:var(--tx);text-align:center;line-height:1.45;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+  .narr.hide{display:none}
+  .brand{position:fixed;top:18px;left:22px;z-index:5;display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.04em;opacity:.9}
+  .brand .mk{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--aqua),var(--mint));display:grid;place-items:center;color:#03070e;font-weight:900;font-size:14px}
+  .hint{position:fixed;top:20px;right:22px;z-index:5;font-family:var(--mono);font-size:11.5px;color:var(--dim2)}
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div><div class="grid"></div>
+<div class="brand"><span class="mk">W</span>WARDEN</div>
+<div class="hint">→ / Space / click = next · ◀▶ keys · F = fullscreen · N = captions</div>
+
+<div class="stage" id="stage">
+
+  <!-- 1 — HOOK -->
+  <section class="scene" data-dur="20">
+    <div class="eyebrow">Sui Overflow 2026 · The Agentic Web</div>
+    <h1>Every AI fund makes you <span class="strike">trust the agent.</span><br/><span class="grad">WARDEN doesn't.</span></h1>
+    <p class="lead">The autonomous AI fund you don't have to trust. The agent is powerful — and structurally <b>powerless to do harm</b>.</p>
+    <div class="tag">Give the machine the markets. Give the chain the leash.</div>
+  </section>
+
+  <!-- 2 — INVERSION -->
+  <section class="scene" data-dur="28">
+    <div class="eyebrow">The inversion</div>
+    <h2>The agent proposes. <span class="grad">The chain disposes.</span></h2>
+    <div class="split">
+      <div class="pc bad"><h3>✕ Every other AI wallet</h3>
+        <li><span class="ic">✕</span> Holds a broad key — can drain the funds</li>
+        <li><span class="ic">✕</span> You trust its own risk numbers</li>
+        <li><span class="ic">✕</span> Reasoning is off-chain and deniable</li></div>
+      <div class="pc good"><h3>✓ WARDEN</h3>
+        <li><span class="ic">✓</span> Authority is a capability object, never a key</li>
+        <li><span class="ic">✓</span> The chain re-derives risk and freezes on divergence</li>
+        <li><span class="ic">✓</span> Every decision anchored, tamper-evident</li></div>
+    </div>
+  </section>
+
+  <!-- 3 — THE HEART -->
+  <section class="scene" data-dur="38">
+    <div class="eyebrow">The heart · live on Sui testnet</div>
+    <h2>The agent lies. <span class="grad">The chain catches it.</span></h2>
+    <div class="heart">
+      <div class="step s1"><span class="lbl">agent</span><span class="claim">“My risk is <b>0</b> — trust me.”</span></div>
+      <div class="step s2"><span class="lbl">guardian</span><span class="derive">re-derives risk on-chain from a feed the agent can't forge → <b>10000 bps</b></span></div>
+      <div class="step s3"><span class="lbl">chain</span><span class="diverge">DIVERGENCE →</span></div>
+      <div class="stamp">❄ VAULT&nbsp;FROZEN</div>
+      <div class="cap">A lying, hallucinating, or hijacked agent <b>cannot</b> move the fund. Not a slide — a real transaction: <a href="https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB" target="_blank" rel="noopener" class="mono">DwEojYEq…</a></div>
+    </div>
+  </section>
+
+  <!-- 4 — IT'S REAL -->
+  <section class="scene" data-dur="30">
+    <div class="eyebrow">Not a mockup</div>
+    <h2>All of it is <span class="grad">real and on-chain.</span></h2>
+    <div class="stats">
+      <div class="stat"><div class="n grad" data-c="13">13</div><div class="l">Move modules, deployed</div></div>
+      <div class="stat"><div class="n grad" data-c="20">20</div><div class="l">/20 unit tests passing</div></div>
+      <div class="stat"><div class="n grad" data-c="15">15</div><div class="l">on-chain transactions</div></div>
+      <div class="stat"><div class="n grad">∞</div><div class="l">audits — every move is public</div></div>
+    </div>
+    <p class="lead">Deployed &amp; verified on Sui testnet (<span class="mono">owner: Immutable</span>). A real <b>AI agent on Claude</b> proposes the trades. A <b>live dApp</b> lets you drive it yourself.</p>
+  </section>
+
+  <!-- 5 — SEVEN LAYERS -->
+  <section class="scene" data-dur="30">
+    <div class="eyebrow">One thesis: trust-minimization</div>
+    <h2>Seven composable layers. <span class="grad">One leash.</span></h2>
+    <div class="layers">
+      <div class="ly"><span class="n">L6</span><span class="t">Continuity — dead-man-switch · no-loss prize</span></div>
+      <div class="ly"><span class="n">L5</span><span class="t">Compliance — KYC gate · optimistic oracle</span></div>
+      <div class="ly"><span class="n">L4</span><span class="t">Verifiable record — tamper-evident ledger</span></div>
+      <div class="ly"><span class="n">L3</span><span class="t">Self-hedging strategy — <small>bounded drawdown, proven</small></span></div>
+      <div class="ly heart-l"><span class="n">L2</span><span class="t">♥ The chain never trusts the AI — re-derive · freeze</span></div>
+      <div class="ly"><span class="n">L1</span><span class="t">Authority is an object — object-capability + revocation</span></div>
+      <div class="ly"><span class="n">L0</span><span class="t">Non-custodial custody — no-withdraw boundary</span></div>
+    </div>
+  </section>
+
+  <!-- 6 — CLOSE -->
+  <section class="scene" data-dur="24">
+    <div class="eyebrow">Why it advances</div>
+    <h1>The only AI fund a regulated institution can <span class="grad">actually fund.</span></h1>
+    <p class="lead">Because trusting the agent is no longer required — the chain structurally prevents theft, mis-allocation, and misreporting.</p>
+    <div class="tag">Give the machine the markets. Give the chain the leash.</div>
+    <div class="cta">
+      <span class="pill fill">avalias.github.io/warden</span>
+      <span class="pill">live dApp · /app</span>
+      <span class="pill">github.com/avalias/warden</span>
+    </div>
+  </section>
+
+</div>
+
+<div class="narr" id="narr"><div class="box" id="narrText"></div></div>
+
+<div class="bar">
+  <button class="ctl" id="back">◀ Back</button>
+  <span class="counter" id="counter">1 / 6</span>
+  <div class="dots" id="dots"></div>
+  <button class="ctl" id="play">▶ Play with audio</button>
+  <button class="ctl fill" id="next">Next ▶</button>
+</div>
+
+<script>
+// --- narration scripts (for your AI voiceover, per part) ---
+const NARRATION = [
+  "Every autonomous AI fund has the same fatal flaw — you have to trust the agent. It holds the keys, you trust its own numbers, and its reasoning is off-chain and deniable. WARDEN is the first AI fund you don't have to trust. The agent is powerful, and structurally powerless to do harm. Here's how.",
+  "The inversion is simple. The AI never holds authority — it only proposes. Then the chain re-derives the truth, clamps the agent to safe moves, freezes on any divergence, and proves every decision. The agent proposes; the chain disposes. That single flip turns a risky toy into infrastructure an institution can actually fund.",
+  "Watch the heart of it. The agent proposes a trade and swears its risk is zero. But the Guardian re-derives risk on-chain, from a market feed the agent cannot forge — and gets ten thousand basis points. The numbers diverge. The chain doesn't argue. It freezes the vault. A lying, hallucinating, or hijacked agent simply cannot move the fund. And this isn't a slide — it's a real transaction on Sui.",
+  "None of this is a mockup. Thirteen Move modules. Twenty out of twenty tests passing. Deployed and verified on Sui testnet, with the entire lifecycle anchored on-chain across fifteen clickable transactions. A real AI agent running on Claude proposes the trades — and a live dApp lets you drive the whole thing yourself.",
+  "And it goes all the way. Seven composable layers under one thesis: trust-minimization. Non-custodial custody. Object-capability authority. The chain-never-trusts-the-AI core. A self-hedging strategy with provably bounded losses. A tamper-evident ledger. Compliance gating. And inheritance, so the fund outlives its owner. All built, all on-chain.",
+  "WARDEN is the only autonomous AI fund a regulated institution can legally fund — because trusting the agent is no longer required. Give the machine the markets. Give the chain the leash. That's WARDEN."
+];
+
+const scenes = [...document.querySelectorAll('.scene')];
+const dotsWrap = document.getElementById('dots');
+scenes.forEach((_,i)=>{ const d=document.createElement('div'); d.className='dot'; d.onclick=e=>{e.stopPropagation();go(i)}; dotsWrap.appendChild(d); });
+const dots=[...document.querySelectorAll('.dot')];
+let cur=-1, playing=false, audio=null, timer=null;
+
+function animateCounters(scene){
+  scene.querySelectorAll('[data-c]').forEach(el=>{
+    const t=+el.dataset.c; let s=null;
+    function fr(ts){ if(!s)s=ts; const p=Math.min((ts-s)/900,1); el.textContent=Math.round((1-Math.pow(1-p,3))*t); if(p<1)requestAnimationFrame(fr);}
+    requestAnimationFrame(fr);
+  });
+}
+function go(i){
+  if(i<0||i>=scenes.length) return;
+  if(timer){clearTimeout(timer);timer=null;}
+  if(audio){audio.pause();audio=null;}
+  scenes.forEach((s,k)=>{ s.classList.toggle('active',k===i); s.classList.remove('play'); });
+  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+  cur=i;
+  document.getElementById('counter').textContent=(i+1)+' / '+scenes.length;
+  document.getElementById('narrText').textContent=NARRATION[i];
+  const sc=scenes[i];
+  // trigger scene-internal animation a beat later
+  setTimeout(()=>{ sc.classList.add('play'); animateCounters(sc); }, 120);
+  if(playing) playScene(i);
+}
+function next(){ go(Math.min(cur+1,scenes.length-1)); }
+function back(){ go(Math.max(cur-1,0)); }
+
+// audio-synced playback (drop audio/part-1.mp3 … part-6.mp3 to enable real voiceover sync)
+function playScene(i){
+  const src='audio/part-'+(i+1)+'.mp3';
+  audio=new Audio(src);
+  audio.onended=()=>{ if(playing) (i<scenes.length-1?next():stopPlay()); };
+  audio.onerror=()=>{ // no audio file yet → fall back to data-dur timing
+    const dur=(+scenes[i].dataset.dur||26)*1000;
+    timer=setTimeout(()=>{ if(playing)(i<scenes.length-1?next():stopPlay()); }, dur);
+  };
+  audio.play().catch(()=>{});
+}
+function startPlay(){ playing=true; document.getElementById('play').textContent='⏸ Stop'; if(cur<0)go(0); else playScene(cur); }
+function stopPlay(){ playing=false; document.getElementById('play').textContent='▶ Play with audio'; if(audio){audio.pause();audio=null;} if(timer){clearTimeout(timer);timer=null;} }
+
+document.getElementById('next').onclick=e=>{e.stopPropagation();next()};
+document.getElementById('back').onclick=e=>{e.stopPropagation();back()};
+document.getElementById('play').onclick=e=>{e.stopPropagation(); playing?stopPlay():startPlay()};
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){back()}
+  else if(e.key.toLowerCase()==='n'){document.getElementById('narr').classList.toggle('hide')}
+  else if(e.key.toLowerCase()==='f'){ document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); }
+});
+addEventListener('click',e=>{ if(e.target.closest('.bar')||e.target.closest('a')) return; next(); });
+go(0);
+</script>
+</body>
+</html>

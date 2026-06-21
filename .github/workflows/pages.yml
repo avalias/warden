@@ -29,6 +29,7 @@ jobs:
           cp index.html logo.svg _site/
           cp app/index.html _site/app/
           cp web/index.html web/logo.svg _site/web/ 2>/dev/null || true
+          cp -r video _site/video 2>/dev/null || true
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
