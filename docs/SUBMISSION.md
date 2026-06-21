@@ -56,7 +56,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
 
 ## Tech stack
 
-Sui Move (object-capabilities, hot-potato settlement), DeepBook v3 (execution / price discovery / risk re-derivation inputs), Walrus + Seal + Nautilus TEE (sealed reasoning, confidentiality, attested facts — in the architecture), zkLogin/Enoki (onboarding).
+Sui Move (object-capabilities, hot-potato settlement), DeepBook v3 (execution / price discovery / risk re-derivation inputs), Walrus + Seal + Nautilus TEE (sealed reasoning, confidentiality, attested facts — in the architecture), zkLogin/Enoki (onboarding). The off-chain agent is built on the Claude API (claude-opus-4-8).
 
 ## Links
 
@@ -72,4 +72,5 @@ The seven layers are built and on-chain. What remains is not a *layer* but the h
 
 - **L5 deepening:** wire the KYC gate into compliance-gated DeepBook/CLMM venue adapters; add native **Confidential Transfers** and **Seal threshold-IBE + Nautilus/Nitro attestation** for private risk models.
 - **L6 distribution:** the **x402** agent-payment rail, an **MCP** server + TS/Py/Rust SDKs, and Walrus-Sites hosting with byte-level integrity.
-- A production **AI agent loop** off-chain driving `agent_trade` under the policy, with sealed reasoning stored to Walrus.
+
+An **AI agent** is included — [`agent/agent.py`](agent/agent.py), a Claude (`claude-opus-4-8`) loop that reads the on-chain feed and proposes `agent_trade` under the policy. Productionizing it (sealing the reasoning to Walrus, scheduling, multi-asset) is roadmap; the trust-minimization is the point: the chain vets whatever the agent proposes.

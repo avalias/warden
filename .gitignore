@@ -7,6 +7,9 @@ contracts/build/
 /.*.err
 *.tmp
 
+# env-specific agent config (object ids are public, but per-deployment)
+warden.config.json
+
 # node / tooling
 node_modules/
 .DS_Store

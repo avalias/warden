@@ -1,0 +1,12 @@
+{
+  "package": "0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902",
+  "vault": "0x...your_vault",
+  "policy": "0x...your_policy",
+  "gen_registry": "0x...your_gen_registry",
+  "critic_registry": "0x...your_critic_registry",
+  "critic_cap": "0x...your_critic_cap",
+  "ledger": "0x...your_ledger",
+  "feed": "0x...your_feed",
+  "per_tx_cap": 50000000,
+  "reserve_floor": 20000000
+}
