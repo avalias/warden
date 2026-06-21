@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WARDEN — dApp</title>
+<link rel="icon" type="image/svg+xml" href="../logo.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#05080f; --bg2:#080d18; --card:#0c1422; --card2:#101b2c;
+    --line:rgba(77,162,255,.14); --line2:rgba(77,162,255,.28);
+    --aqua:#4da2ff; --mint:#37e0ac; --amber:#ffb454; --rose:#ff6b81;
+    --tx:#e9eff8; --dim:#93a6c0; --dim2:#62748f;
+    --mono:'JetBrains Mono',ui-monospace,monospace; --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--aqua);text-decoration:none} a:hover{text-decoration:underline}
+  .mono{font-family:var(--mono)}
+  .grad{background:linear-gradient(100deg,var(--aqua),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(5,8,15,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.04em}
+  .logo .mark{width:25px;height:25px;border-radius:7px;background:linear-gradient(135deg,var(--aqua),var(--mint));display:grid;place-items:center;color:#03070e;font-weight:900;font-size:14px}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:9px;font-weight:600;font-size:13.5px;border:1px solid var(--line2);color:var(--tx);background:transparent;cursor:pointer;transition:.15s;font-family:var(--sans)}
+  .btn:hover:not(:disabled){background:rgba(77,162,255,.1);border-color:var(--aqua)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.fill{background:linear-gradient(100deg,var(--aqua),var(--mint));color:#03070e;border:0}
+  .btn.warn{border-color:rgba(255,180,84,.5);color:var(--amber)}
+  h1{font-size:clamp(26px,4vw,38px);font-weight:900;letter-spacing:-.02em;margin:30px 0 6px}
+  .sub{color:var(--dim);margin-bottom:26px;max-width:680px}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--aqua);margin:30px 0 12px}
+  .grid{display:grid;gap:14px;grid-template-columns:1fr}
+  @media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+  @media(min-width:980px){.grid4{grid-template-columns:1fr 1fr 1fr 1fr}}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:18px 20px}
+  .card.heart{border-color:rgba(255,180,84,.4)}
+  .k{font-family:var(--mono);font-size:11.5px;color:var(--dim2);text-transform:uppercase;letter-spacing:.08em}
+  .v{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:4px}
+  .v.sm{font-size:15px;font-weight:600;word-break:break-all}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:6px;border:1px solid var(--line2);color:var(--dim)}
+  .pill.ok{color:var(--mint);border-color:rgba(55,224,172,.4)} .pill.frozen{color:var(--amber);border-color:rgba(255,180,84,.5)}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .panel{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:20px;margin-top:14px}
+  .panel h3{font-size:15px;margin-bottom:4px}
+  .panel p{color:var(--dim);font-size:13px;margin-bottom:14px}
+  input,select{background:var(--bg2);border:1px solid var(--line2);border-radius:8px;color:var(--tx);padding:8px 10px;font-family:var(--mono);font-size:13px;width:130px}
+  label{font-size:12px;color:var(--dim);display:flex;flex-direction:column;gap:4px}
+  .console{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:#04060c;padding:14px 16px;font-family:var(--mono);font-size:12.5px;max-height:260px;overflow:auto}
+  .console .ln{padding:2px 0;color:var(--dim)} .console .ln b{color:var(--tx)}
+  .console .ok{color:var(--mint)} .console .frz{color:var(--amber)} .console .err{color:var(--rose)}
+  .note{font-size:12.5px;color:var(--dim2);margin-top:10px}
+  footer{border-top:1px solid var(--line);margin-top:50px;padding:24px 0;color:var(--dim2);font-size:12.5px}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="../index.html"><span class="mark">W</span>WARDEN <span class="pill" style="margin-left:6px">dApp</span></a>
+  <div class="row">
+    <span class="pill" id="net">testnet</span>
+    <button class="btn fill" id="connect">Connect Wallet</button>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <h1>The fund, <span class="grad">live</span>.</h1>
+  <p class="sub">Every number below is read straight from Sui testnet — the deployed WARDEN package, the keeper-fed oracle, a vault, and the tamper-evident ledger. Connect a wallet to drive it: open a vault, post market data, propose a trade, and watch the chain vet it.</p>
+
+  <div class="eyebrow">Live on-chain state · auto-refreshing</div>
+  <div class="grid grid4">
+    <div class="card"><div class="k">Oracle feed — price</div><div class="v" id="d-price">—</div><div class="k" id="d-fresh" style="margin-top:6px">depth —</div></div>
+    <div class="card heart"><div class="k">Vault — idle</div><div class="v" id="d-idle">—</div><div class="k" style="margin-top:6px">deployed <span id="d-deployed">—</span> · <span id="d-frozen" class="pill">—</span></div></div>
+    <div class="card"><div class="k">Ledger — entries</div><div class="v" id="d-seq">—</div><div class="k" style="margin-top:6px">last risk <span id="d-risk">—</span> bps</div></div>
+    <div class="card"><div class="k">Package</div><div class="v sm"><a id="d-pkg" target="_blank" rel="noopener">—</a></div><div class="k" style="margin-top:6px">13 modules · Immutable</div></div>
+  </div>
+  <div class="note">Tracking vault <a id="d-vaultlink" class="mono" target="_blank" rel="noopener">—</a> and feed <a id="d-feedlink" class="mono" target="_blank" rel="noopener">—</a>. Refreshes every 5s.</div>
+
+  <div class="eyebrow">Drive it (needs a Sui wallet on testnet)</div>
+  <div class="panel">
+    <div id="acct" class="note" style="margin-bottom:12px">Not connected. Click <b>Connect Wallet</b> above (Slush / Suiet / Sui Wallet).</div>
+    <div class="row" style="gap:8px">
+      <button class="btn" data-act="openFeed" disabled>1 · Open oracle feed</button>
+      <button class="btn" data-act="openVault" disabled>2 · Open vault (0.05 SUI)</button>
+      <button class="btn" data-act="feedDeep" disabled>3a · Post deep book</button>
+      <button class="btn warn" data-act="feedThin" disabled>3b · Post thin book (crash)</button>
+      <button class="btn warn" data-act="exit" disabled>5 · Owner exit</button>
+    </div>
+    <div class="row" style="margin-top:16px;align-items:flex-end;gap:14px">
+      <label>amount (MIST)<input id="i-amount" value="10000000"></label>
+      <label>direction<select id="i-dir"><option value="0">0 · reduce risk</option><option value="1">1 · increase</option></select></label>
+      <label>claimed risk (bps)<input id="i-risk" value="0"></label>
+      <button class="btn fill" data-act="trade" disabled>4 · Propose trade → chain vets it</button>
+    </div>
+    <div class="note">Flow: open a feed &amp; vault, post a <b>deep</b> book and propose a valid trade (accepted), then post a <b>thin</b> book and propose again claiming low risk — the Guardian reads the feed and <b>freezes</b> the vault. Owner exit still works while frozen.</div>
+  </div>
+
+  <div class="console" id="log"><div class="ln">› console ready. Read-only dashboard works without a wallet.</div></div>
+
+  <footer>
+    WARDEN · Sui Overflow 2026 · The Agentic Web — <a href="../index.html">landing</a> · <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">GitHub</a> · all actions are signed by your wallet on testnet.
+  </footer>
+</div>
+
+<script>
+const RPC = "https://fullnode.testnet.sui.io:443";
+const PKG = "0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902";
+const CLOCK = "0x6";
+// defaults for the read-only dashboard (a live deployed vault + feed)
+const STATE = {
+  feed: "0x56711d4dd4826e78125303538a6e00786c3beb87abf8a756636e37a3399401ea",
+  vault: "0xe41a661ccbdcaaf16870db18438f78912e8172cb0dde7c649565de9256418c71",
+  ledger: "0x8efbdb64e67c40e8f1912743c702e8f4519a89f96554f5d6859ce412c1d2d826",
+  policy:null, gen:null, creg:null, ccap:null, ocap:null,
+  wallet:null, account:null,
+};
+const $ = s => document.querySelector(s);
+const fmtSui = m => (Number(m)/1e9).toFixed(4)+" SUI";
+function log(html, cls=""){ const d=document.createElement('div'); d.className='ln '+cls; d.innerHTML=html; $('#log').prepend(d); }
+
+async function rpc(method, params){
+  const r = await fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+  const j = await r.json(); if(j.error) throw new Error(j.error.message); return j.result;
+}
+async function fields(id){ const r = await rpc('sui_getObject',[id,{showContent:true}]); return r.data?.content?.fields; }
+
+async function refresh(){
+  try{
+    $('#d-pkg').textContent = PKG.slice(0,10)+"…"+PKG.slice(-4);
+    $('#d-pkg').href = "https://suiscan.xyz/testnet/object/"+PKG;
+    $('#d-vaultlink').textContent = STATE.vault.slice(0,10)+"…"; $('#d-vaultlink').href="https://suiscan.xyz/testnet/object/"+STATE.vault;
+    $('#d-feedlink').textContent = STATE.feed.slice(0,10)+"…"; $('#d-feedlink').href="https://suiscan.xyz/testnet/object/"+STATE.feed;
+    const [f,v,l] = await Promise.all([fields(STATE.feed), fields(STATE.vault), fields(STATE.ledger)]);
+    if(f){ $('#d-price').textContent = (Number(f.price_e6)/1e6).toFixed(3); $('#d-fresh').textContent = "depth "+Number(f.depth).toLocaleString(); }
+    if(v){ $('#d-idle').textContent = fmtSui(v.idle); $('#d-deployed').textContent = fmtSui(v.deployed);
+      const fr=$('#d-frozen'); fr.textContent = v.frozen?"FROZEN":"live"; fr.className = "pill "+(v.frozen?"frozen":"ok"); }
+    if(l){ $('#d-seq').textContent = l.seq; }
+    // last ledger risk via the most recent Recorded event
+    try{ const ev = await rpc('suix_queryEvents',[{MoveModule:{package:PKG,module:'ledger'}},null,1,true]);
+      const e = ev.data?.[0]?.parsedJson; if(e) $('#d-risk').textContent = e.risk_bps; }catch(_){}
+  }catch(e){ /* keep last values */ }
+}
+refresh(); setInterval(refresh, 5000);
+
+// ---------- wallet ----------
+async function connect(){
+  try{
+    const { getWallets } = await import('https://esm.sh/@mysten/wallet-standard@0.16.16');
+    const ws = getWallets().get().filter(w => (w.chains||[]).some(c=>c.startsWith('sui:')) &&
+      ('sui:signAndExecuteTransaction' in w.features || 'sui:signAndExecuteTransactionBlock' in w.features));
+    if(!ws.length){ log('No Sui wallet detected — install Slush, Suiet, or Sui Wallet.', 'err'); return; }
+    const w = ws[0];
+    const { accounts } = await w.features['standard:connect'].connect();
+    STATE.wallet = w; STATE.account = accounts[0];
+    $('#acct').innerHTML = 'Connected <b>'+w.name+'</b> · <span class="mono">'+STATE.account.address.slice(0,12)+'…'+STATE.account.address.slice(-4)+'</span>';
+    document.querySelectorAll('[data-act]').forEach(b=>b.disabled=false);
+    $('#connect').textContent = 'Connected';
+    log('Wallet connected: <b>'+w.name+'</b>', 'ok');
+  }catch(e){ log('Connect failed: '+e.message, 'err'); }
+}
+$('#connect').onclick = connect;
+
+async function newTx(){ const { Transaction } = await import('https://esm.sh/@mysten/sui@1/transactions'); return new Transaction(); }
+function bytes(s){ return Array.from(new TextEncoder().encode(s)); }
+
+async function sign(tx, label){
+  const w = STATE.wallet, a = STATE.account;
+  if(!w){ log('Connect a wallet first.', 'err'); return null; }
+  const opts = { transaction: tx, account: a, chain: 'sui:testnet' };
+  let res;
+  if('sui:signAndExecuteTransaction' in w.features)
+    res = await w.features['sui:signAndExecuteTransaction'].signAndExecuteTransaction(opts);
+  else
+    res = await w.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({ transactionBlock: tx, account:a, chain:'sui:testnet', options:{showObjectChanges:true,showEvents:true} });
+  const digest = res.digest;
+  log(label+' → tx <a href="https://suiscan.xyz/testnet/tx/'+digest+'" target="_blank" rel="noopener" class="mono">'+digest.slice(0,12)+'…</a>');
+  // fetch full effects (object changes + events) for ids/events
+  const full = await rpc('sui_getTransactionBlock',[digest,{showObjectChanges:true,showEvents:true}]);
+  return full;
+}
+function created(full, typeSuffix){
+  return (full.objectChanges||[]).find(c=>c.type==='created' && (c.objectType||'').includes(typeSuffix))?.objectId;
+}
+
+const ACTS = {
+  async openFeed(){
+    const tx = await newTx();
+    tx.moveCall({ target:`${PKG}::app::feed_open`, arguments:[ tx.pure.u64(3600000), tx.object(CLOCK) ] });
+    const f = await sign(tx,'open feed'); if(!f) return;
+    STATE.feed = created(f,'feed::OracleFeed') || STATE.feed;
+    log('feed ready: <span class="mono">'+STATE.feed.slice(0,12)+'…</span> (dashboard now tracks yours)', 'ok');
+  },
+  async openVault(){
+    const tx = await newTx();
+    const [seed] = tx.splitCoins(tx.gas, [tx.pure.u64(50000000)]);
+    tx.moveCall({ target:`${PKG}::app::open_vault`, arguments:[ seed, tx.pure.address(STATE.account.address),
+      tx.pure.u64(30000000), tx.pure.u64(200000000), tx.pure.u64(60000), tx.pure.u64(10000000), tx.pure.u64(3600000), tx.object(CLOCK) ] });
+    const f = await sign(tx,'open vault'); if(!f) return;
+    STATE.vault = created(f,'vault::Vault')||created(f,'SUI>')||STATE.vault;
+    STATE.policy = created(f,'WardenPolicy'); STATE.gen = created(f,'GenerationRegistry');
+    STATE.creg = created(f,'CriticRegistry'); STATE.ccap = created(f,'CriticCap');
+    STATE.ledger = created(f,'TradeLedger')||STATE.ledger; STATE.ocap = created(f,'OwnerCap');
+    log('vault ready: <span class="mono">'+STATE.vault.slice(0,12)+'…</span> + policy/critic/ledger', 'ok');
+  },
+  async feedDeep(){ return setFeed(1000000, 1000000000000, 'deep book'); },
+  async feedThin(){ return setFeed(1000000, 1000, 'thin book (crash)'); },
+  async trade(){
+    if(!STATE.policy){ log('Open a vault first (step 2).', 'err'); return; }
+    const tx = await newTx();
+    tx.moveCall({ target:`${PKG}::app::agent_trade`, arguments:[
+      tx.object(STATE.vault), tx.object(STATE.policy), tx.object(STATE.gen), tx.object(STATE.creg),
+      tx.object(STATE.ccap), tx.object(STATE.ledger), tx.object(STATE.feed),
+      tx.pure.u64($('#i-amount').value||'0'), tx.pure.u8(Number($('#i-dir').value)), tx.pure.u64($('#i-risk').value||'0'),
+      tx.pure.vector('u8', bytes('trade')), tx.pure.vector('u8', bytes('walrus')), tx.pure.vector('u8', bytes('tee')), tx.object(CLOCK) ] });
+    const f = await sign(tx,'propose trade'); if(!f) return;
+    const evs = (f.events||[]).map(e=>e.type.split('::').pop());
+    if(evs.includes('VaultFrozen')) log('❄ the chain re-derived risk from the feed, caught the divergence, and FROZE the vault.', 'frz');
+    else log('✅ trade accepted within the leash.', 'ok');
+  },
+  async exit(){
+    if(!STATE.ocap){ log('Open a vault first (step 2).', 'err'); return; }
+    const tx = await newTx();
+    tx.moveCall({ target:`${PKG}::app::owner_exit`, arguments:[ tx.object(STATE.vault), tx.object(STATE.ocap), tx.pure.u64('5000000') ] });
+    const f = await sign(tx,'owner exit'); if(!f) return;
+    log('💸 withdrew 0.005 SUI — works even while frozen (non-custodial).', 'ok');
+  },
+};
+async function setFeed(price, depth, label){
+  const tx = await newTx();
+  tx.moveCall({ target:`${PKG}::app::feed_update`, arguments:[ tx.object(STATE.feed), tx.pure.u64(price), tx.pure.u64(depth), tx.object(CLOCK) ] });
+  const f = await sign(tx,'post '+label); if(f) log('feed updated: '+label, 'ok');
+}
+document.querySelectorAll('[data-act]').forEach(b=> b.onclick = async ()=>{ try{ await ACTS[b.dataset.act](); refresh(); }catch(e){ log('error: '+e.message,'err'); } });
+</script>
+</body>
+</html>

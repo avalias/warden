@@ -61,7 +61,7 @@ Sui Move (object-capabilities, hot-potato settlement), DeepBook v3 (execution / 
 ## Links
 
 - **Repo:** https://github.com/avalias/warden
-- **Site:** https://avalias.github.io/warden
+- **Site (landing + live dApp):** https://avalias.github.io/warden  ·  dApp at /app/
 - **Architecture (full 7-layer spec):** [docs/ARCHITECTURE.md](ARCHITECTURE.md)
 - **Demo video script:** [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md)
 - **Demo video:** _(add URL)_

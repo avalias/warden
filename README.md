@@ -13,7 +13,7 @@
 [![Move tests](https://img.shields.io/badge/move_tests-20%2F20_passing-2ecc71?style=flat-square)](#-tests)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[**Live site**](https://avalias.github.io/warden) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources)
+[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources)
 
 </div>
 
@@ -129,6 +129,7 @@ warden/
 │   │   ├── warden.move     # orchestrator (hot-potato Trade flow)
 │   │   └── app.move        # entry points (CLI/PTB-callable)
 │   └── tests/  warden_tests · strategy_tests · l5_l6_tests
+├── app/                    # interactive dApp (live dashboard + wallet actions)
 ├── agent/                  # the Claude-powered trading agent (agent.py)
 ├── scripts/                # deploy.sh + demo.sh (reproduce the on-chain run)
 ├── docs/ARCHITECTURE.md    # full 7-layer architecture spec
