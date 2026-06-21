@@ -204,6 +204,35 @@ fun test_withdraw_rejects_wrong_cap() {
 }
 
 #[test]
+fun test_value_plane_moves_real_balance() {
+    let mut ctx = tx_context::dummy();
+    let (mut v, cap) = mk_vault(1000, &mut ctx);
+    assert!(vault::nav(&v) == 1000, 0);
+    vault::deploy(&mut v, 300, 0);
+    assert!(vault::idle_value(&v) == 700, 1);   // REAL balance left idle
+    assert!(vault::deployed(&v) == 300, 2);      // REAL balance now deployed
+    assert!(vault::nav(&v) == 1000, 3);          // NAV conserved — funds never leave
+    vault::undeploy(&mut v, 200);                // close leg
+    assert!(vault::deployed(&v) == 100, 4);
+    assert!(vault::idle_value(&v) == 900, 5);
+    assert!(vault::nav(&v) == 1000, 6);
+    vault::destroy_for_testing(v);
+    vault::destroy_cap_for_testing(cap);
+}
+
+#[test]
+#[expected_failure(abort_code = 0, location = vault)] // ENotOwner
+fun test_owner_undeploy_rejects_wrong_cap() {
+    let mut ctx = tx_context::dummy();
+    let (mut v1, cap1) = mk_vault(1000, &mut ctx);
+    let (v2, cap2) = mk_vault(1000, &mut ctx);
+    vault::deploy(&mut v1, 100, 0);
+    vault::owner_undeploy(&mut v1, &cap2, 50); // cap2 is for v2 -> ENotOwner
+    vault::destroy_for_testing(v1); vault::destroy_cap_for_testing(cap1);
+    vault::destroy_for_testing(v2); vault::destroy_cap_for_testing(cap2);
+}
+
+#[test]
 fun test_unfreeze_restores_agent() {
     let mut ctx = tx_context::dummy();
     let (mut v, cap) = mk_vault(1000, &mut ctx);

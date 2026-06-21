@@ -43,7 +43,8 @@ public struct Receipt has store, copy, drop {
 }
 
 public struct Recorded has copy, drop {
-    vault: ID, seq: u64, ts_ms: u64, risk_bps: u64, accepted: bool,
+    vault: ID, seq: u64, ts_ms: u64, risk_bps: u64, accepted: bool, fault: u8,
+    trade_digest: vector<u8>,   // emitted so the hash chain is verifiable off-chain from events alone
     entry_digest: vector<u8>,
 }
 
@@ -88,7 +89,7 @@ public fun record(
     l.prev_digest = entry_digest;
     vec_set::insert(&mut l.seen, trade_digest);
 
-    event::emit(Recorded { vault: l.vault, seq: l.seq, ts_ms: now, risk_bps, accepted, entry_digest });
+    event::emit(Recorded { vault: l.vault, seq: l.seq, ts_ms: now, risk_bps, accepted, fault, trade_digest, entry_digest });
     Receipt {
         seq: l.seq, ts_ms: now, risk_bps, amount, direction, accepted, fault,
         trade_digest, entry_digest, walrus_blob, tee_attestation,

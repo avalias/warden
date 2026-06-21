@@ -29,7 +29,7 @@ Tooling on screen: the landing page, a terminal with `sui` CLI, and Suiscan.
 # the keeper has already posted a THIN order book to the shared on-chain feed
 # ($FEED); the agent lies and claims risk=0 against it.
 # args: VAULT POLICY REG CREG CCAP LEDGER FEED  amount dir claimed  digest walrus tee  clock
-sui client call --package 0xe65932…36dc --module app --function agent_trade \
+sui client call --package 0xfd6131…7437 --module app --function agent_trade \
   --args $VAULT $POLICY $REG $CREG $CCAP $LEDGER $FEED 3000000 1 0 \
          0x6c6965 0x77616c727573 0x746565 0x6 --gas-budget 60000000
 ```
@@ -38,7 +38,7 @@ sui client call --package 0xe65932…36dc --module app --function agent_trade \
 > Guardian re-derives risk on-chain from the raw order book — and gets ten
 > thousand basis points. The numbers diverge. The chain doesn't argue —"
 **On screen:** cut to Suiscan tx
-[`AtjSozeL…`](https://suiscan.xyz/testnet/tx/AtjSozeLGYdgAR7efSqQCgpTMoewWAyYUPisx8Ez9Thb),
+[`9BbwxdsR…`](https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m),
 highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 **Narration:**
 > "— it freezes the vault. The agent is now powerless. And notice: even with a
@@ -71,13 +71,13 @@ highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 ### Scene 7 — Recap (2:55–3:15)
 **On screen:** the proof section (15 transactions) + the GitHub repo.
 **Narration:**
-> "All seven layers — built, forty-one passing Move tests, and the full lifecycle
+> "All seven layers — built, forty-three passing Move tests, and the full lifecycle
 > anchored on-chain across fifteen transactions. Seven composable layers under one
 > thesis. Give the machine the markets. Give the chain the leash. That's WARDEN."
 
 ---
 
 **Lower-thirds / links to show:**
-- Package: `0xe65932ac7cba6db749d3deea0a6fbaeb0ea4fb64f7bcbb2b8446cb112fc736dc`
+- Package: `0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437`
 - Repo: github.com/avalias/warden · Site: avalias.github.io/warden
-- The heart tx: `AtjSozeL…` · L5 oracle: `CXi2xuVi…` · L6 inherit: `BizxznXJ…`
+- The heart tx: `9BbwxdsR…` · L5 oracle: `BxXzCrkS…` · L6 inherit: `EiDvSwCa…`

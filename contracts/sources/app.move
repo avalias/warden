@@ -151,6 +151,11 @@ entry fun inherit_open(beneficiary: address, dormancy_ms: u64, clock: &Clock, ct
 
 entry fun inherit_claim(s: &mut Switch, clock: &Clock) { inheritance::claim(s, clock); }
 
+/// Owner pulls deployed capital back into idle (the close leg of the value plane).
+entry fun owner_undeploy(v: &mut vault::Vault<SUI>, cap: &vault::OwnerCap, amount: u64) {
+    vault::owner_undeploy(v, cap, amount);
+}
+
 /// Owner withdraws — works even when the agent is frozen (non-custodial).
 entry fun owner_exit(
     v: &mut vault::Vault<SUI>,

@@ -18,9 +18,9 @@ const EInsufficient: u64 = 3;
 public struct Vault<phantom T> has key {
     id: UID,
     owner: address,
-    idle: Balance<T>,   // capital sitting in the vault
-    deployed: u64,      // notional the agent has steered into strategies
-    shares: u64,        // total depositor shares (1:1 in the MVP)
+    idle: Balance<T>,      // capital sitting in the vault
+    deployed: Balance<T>,  // REAL capital the agent has steered into strategies
+    shares: u64,           // total depositor shares (1:1 in the MVP)
     frozen: bool,
 }
 
@@ -41,7 +41,7 @@ public fun new<T>(ctx: &mut TxContext): (Vault<T>, OwnerCap) {
         id: object::new(ctx),
         owner: ctx.sender(),
         idle: balance::zero<T>(),
-        deployed: 0,
+        deployed: balance::zero<T>(),
         shares: 0,
         frozen: false,
     };
@@ -94,19 +94,36 @@ public fun share<T>(v: Vault<T>) { transfer::share_object(v) }
 public(package) fun deploy<T>(v: &mut Vault<T>, amount: u64, reserve_floor: u64) {
     assert!(!v.frozen, EFrozen);
     assert!(balance::value(&v.idle) >= amount + reserve_floor, EReserveBreached);
-    v.deployed = v.deployed + amount;
+    // move REAL balance idle -> deployed; funds never leave the vault object
+    balance::join(&mut v.deployed, balance::split(&mut v.idle, amount));
+}
+
+/// Close a deployed position back into idle (the value plane is two-sided).
+/// Funds never leave the vault.
+public(package) fun undeploy<T>(v: &mut Vault<T>, amount: u64) {
+    assert!(balance::value(&v.deployed) >= amount, EInsufficient);
+    balance::join(&mut v.idle, balance::split(&mut v.deployed, amount));
+}
+
+/// The owner pulls deployed capital home — the close leg, OwnerCap-gated.
+public fun owner_undeploy<T>(v: &mut Vault<T>, cap: &OwnerCap, amount: u64) {
+    assert!(cap.vault == object::id(v), ENotOwner);
+    undeploy(v, amount);
 }
 
 public fun is_frozen<T>(v: &Vault<T>): bool { v.frozen }
 public fun idle_value<T>(v: &Vault<T>): u64 { balance::value(&v.idle) }
-public fun deployed<T>(v: &Vault<T>): u64 { v.deployed }
+public fun deployed<T>(v: &Vault<T>): u64 { balance::value(&v.deployed) }
+/// Net asset value = idle + deployed — all real balance inside the vault.
+public fun nav<T>(v: &Vault<T>): u64 { balance::value(&v.idle) + balance::value(&v.deployed) }
 public fun shares<T>(v: &Vault<T>): u64 { v.shares }
 public fun vault_id<T>(v: &Vault<T>): ID { object::id(v) }
 
 #[test_only]
 public fun destroy_for_testing<T>(v: Vault<T>) {
-    let Vault { id, owner: _, idle, deployed: _, shares: _, frozen: _ } = v;
+    let Vault { id, owner: _, idle, deployed, shares: _, frozen: _ } = v;
     balance::destroy_for_testing(idle);
+    balance::destroy_for_testing(deployed);
     object::delete(id);
 }
 

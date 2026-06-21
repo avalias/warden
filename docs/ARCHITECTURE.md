@@ -124,7 +124,7 @@ any divergence freezes the position and records the rejection.
 
 ## Engineering rigor
 
-- **41/41 Move unit tests** — the heart (direct guardian coverage: the risk
+- **43/43 Move unit tests** — the heart (direct guardian coverage: the risk
   arithmetic, the divergence boundary, the hard ceiling, and the safe-direction
   clamp both ways), every gate's negative path (L1 per-tx / window / expiry /
   pause / wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0
@@ -134,8 +134,8 @@ any divergence freezes the position and records the rejection.
   no-loss draw.
 - **Deployed + verified on Sui testnet**, with the full L0→L6 lifecycle anchored
   on-chain across **15 clickable transactions** and reproducible via
-  `scripts/demo.sh`. (The `UpgradeCap` is retained by the deployer; burning it to
-  make the package immutable is a deliberate, pending step.)
+  `scripts/demo.sh`. The `UpgradeCap` has been **burned** — the package is
+  immutable; even the deployer cannot change the leash.
 - Transparent commit history; deployed package matches the source.
 
 ---

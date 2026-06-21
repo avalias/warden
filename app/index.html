@@ -73,7 +73,7 @@
     <div class="card"><div class="k">Oracle feed — price</div><div class="v" id="d-price">—</div><div class="k" id="d-fresh" style="margin-top:6px">depth —</div></div>
     <div class="card heart"><div class="k">Vault — idle</div><div class="v" id="d-idle">—</div><div class="k" style="margin-top:6px">deployed <span id="d-deployed">—</span> · <span id="d-frozen" class="pill">—</span></div></div>
     <div class="card"><div class="k">Ledger — entries</div><div class="v" id="d-seq">—</div><div class="k" style="margin-top:6px">last risk <span id="d-risk">—</span> bps</div></div>
-    <div class="card"><div class="k">Package</div><div class="v sm"><a id="d-pkg" target="_blank" rel="noopener">—</a></div><div class="k" style="margin-top:6px">13 modules · upgradeable</div></div>
+    <div class="card"><div class="k">Package</div><div class="v sm"><a id="d-pkg" target="_blank" rel="noopener">—</a></div><div class="k" style="margin-top:6px">13 modules · Immutable</div></div>
   </div>
   <div class="note">Tracking vault <a id="d-vaultlink" class="mono" target="_blank" rel="noopener">—</a> and feed <a id="d-feedlink" class="mono" target="_blank" rel="noopener">—</a>. Refreshes every 5s.</div>
 
@@ -105,13 +105,13 @@
 
 <script>
 const RPC = "https://fullnode.testnet.sui.io:443";
-const PKG = "0xe65932ac7cba6db749d3deea0a6fbaeb0ea4fb64f7bcbb2b8446cb112fc736dc";
+const PKG = "0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437";
 const CLOCK = "0x6";
 // defaults for the read-only dashboard (a live deployed vault + feed)
 const STATE = {
-  feed: "0xdecdbec5ee3fb56715b7ec0074b07a1e27b86d0b345f510e4a9d289e3e8e03fd",
-  vault: "0x4f8cfb0d1bae2f7c7c41fdca84f54ee36895061d2228a1dc9472574f2aa5d38d",
-  ledger: "0x4c6e4876f78f163572b800d2b26cb83134100c21d703f059e8256b1daa5aab11",
+  feed: "0x7c5ec2033adcf794ec085da6e67e86531fba75f7db880d396794573df628ce40",
+  vault: "0xa50d1f6a8d0fd5966ed757967b6c34c084b8f74a94f392b6111b086f0ddc6288",
+  ledger: "0x6430faf2036c5de48a92e6f89816574c14dbe9887e93fb4a3a60b26e3fac8e64",
   policy:null, gen:null, creg:null, ccap:null, ocap:null,
   wallet:null, account:null,
 };
