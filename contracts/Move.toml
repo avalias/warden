@@ -1,0 +1,13 @@
+[package]
+name = "warden"
+edition = "2024.beta"
+license = "MIT"
+authors = ["avalias"]
+
+[dependencies]
+# Sui framework is injected automatically by the bundled CLI (sui >= 1.45).
+# If your toolchain needs it explicit, uncomment:
+# Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+
+[addresses]
+warden = "0x0"

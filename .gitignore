@@ -1,0 +1,13 @@
+# Move build artifacts
+contracts/build/
+
+# transient CLI output / any hidden json/err captured during development
+# (NEVER commit these — sui --json wallet output can contain a recovery phrase)
+/.*.json
+/.*.err
+*.tmp
+
+# node / tooling
+node_modules/
+.DS_Store
+*.log

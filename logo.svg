@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>WARDEN</title>
+  <desc>Square WARDEN logo — a gradient W inside a guardian shield on a dark tile.</desc>
+  <defs>
+    <linearGradient id="g" x1="96" y1="120" x2="416" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4da2ff"/>
+      <stop offset="1" stop-color="#37e0ac"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#4da2ff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#4da2ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- dark square tile -->
+  <rect x="0" y="0" width="512" height="512" rx="104" fill="#05080f"/>
+  <rect x="0" y="0" width="512" height="512" rx="104" fill="url(#glow)"/>
+  <rect x="6" y="6" width="500" height="500" rx="98" fill="none" stroke="url(#g)" stroke-opacity="0.4" stroke-width="3"/>
+
+  <!-- guardian shield -->
+  <path d="M256 96 L398 150 V268 C398 350 332 398 256 426 C180 398 114 350 114 268 V150 Z"
+        fill="none" stroke="url(#g)" stroke-opacity="0.5" stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- the W -->
+  <path d="M168 196 L208 326 L256 236 L304 326 L344 196"
+        fill="none" stroke="url(#g)" stroke-width="40"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- leash node -->
+  <circle cx="256" cy="236" r="13" fill="#05080f" stroke="url(#g)" stroke-width="10"/>
+</svg>
