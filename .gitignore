@@ -18,3 +18,7 @@ node_modules/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# video capture artifacts (regenerable)
+video/frames/
+video/*.mp4

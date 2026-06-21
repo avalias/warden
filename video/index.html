@@ -130,7 +130,7 @@
       <div class="pc good"><h3>✓ WARDEN</h3>
         <li><span class="ic">✓</span> Authority is a capability object, never a key</li>
         <li><span class="ic">✓</span> The chain re-derives risk and freezes on divergence</li>
-        <li><span class="ic">✓</span> Every decision anchored, append-only</li></div>
+        <li><span class="ic">✓</span> Every decision anchored on a tamper-evident hash chain</li></div>
     </div>
   </section>
 
@@ -167,7 +167,7 @@
     <div class="layers">
       <div class="ly"><span class="n">L6</span><span class="t">Continuity — dead-man-switch · no-loss prize</span></div>
       <div class="ly"><span class="n">L5</span><span class="t">Compliance — KYC gate · optimistic oracle</span></div>
-      <div class="ly"><span class="n">L4</span><span class="t">Verifiable record — append-only ledger</span></div>
+      <div class="ly"><span class="n">L4</span><span class="t">Verifiable record — hash-chained ledger</span></div>
       <div class="ly"><span class="n">L3</span><span class="t">Self-hedging strategy — <small>bounded drawdown, proven</small></span></div>
       <div class="ly heart-l"><span class="n">L2</span><span class="t">♥ The chain never trusts the AI — re-derive · freeze</span></div>
       <div class="ly"><span class="n">L1</span><span class="t">Authority is an object — object-capability + revocation</span></div>
@@ -231,7 +231,26 @@ addEventListener('keydown',e=>{
   else if(e.key.toLowerCase()==='f'){ document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); }
 });
 addEventListener('click',e=>{ if(e.target.closest('.bar')||e.target.closest('a')) return; next(); });
-go(0);
+
+// --- still capture mode (for screenshots): ?still=1 freezes ambient animations
+//     and shows the scene fully settled; ?go=N jumps straight to scene N.
+const _p = new URLSearchParams(location.search);
+if (_p.get('still')) {
+  const _st = document.createElement('style');
+  _st.textContent = '.orb,.grid{animation:none!important}'
+    + '.scene.active .eyebrow,.scene.active h1,.scene.active h2,.scene.active .lead,'
+    + '.scene.active .tag,.scene.active .split,.scene.active .stats,.scene.active .layers,'
+    + '.scene.active .cta,.scene.active .step,.scene.active .stamp,.scene.active .cap,'
+    + '.scene.active .ly{opacity:1!important;transform:none!important;animation:none!important}'
+    + '.scene.active .strike::after{transform:scaleX(1)!important;animation:none!important}';
+  document.head.appendChild(_st);
+  const i = parseInt(_p.get('go') || '0', 10) || 0;
+  scenes.forEach((s,k)=>{ s.classList.toggle('active',k===i); s.classList.toggle('play',k===i); });
+  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+  cur=i; document.getElementById('counter').textContent=(i+1)+' / '+scenes.length;
+} else {
+  go(parseInt(_p.get('go') || '0', 10) || 0);
+}
 </script>
 </body>
 </html>
