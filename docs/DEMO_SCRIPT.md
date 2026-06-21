@@ -20,26 +20,29 @@ Tooling on screen: the landing page, a terminal with `sui` CLI, and Suiscan.
 **Narration:**
 > "The AI only *proposes*. The chain re-derives the truth, clamps the agent,
 > freezes on divergence, and proves every move. Seven layers, one thesis:
-> trust-minimization. Five of them are built and deployed today."
+> trust-minimization. All seven are built and deployed today."
 
 ### Scene 3 — The heart, LIVE (0:45–1:35)  ← the money shot
 **On screen:** terminal. Run the freeze trade where the agent lies (claims
 `risk=0`, thin order book):
 ```bash
+# the keeper has already posted a THIN order book to the shared on-chain feed
+# ($FEED); the agent lies and claims risk=0 against it.
+# args: VAULT POLICY REG CREG CCAP LEDGER FEED  amount dir claimed  digest walrus tee  clock
 sui client call --package 0x823f84…6902 --module app --function agent_trade \
-  --args $VAULT $POLICY $REG $CREG $CCAP $LEDGER 3000000 1 0 1000000 1000 \
-         0x6c6965 0x77616c727573 0x746565 0x6 --gas-budget 14000000
+  --args $VAULT $POLICY $REG $CREG $CCAP $LEDGER $FEED 3000000 1 0 \
+         0x6c6965 0x77616c727573 0x746565 0x6 --gas-budget 60000000
 ```
 **Narration:**
 > "Watch. The agent proposes a trade and *claims* the risk is zero. But the
 > Guardian re-derives risk on-chain from the raw order book — and gets ten
 > thousand basis points. The numbers diverge. The chain doesn't argue —"
 **On screen:** cut to Suiscan tx
-[`DwEojYEq…`](https://suiscan.xyz/testnet/tx/DwEojYEqyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5),
+[`DwEojYEq…`](https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB),
 highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 **Narration:**
-> "— it freezes the vault. The agent is now powerless. And notice: even the
-> independent critic had approved this trade. The chain still caught it."
+> "— it freezes the vault. The agent is now powerless. And notice: even with a
+> critic approval co-signed in the same transaction, the chain still caught it."
 
 ### Scene 4 — Non-custodial (1:35–2:00)
 **On screen:** the `test_owner_withdraw_works_even_when_frozen` test passing
@@ -68,7 +71,7 @@ highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 ### Scene 7 — Recap (2:55–3:15)
 **On screen:** the proof section (15 transactions) + the GitHub repo.
 **Narration:**
-> "All seven layers — built, twenty passing Move tests, and the full lifecycle
+> "All seven layers — built, twenty-six passing Move tests, and the full lifecycle
 > anchored on-chain across fifteen transactions. Seven composable layers under one
 > thesis. Give the machine the markets. Give the chain the leash. That's WARDEN."
 

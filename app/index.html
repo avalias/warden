@@ -66,14 +66,14 @@
 
 <div class="wrap">
   <h1>The fund, <span class="grad">live</span>.</h1>
-  <p class="sub">Every number below is read straight from Sui testnet — the deployed WARDEN package, the keeper-fed oracle, a vault, and the tamper-evident ledger. Connect a wallet to drive it: open a vault, post market data, propose a trade, and watch the chain vet it.</p>
+  <p class="sub">Every number below is read straight from Sui testnet — the deployed WARDEN package, the keeper-fed oracle, a vault, and the append-only ledger. Connect a wallet to drive it: open a vault, post market data, propose a trade, and watch the chain vet it.</p>
 
   <div class="eyebrow">Live on-chain state · auto-refreshing</div>
   <div class="grid grid4">
     <div class="card"><div class="k">Oracle feed — price</div><div class="v" id="d-price">—</div><div class="k" id="d-fresh" style="margin-top:6px">depth —</div></div>
     <div class="card heart"><div class="k">Vault — idle</div><div class="v" id="d-idle">—</div><div class="k" style="margin-top:6px">deployed <span id="d-deployed">—</span> · <span id="d-frozen" class="pill">—</span></div></div>
     <div class="card"><div class="k">Ledger — entries</div><div class="v" id="d-seq">—</div><div class="k" style="margin-top:6px">last risk <span id="d-risk">—</span> bps</div></div>
-    <div class="card"><div class="k">Package</div><div class="v sm"><a id="d-pkg" target="_blank" rel="noopener">—</a></div><div class="k" style="margin-top:6px">13 modules · Immutable</div></div>
+    <div class="card"><div class="k">Package</div><div class="v sm"><a id="d-pkg" target="_blank" rel="noopener">—</a></div><div class="k" style="margin-top:6px">13 modules · upgradeable</div></div>
   </div>
   <div class="note">Tracking vault <a id="d-vaultlink" class="mono" target="_blank" rel="noopener">—</a> and feed <a id="d-feedlink" class="mono" target="_blank" rel="noopener">—</a>. Refreshes every 5s.</div>
 

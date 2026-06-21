@@ -1,0 +1,28 @@
+name: contracts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  move-test:
+    runs-on: ubuntu-latest
+    env:
+      SUI_VERSION: "1.73.1"   # matches contracts/Published.toml toolchain-version
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Sui CLI (testnet release)
+        run: |
+          set -euo pipefail
+          url="https://github.com/MystenLabs/sui/releases/download/testnet-v${SUI_VERSION}/sui-testnet-v${SUI_VERSION}-ubuntu-x86_64.tgz"
+          echo "downloading $url"
+          curl -fsSL "$url" -o sui.tgz
+          tar -xzf sui.tgz
+          sudo mv sui /usr/local/bin/sui
+          sui --version
+
+      - name: Move test
+        run: sui move test --path contracts

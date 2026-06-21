@@ -188,7 +188,7 @@
   <div class="wrap">
     <div class="pill rv"><span class="dot"></span> Sui Overflow 2026 · The Agentic Web · Autonomous Agent Wallet</div>
     <h1 class="rv">The autonomous AI fund<br/>you <span class="grad">don't have to trust.</span></h1>
-    <p class="lead rv">WARDEN is a regulated-ready, fully verifiable, non-custodial asset manager on Sui. An AI fleet trades real capital it is <b>structurally incapable</b> of stealing, mis-allocating, or misreporting — because the chain re-derives, clamps, freezes and proves every move.</p>
+    <p class="lead rv">WARDEN is a fully verifiable, non-custodial autonomous asset manager on Sui. An AI agent proposes every trade — and is <b>structurally incapable</b> of stealing, over-allocating, or misreporting, because the chain re-derives, clamps, freezes and proves every move.</p>
     <p class="tag rv">Give the machine the markets. Give the chain the leash. <span>// Машине — рынки. Цепи — поводок.</span></p>
     <div class="cta rv">
       <a href="app/index.html" class="btn btn-fill">Launch the live dApp →</a>
@@ -196,7 +196,7 @@
       <a href="#inversion" class="btn btn-ghost">See how it works</a>
     </div>
     <div class="herostats rv">
-      <div class="hs"><div class="n grad" data-c="12">12</div><div class="l">Move modules, deployed</div></div>
+      <div class="hs"><div class="n grad" data-c="13">13</div><div class="l">Move modules, deployed</div></div>
       <div class="hs"><div class="n grad" data-c="7">7</div><div class="l">composable security layers</div></div>
       <div class="hs"><div class="n grad" data-c="1">1</div><div class="l">thesis: trust-minimization</div></div>
       <div class="hs"><div class="n grad">∞</div><div class="l">audits — every move is on-chain</div></div>
@@ -225,10 +225,10 @@
         <h3>✓ WARDEN</h3>
         <ul>
           <li><span class="ic">✓</span><span>Agent holds a <b>non-transferable capability object</b>, not a key — and <b>never</b> the withdraw path</span></li>
-          <li><span class="ic">✓</span><span>Chain <b>re-derives risk on-chain</b> from raw Pyth + DeepBook — diverge → <b>freeze</b></span></li>
-          <li><span class="ic">✓</span><span>Action <b>and reasoning</b> sealed to Walrus with a three-proof receipt — <b>replay anything</b></span></li>
-          <li><span class="ic">✓</span><span>Independent critic agent signs with its <b>own separate key</b></span></li>
-          <li><span class="ic">✓</span><span>Protocol-level <b>KYC token + gated venues</b> → institution-ready</span></li>
+          <li><span class="ic">✓</span><span>Chain <b>re-derives risk on-chain</b> from a keeper-fed feed the agent can't forge — diverge → <b>freeze</b></span></li>
+          <li><span class="ic">✓</span><span>Every decision — <b>including rejected ones</b> — recorded with a three-proof receipt on an append-only ledger</span></li>
+          <li><span class="ic">✓</span><span>A separable <b>critic capability</b> co-signs — a distinct critic signer in multi-party deployment</span></li>
+          <li><span class="ic">✓</span><span>Protocol-level <b>KYC gate + optimistic oracle</b> → institution-ready</span></li>
         </ul>
       </div>
     </div>
@@ -245,44 +245,44 @@
       <!-- L0 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L0</div><div class="ltitle">Onboarding &amp; custody — non-custodial by construction</div><div class="lsrc">module: vault</div></div>
-        <div class="ldesc">zkLogin + sponsored gas (deposit with Google, no seed, no gas). Funds live in a <b>user-owned Vault</b>; the fleet gets a <b>no-withdraw boundary</b>. Deposit mints a PT/YT split priced on DeepBook; idle buffer earns yield-in-flight from second one.</div>
-        <div class="chips"><span class="chip">zkLogin + Enoki gas</span><span class="chip">user-owned Vault&lt;T&gt;</span><span class="chip">no-withdraw boundary</span><span class="chip">PT/YT + DeepBook price discovery</span><span class="chip">yield-in-flight</span></div>
+        <div class="ldesc">Funds live in a <b>user-owned Vault</b>; the agent gets a <b>no-withdraw boundary</b> — only the <span class="mono">OwnerCap</span> can remove capital, and it works even while the agent is frozen. A reserve floor is always held back. <i>(zkLogin/Enoki onboarding is roadmap.)</i></div>
+        <div class="chips"><span class="chip">user-owned Vault&lt;T&gt;</span><span class="chip">OwnerCap-only withdraw</span><span class="chip">no-withdraw boundary</span><span class="chip">works while frozen</span><span class="chip">reserve floor</span></div>
       </div>
       <!-- L1 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L1</div><div class="ltitle">Authority is an object, not a key — object-capability</div><div class="lsrc">module: policy</div></div>
-        <div class="ldesc">A <b>non-transferable</b> capability minted without <span class="mono">store</span> (unforgeable, unsellable). Scope enforced by Move's type system + a <b>hot-potato ActionReceipt</b> that must be consumed by a policy-checked settlement in the same PTB — over-scope is structurally impossible. Recursive work-graph delegation with a <b>generation revocation lattice</b>: revoke the parent, the whole fleet dies.</div>
-        <div class="chips"><span class="chip">non-transferable cap (no-store)</span><span class="chip">hot-potato enforcement</span><span class="chip">adapter-gated permits</span><span class="chip">revocation lattice</span><span class="chip">admin can't move funds</span></div>
+        <div class="ldesc">A <b>non-transferable</b> capability minted without <span class="mono">store</span> (unforgeable, unsellable), scoped by per-tx cap, rolling-window cap, reserve floor and expiry. The hot-potato <span class="mono">Trade</span> must be settled through the policy check in the same PTB — over-scope is structurally impossible. A <b>generation revocation lattice</b>: bump the generation and every older policy dies in one transaction.</div>
+        <div class="chips"><span class="chip">non-transferable cap (no-store)</span><span class="chip">hot-potato enforcement</span><span class="chip">per-tx + window caps</span><span class="chip">revocation lattice</span><span class="chip">agent can't withdraw</span></div>
       </div>
       <!-- L2 HEART -->
       <div class="layer heart rv">
         <div class="lhead"><div class="lnum">L2</div><div class="ltitle">The chain never trusts the AI<span class="ht">♥ heart</span></div><div class="lsrc">modules: guardian · critic</div></div>
-        <div class="ldesc">The AI proposes an unsigned intent. A <b>deterministic, fail-closed Guardian re-derives every risk number on-chain</b> from raw Pyth + DeepBook order-book state. The agent is <b>clamped to the safe direction only</b>; fills above a live-SVI ceiling are rejected on-chain. An <b>independent critic agent signs with its own key</b>. If the on-chain re-derivation diverges from the agent's claim → <b>the position freezes</b>; only the DAO can unfreeze.</div>
-        <div class="chips"><span class="chip">on-chain risk re-derivation</span><span class="chip">safe-direction-only clamp</span><span class="chip">independent critic (own key)</span><span class="chip">divergence → freeze</span><span class="chip">WYSIWYS + scam-clone detection</span></div>
+        <div class="ldesc">The AI proposes an unsigned intent. A <b>deterministic, fail-closed Guardian re-derives the risk on-chain</b> from a keeper-fed market feed (price + order-book depth) the agent <b>cannot forge</b>. In a danger zone the agent is <b>clamped to the risk-reducing direction only</b>; fills above a hard ceiling are rejected. A separable <b>critic capability</b> co-signs. If the chain's re-derivation diverges from the agent's claim → <b>the vault freezes</b>; only governance can unfreeze.</div>
+        <div class="chips"><span class="chip">on-chain risk re-derivation</span><span class="chip">safe-direction clamp</span><span class="chip">keeper-fed feed (agent-proof)</span><span class="chip">critic co-sign</span><span class="chip">divergence → freeze</span></div>
       </div>
       <!-- L3 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L3</div><div class="ltitle">Structured-product engine — it hedges itself</div><div class="lsrc">module: strategy</div></div>
-        <div class="ldesc">A hedged-carry loop (PLP carry minus OTM crash insurance, bounded drawdown). Trades volatility itself via the first <b>on-chain variance / log-contract</b> (VIX-style replication, settled from one Pyth read). Strategies are <b>forkable, composable on-chain objects</b> compiled from NL/visual/YAML through a typed Financial IR, priced via <span class="mono">devInspect</span> zero-gas quotes.</div>
-        <div class="chips"><span class="chip">hedged-carry (PLP + OTM)</span><span class="chip">on-chain variance (VIX)</span><span class="chip">Financial IR + forkable strategy</span><span class="chip">strategy marketplace</span><span class="chip">on-chain American options</span></div>
+        <div class="ldesc">A <b>hedged-carry</b> position (<span class="mono">HedgedCarry</span>) earns carry over time and holds a downside hedge. Below the strike the hedge payout offsets further spot losses, so the <b>maximum drawdown is bounded by construction</b> — verified by unit test, and the <span class="mono">Settled</span> event carries both the realized magnitude and the drawdown floor on-chain.</div>
+        <div class="chips"><span class="chip">hedged-carry position</span><span class="chip">bounded drawdown (proven)</span><span class="chip">settled from one price read</span><span class="chip">auditable Settled event</span></div>
       </div>
       <!-- L4 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L4</div><div class="ltitle">Everything is verifiable — memory, reasoning, provenance</div><div class="lsrc">module: ledger</div></div>
-        <div class="ldesc">Every tick: recall → reason → execute under policy → attest on-chain → store on Walrus. Each decision yields a <b>three-proof receipt</b> (Sui digest + Walrus blob + TEE attestation). The full <b>reasoning</b> is sealed and replayable. Cited sources are frozen byte-for-byte; the track record is <b>tamper-evident, non-backdated, monotonic-no-delete</b> — you can't quietly drop your losing trades.</div>
-        <div class="chips"><span class="chip">three-proof receipt</span><span class="chip">replayable reasoning</span><span class="chip">TLSNotary provenance</span><span class="chip">tamper-evident track record</span><span class="chip">live vol terminal, no mock data</span></div>
+        <div class="ldesc">Every decision is appended to a <b>monotonic, non-backdated, no-delete</b> ledger — you can't quietly drop a losing trade. Each entry carries a <b>three-proof receipt</b>: the Sui tx digest (real), plus Walrus-blob and TEE-attestation fields (placeholders today, wired to real proofs on the roadmap). Rejected attempts are recorded too.</div>
+        <div class="chips"><span class="chip">three-proof receipt</span><span class="chip">append-only + no-delete</span><span class="chip">non-backdated (Sui Clock)</span><span class="chip">rejections recorded too</span></div>
       </div>
       <!-- L5 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L5</div><div class="ltitle">Compliance &amp; confidentiality — institution-ready</div><div class="lsrc">modules: compliance · oracle</div></div>
-        <div class="ldesc">A <b>closed-loop KYC token</b> (transferable only between verified holders, enforced at protocol level) + <b>compliance-gated venue adapters</b> → compliant <i>and</i> liquid on DeepBook/CLMM/DLMM. Confidential Transfers hide sensitive amounts; private risk models stay encrypted under <b>Seal threshold-IBE + TEE attestation</b>. Real-world facts become TEE-signed, on-chain-checkable results; disputes resolve through a Move-native optimistic oracle.</div>
-        <div class="chips"><span class="chip">KYC token + gated adapters</span><span class="chip">Confidential Transfers</span><span class="chip">Seal + Nautilus/Nitro attestation</span><span class="chip">TEE real-world facts</span><span class="chip">optimistic oracle + disputes</span></div>
+        <div class="ldesc">A <b>closed-loop KYC registry</b> (regulated value moves only between verified holders, enforced at protocol level) with an auditor capability for read-only oversight. A <b>Move-native optimistic oracle</b> resolves real-world outcomes with a challenge window: propose with a bond, dispute while open, finalize when it closes, escalate to a resolver. <i>(Confidential Transfers + Seal threshold-IBE are roadmap.)</i></div>
+        <div class="chips"><span class="chip">closed-loop KYC + auditor cap</span><span class="chip">optimistic oracle + disputes</span><span class="chip">Confidential Transfers (roadmap)</span><span class="chip">Seal + Nautilus (roadmap)</span></div>
       </div>
       <!-- L6 -->
       <div class="layer rv">
         <div class="lhead"><div class="lnum">L6</div><div class="ltitle">Continuity · governance · distribution</div><div class="lsrc">modules: inheritance · prize</div></div>
-        <div class="ldesc"><b>Dead-man-switch inheritance</b>: a heartbeat keeps a position yours; on prolonged inactivity a Clock-gated <span class="mono">seal_approve</span> lets a beneficiary inherit it. A no-loss prize layer (commit-reveal + native ecvrf). An <b>x402 rail</b> where other agents pay per-query and the balance change <i>is</i> the receipt. MCP server + SDKs + a Walrus-Sites front-end with byte-level integrity.</div>
-        <div class="chips"><span class="chip">dead-man-switch inheritance</span><span class="chip">no-loss prize (ecvrf)</span><span class="chip">x402 fee-as-output</span><span class="chip">Merkle performance rewards</span><span class="chip">MCP + SDKs + Walrus Sites</span></div>
+        <div class="ldesc"><b>Dead-man-switch inheritance</b>: a heartbeat keeps a position yours; after a dormancy period a named beneficiary inherits control. A <b>no-loss prize draw</b> selects a winner by commit-reveal (<span class="mono">keccak256</span>), principal preserved by construction. <i>(An x402 agent-payment rail + an MCP server/SDKs are roadmap.)</i></div>
+        <div class="chips"><span class="chip">dead-man-switch inheritance</span><span class="chip">no-loss commit-reveal draw</span><span class="chip">principal-preserved</span><span class="chip">x402 + MCP + SDKs (roadmap)</span></div>
       </div>
     </div>
     <div class="spine">↑ The chain is the referee · non-custodial · the agent never holds the leash ↑</div>
@@ -294,15 +294,15 @@
   <div class="wrap">
     <div class="rv"><div class="eyebrow">Anatomy of one trade</div>
     <h2>How a single move survives the chain.</h2>
-    <p class="sectlead">The agent never touches money directly. Seven gates stand between intent and execution — and any divergence freezes the position.</p></div>
+    <p class="sectlead">The agent never touches money directly. On-chain gates stand between intent and execution — and any divergence freezes the position.</p></div>
     <div class="flow">
       <div class="step rv"><div class="sc">🧠</div><div class="st">Propose</div><div class="sd">AI emits an unsigned intent</div></div>
       <div class="step rv"><div class="sc">⛓️</div><div class="st">Re-derive</div><div class="sd">Guardian recomputes risk on-chain</div></div>
-      <div class="step rv"><div class="sc">⚖️</div><div class="st">Critic</div><div class="sd">2nd agent signs with own key</div></div>
-      <div class="step rv"><div class="sc">🛡️</div><div class="st">Clamp</div><div class="sd">safe-direction + SVI ceiling</div></div>
-      <div class="step frz rv"><div class="sc">🧊</div><div class="st">Or freeze</div><div class="sd">divergence → DAO-only unfreeze</div></div>
+      <div class="step rv"><div class="sc">⚖️</div><div class="st">Critic</div><div class="sd">critic capability co-signs</div></div>
+      <div class="step rv"><div class="sc">🛡️</div><div class="st">Clamp</div><div class="sd">safe-direction + risk ceiling</div></div>
+      <div class="step frz rv"><div class="sc">🧊</div><div class="st">Or freeze</div><div class="sd">divergence → governance unfreeze</div></div>
       <div class="step rv"><div class="sc">⚡</div><div class="st">Execute</div><div class="sd">hot-potato settles in one PTB</div></div>
-      <div class="step rv"><div class="sc">🔏</div><div class="st">Attest</div><div class="sd">3-proof receipt → Walrus</div></div>
+      <div class="step rv"><div class="sc">🔏</div><div class="st">Attest</div><div class="sd">3-proof receipt recorded</div></div>
     </div>
   </div>
 </section>
@@ -311,7 +311,7 @@
 <section class="band">
   <div class="wrap">
     <div class="bgrid">
-      <div class="bstat rv"><div class="n grad" data-c="18">18</div><div class="l">Move tests passing</div></div>
+      <div class="bstat rv"><div class="n grad" data-c="26">26</div><div class="l">Move tests passing</div></div>
       <div class="bstat rv"><div class="n grad" data-c="0" data-suf="%">0%</div><div class="l">of capital the agent can withdraw</div></div>
       <div class="bstat rv"><div class="n grad" data-c="3">3</div><div class="l">proofs per decision (Sui·Walrus·TEE)</div></div>
       <div class="bstat rv"><div class="n grad" data-c="100" data-suf="%">100%</div><div class="l">of risk numbers re-derived on-chain</div></div>
@@ -330,7 +330,7 @@
       <a class="btn btn-ghost" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">View on Suiscan ↗</a>
     </div>
     <div class="fgrid" style="margin-top:16px">
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav" target="_blank" rel="noopener"><div class="fi">🏦</div><h3>open_vault</h3><p>Non-custodial vault + revocation/critic registries + tamper-evident ledger created.</p><div class="from mono">tx 4KFjVaGo… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav" target="_blank" rel="noopener"><div class="fi">🏦</div><h3>open_vault</h3><p>Non-custodial vault + revocation/critic registries + append-only ledger created.</p><div class="from mono">tx 4KFjVaGo… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/B1MraJK5ZPT7qVm8VGtkvMigouZTC11711zmrDxmDxai" target="_blank" rel="noopener"><div class="fi">📡</div><h3>oracle feed — keeper writes</h3><p>A keeper posts price + order-book depth to a shared on-chain feed the agent <b>cannot forge</b>. The Guardian reads this — never a number the agent passed in.</p><div class="from mono">tx B1MraJK5… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/JATEczbhRMujdQGP7kYaj8vmYA2i4EMzT3BLgMzhsSQ3" target="_blank" rel="noopener"><div class="fi">✅</div><h3>agent_trade — accepted</h3><p>A valid trade clears all five gates (Guardian reads the deep-book feed) → <span class="mono">Recorded{accepted:true, seq:1}</span>.</p><div class="from mono">tx JATEczbh… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB" target="_blank" rel="noopener"><div class="fi">🧊</div><h3>agent_trade — the heart</h3><p>The keeper posts a thin book; the agent still claims <span class="mono">risk=0</span>; the chain re-derives <span class="mono">10000bps</span> <b>from the feed</b>, catches the lie → <b>VaultFrozen</b>.</p><div class="from mono">tx DwEojYEq… ↗</div></a>
@@ -341,7 +341,7 @@
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c" target="_blank" rel="noopener"><div class="fi">🛰️</div><h3>oracle_finalize — L5</h3><p>A Move-native optimistic oracle finalizes an outcome after its challenge window closes.</p><div class="from mono">tx 738N3XQ5… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8" target="_blank" rel="noopener"><div class="fi">♾️</div><h3>inherit_claim — L6</h3><p>Dead-man-switch: after the dormancy timer elapses, the beneficiary inherits → <b>Inherited</b>.</p><div class="from mono">tx E5mWFNNN… ↗</div></a>
     </div>
-    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — fifteen transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>20/20 Move unit tests</b>.</p>
+    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — fifteen transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>26/26 Move unit tests</b>.</p>
   </div>
 </section>
 
@@ -353,16 +353,16 @@
     <p class="sectlead">Every mechanism maps to a Move module that implements it. Nothing decorative.</p></div>
     <div class="fgrid">
       <div class="fc rv"><div class="fi">🔒</div><h3>Capital the AI can't take</h3><p>User-owned vault + non-transferable capability object + a no-withdraw boundary. The agent touches positions, never the exit.</p><div class="from">module: <b>vault · policy</b></div></div>
-      <div class="fc rv"><div class="fi">⛓️</div><h3>Risk re-derived on-chain</h3><p>The Guardian never trusts the agent's number — it recomputes breach from raw Pyth + DeepBook state and freezes on divergence.</p><div class="from">module: <b>guardian</b></div></div>
-      <div class="fc rv"><div class="fi">⚖️</div><h3>Two agents, one referee</h3><p>An independent critic signs its verdict with its own separate key. No agent trusts another; the chain is the judge.</p><div class="from">module: <b>critic</b></div></div>
-      <div class="fc rv"><div class="fi">📈</div><h3>It hedges itself</h3><p>PLP carry minus OTM crash insurance, plus the first on-chain variance contract via VIX-style replication. Movement, not direction.</p><div class="from">module: <b>strategy</b></div></div>
+      <div class="fc rv"><div class="fi">⛓️</div><h3>Risk re-derived on-chain</h3><p>The Guardian never trusts the agent's number — it recomputes risk from a keeper-fed market feed the agent can't forge, and freezes on divergence.</p><div class="from">module: <b>guardian</b></div></div>
+      <div class="fc rv"><div class="fi">⚖️</div><h3>Two agents, one referee</h3><p>A separable critic capability co-signs each verdict — a distinct critic signer in the intended multi-party deployment. The chain is the final judge.</p><div class="from">module: <b>critic</b></div></div>
+      <div class="fc rv"><div class="fi">📈</div><h3>It hedges itself</h3><p>A self-hedging carry position: below the hedge strike the payout offsets further losses, so the maximum drawdown is bounded by construction.</p><div class="from">module: <b>strategy</b></div></div>
       <div class="fc rv"><div class="fi">🧩</div><h3>Forkable strategies</h3><p>Compile NL / visual / YAML through a typed Financial IR, price via zero-gas devInspect, mint a composable on-chain strategy object.</p><div class="from">status: <b>roadmap</b></div></div>
-      <div class="fc rv"><div class="fi">🔏</div><h3>Proof of action and reasoning</h3><p>Three-proof receipts (Sui + Walrus + TEE) and sealed, replayable reasoning. Strategy private, proof public.</p><div class="from">module: <b>ledger</b></div></div>
-      <div class="fc rv"><div class="fi">📜</div><h3>A track record you can't fake</h3><p>Tamper-evident, non-backdated via Sui Clock, monotonic with no delete path. You can't quietly drop your losing trades.</p><div class="from">module: <b>ledger</b></div></div>
-      <div class="fc rv"><div class="fi">🏛️</div><h3>Compliant and liquid</h3><p>Closed-loop KYC token + compliance-gated venue adapters keep it regulated and tradeable on real DeepBook liquidity.</p><div class="from">module: <b>compliance</b></div></div>
-      <div class="fc rv"><div class="fi">🛰️</div><h3>Real-world facts, verified</h3><p>TEE-signed results turn off-chain truth into on-chain-checkable facts; ambiguous outcomes resolve via a Move-native optimistic oracle.</p><div class="from">module: <b>oracle</b></div></div>
+      <div class="fc rv"><div class="fi">🔏</div><h3>Proof of every action</h3><p>Three-proof receipts: the Sui digest is real; the Walrus + TEE fields are placeholders today (real proofs on the roadmap). Rejected attempts are recorded too.</p><div class="from">module: <b>ledger</b></div></div>
+      <div class="fc rv"><div class="fi">📜</div><h3>A track record you can't fake</h3><p>Append-only, non-backdated via Sui Clock, monotonic with no delete path. You can't quietly drop your losing trades.</p><div class="from">module: <b>ledger</b></div></div>
+      <div class="fc rv"><div class="fi">🏛️</div><h3>Compliance, enforced</h3><p>A closed-loop KYC registry keeps regulated value moving only between verified holders, with an auditor capability for read-only oversight.</p><div class="from">module: <b>compliance</b></div></div>
+      <div class="fc rv"><div class="fi">🛰️</div><h3>Real-world facts, resolved</h3><p>Ambiguous real-world outcomes resolve via a Move-native optimistic oracle with a bonded challenge window and a resolver escalation path.</p><div class="from">module: <b>oracle</b></div></div>
       <div class="fc rv"><div class="fi">🔐</div><h3>Private where it must be</h3><p>Confidential Transfers hide amounts; Seal threshold-IBE + enclave attestation keep risk models encrypted yet verifiable.</p><div class="from">status: <b>roadmap</b></div></div>
-      <div class="fc rv"><div class="fi">♾️</div><h3>It outlives its depositor</h3><p>Dead-man-switch inheritance via a Clock-gated seal_approve — your position and its private memory pass to a named beneficiary.</p><div class="from">module: <b>inheritance</b></div></div>
+      <div class="fc rv"><div class="fi">♾️</div><h3>It outlives its depositor</h3><p>Dead-man-switch inheritance: a heartbeat keeps a position yours; after a dormancy period it passes to a named beneficiary.</p><div class="from">module: <b>inheritance</b></div></div>
       <div class="fc rv"><div class="fi">💸</div><h3>Agents pay agents</h3><p>An x402 rail where other agents buy signals per-query; the fee is carved as a second output — the balance change is the receipt.</p><div class="from">status: <b>roadmap</b></div></div>
     </div>
   </div>
@@ -378,8 +378,8 @@
       <div class="sb rv"><div class="sl">Real-world application</div><div class="sn grad">Fundable</div><div class="bar"><i data-w="100"></i></div><p>A construction a regulated institution can actually fund — because trusting the agent isn't required. The chain structurally prevents theft, mis-allocation, and misreporting.</p></div>
       <div class="sb tot rv"><div class="sl">Technical depth</div><div class="sn grad">Load-bearing</div><div class="bar"><i data-w="100"></i></div><p>Object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against an oracle feed the agent can't forge, a dual-key critic, a proven bounded-drawdown, a Move-native oracle, a dead-man-switch — composed under one thesis, deployed and proven on-chain.</p></div>
     </div>
-    <div class="note rv"><b>Honest scope.</b> All <b>seven layers</b> are built, unit-tested (20/20), deployed, and anchored on-chain (L0→L6) — nothing here is a mockup.
-      <span class="mvp">L0 non-custodial vault · L1 object-capability + revocation · L2 on-chain re-derivation + freeze + dual-key critic · L3 bounded-drawdown hedge · L4 three-proof tamper-evident ledger · L5 KYC gate + optimistic oracle · L6 dead-man-switch + no-loss draw.</span>
+    <div class="note rv"><b>Honest scope.</b> All <b>seven layers</b> are built, unit-tested (26/26), deployed, and anchored on-chain (L0→L6) — nothing here is a mockup.
+      <span class="mvp">L0 non-custodial vault · L1 object-capability + revocation · L2 on-chain re-derivation + freeze + critic co-sign · L3 bounded-drawdown hedge · L4 three-proof append-only ledger · L5 KYC gate + optimistic oracle · L6 dead-man-switch + no-loss draw.</span>
       What remains a roadmap is not a <i>layer</i> but the heaviest <i>integrations</i> inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc, not claimed as shipped.</div>
   </div>
 </section>
@@ -398,9 +398,9 @@
       </div>
     </div>
     <div class="fmeta">
-      Sui Overflow 2026 · The Agentic Web (Autonomous Agent Wallet) — also qualifies across DeFi &amp; Payments, Special-DeepBook, Special-Walrus.<br/>
-      Built on Sui · Move · DeepBook · Walrus · Seal · Nautilus. Seven composable layers under one thesis: trust-minimization.<br/>
-      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed &amp; verified on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">0x823f84…6902</a> · 20/20 Move tests passing.</span>
+      Sui Overflow 2026 · The Agentic Web (Autonomous Agent Wallet) — also relevant to DeFi &amp; Payments.<br/>
+      Built on Sui · Move · object-capabilities · hot-potato settlement. Seven composable layers under one thesis: trust-minimization.<br/>
+      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed &amp; verified on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">0x823f84…6902</a> · 26/26 Move tests passing.</span>
     </div>
   </div>
 </footer>
