@@ -14,3 +14,7 @@ warden.config.json
 node_modules/
 .DS_Store
 *.log
+
+# Python bytecode
+__pycache__/
+*.pyc
