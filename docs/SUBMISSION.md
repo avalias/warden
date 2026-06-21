@@ -27,29 +27,32 @@ The design is organized into seven composable layers under one thesis: **trust-m
 
 ## What's built (and verifiable)
 
-- **Sui Move package**, 12 modules: `vault · policy · guardian · critic · ledger · strategy · compliance · oracle · inheritance · prize · warden · app`.
-- **18/18 Move unit tests passing** — the heart (freeze-on-divergence), non-custodial withdraw, capability scope, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
+- **Sui Move package**, 13 modules: `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app`.
+- **20/20 Move unit tests passing** — the heart (freeze-on-divergence), non-custodial withdraw, capability scope, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
 - **Deployed + verified on Sui testnet** (`owner: Immutable`).
-- **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **12 clickable transactions**. Reproducible via `scripts/demo.sh`.
+- **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **15 clickable transactions**. Reproducible via `scripts/demo.sh`.
 
 ## How to verify
 
-- **Package:** `0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60`
-  → https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60
-- **The 12-tx lifecycle** (all on testnet):
-  - open_vault — https://suiscan.xyz/testnet/tx/4QmzqjG9TrPktYWXomVopzaVok2acnksarNsx5TYxaUD
-  - accepted trade — https://suiscan.xyz/testnet/tx/D1YJMb94TzYSLpYQciyMtQhwPJWNFRwQAnbcFNR5opx7
-  - **the heart** (freeze-on-lie) — https://suiscan.xyz/testnet/tx/GW5tbpmLyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5
-  - owner exit while frozen — https://suiscan.xyz/testnet/tx/AThn7CAbDqEQtVL7UpYYjoXaZuH3AzMRze47wXrMikyA
-  - open hedge (L3) — https://suiscan.xyz/testnet/tx/FQZ42KqP7VMMgP7MUxXAGjgqBRftcbkRDLvUHSN7Xbs9
-  - settle hedge — bounded drawdown (L3) — https://suiscan.xyz/testnet/tx/B3aU6DcQ2fFnppH9jGsJg5P2DGUSfSTgSQWkZiMQfSn3
-  - kyc_open (L5) — https://suiscan.xyz/testnet/tx/Hf5pmGqC3HXybnro1DLY7ttKfSD4TWZTHUFgtvuqVz8n
-  - kyc_set / verify (L5) — https://suiscan.xyz/testnet/tx/oi9yq4v3zqvQdqAyjTZQ6Y5ebbFd1NCXyCSted3ir8K
-  - oracle_propose (L5) — https://suiscan.xyz/testnet/tx/GeCtYRPVQxMWD8eWkz6ATWMUj6vTA4dz7Ydty2BFDF35
-  - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/Syhogp8c5UC5ckCLmShsuqv8PzsVLFWY2Sj8sfdiUpt
-  - inherit_open (L6) — https://suiscan.xyz/testnet/tx/A8Zm55Z9yu1aYR1pw3mNZYSuHQdMAhTfo1AM5Xnyd3Yw
-  - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/B5AMFKW19fmCMUxioeXMsQoD6mrK2CjfJjwEBq5TmLUw
-- **Tests:** `cd contracts && sui move test` → 18/18.
+- **Package:** `0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902`
+  → https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902
+- **The 15-tx lifecycle** (all on testnet):
+  - open_vault — https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav
+  - feed_open (keeper market feed) — https://suiscan.xyz/testnet/tx/9v9okf2NxDiq3RRjD4jUXWyD4LHjzapWGHMVPuFUWVdV
+  - feed_update (deep book) — https://suiscan.xyz/testnet/tx/B1MraJK5ZPT7qVm8VGtkvMigouZTC11711zmrDxmDxai
+  - accepted trade (Guardian reads the feed) — https://suiscan.xyz/testnet/tx/JATEczbhRMujdQGP7kYaj8vmYA2i4EMzT3BLgMzhsSQ3
+  - feed_update (keeper posts a thin book / crash) — https://suiscan.xyz/testnet/tx/4suhsbWvXuCTwZ2oec8LYZZNoxPRjpcpE4kcpqAXJ5sn
+  - **the heart** (chain reads the feed → freeze) — https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB
+  - owner exit while frozen — https://suiscan.xyz/testnet/tx/DDGNzNjcyMMVK7bDQGTkmeuqdEkCeep9KuXS733WLScz
+  - open hedge (L3) — https://suiscan.xyz/testnet/tx/EvPehBHiPFmAviqT3ECGSjfmpWK9K5kdvdy7rqtyGnS3
+  - settle hedge — bounded drawdown (L3) — https://suiscan.xyz/testnet/tx/F1iw1TqUDScR8UKSLbb1eUgdmCgdPEfLUCyBCtHXS7Ad
+  - kyc_open (L5) — https://suiscan.xyz/testnet/tx/9DfUvb7YMGS9wmBsCchuFgr3MvSnMZzgtbHfwyCxQEyq
+  - kyc_set / verify (L5) — https://suiscan.xyz/testnet/tx/2bifydHzn7amCxQ27XGLtjQt71nSSFJPCgdALo74BvbU
+  - oracle_propose (L5) — https://suiscan.xyz/testnet/tx/5TZiHZcxcpS6bASbwiddQf6AzocKvGajv322oPZ4bt7S
+  - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c
+  - inherit_open (L6) — https://suiscan.xyz/testnet/tx/At9aN8sxcJ5PtpQEw66nnuH8mKsEozxQLTDoCXcDk38j
+  - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8
+- **Tests:** `cd contracts && sui move test` → 20/20.
 
 ## Tech stack
 

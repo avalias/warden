@@ -11,9 +11,17 @@ use warden::guardian;
 use warden::critic;
 use warden::ledger;
 use warden::warden;
+use warden::feed;
 
 const ADMIN: address = @0xA;
 const CRITIC: address = @0xC;
+
+// a shared market feed pre-loaded with (price, depth)
+fun feed_with(price: u64, depth: u64, clk: &clock::Clock, ctx: &mut TxContext): feed::OracleFeed {
+    let mut f = feed::new(ctx.sender(), 3_600_000, clk, ctx);
+    feed::update(&mut f, price, depth, clk, ctx);
+    f
+}
 
 // build the full stack, return the moving parts
 fun setup(ctx: &mut TxContext, clock: &clock::Clock): (
@@ -64,9 +72,10 @@ fun test_happy_path() {
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
     let t = warden::propose(&v, amount, guardian::dir_increase(), derived, digest);
     let verdict = critic::judge(&ccap, digest, true);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx); // deep book
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
-        1_000_000, 100_000_000, b"walrus-blob-1", b"tee-att-1", &clk,
+        &market, b"walrus-blob-1", b"tee-att-1", &clk,
     );
 
     assert!(ledger::receipt_accepted(&r), 100);
@@ -74,6 +83,7 @@ fun test_happy_path() {
     assert!(vault::deployed(&v) == amount, 102);
     assert!(!vault::is_frozen(&v), 103);
 
+    feed::destroy_for_testing(market);
     teardown(v, ocap, pol, reg, creg, ccap, led);
     clock::destroy_for_testing(clk);
 }
@@ -89,10 +99,11 @@ fun test_divergence_freezes_and_records() {
     // agent LIES: claims 10 bps while the chain will derive far higher
     let t = warden::propose(&v, amount, guardian::dir_increase(), 10, digest);
     let verdict = critic::judge(&ccap, digest, true); // critic even approved it
-    // thin book (depth 1000) → derived risk explodes → divergence fault
+    // thin book (depth 1000) on the on-chain feed → derived risk explodes
+    let market = feed_with(1_000_000, 1_000, &clk, &mut ctx);
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
-        1_000_000, 1_000, b"walrus-blob-bad", b"tee-att-bad", &clk,
+        &market, b"walrus-blob-bad", b"tee-att-bad", &clk,
     );
 
     assert!(!ledger::receipt_accepted(&r), 200);   // rejected
@@ -100,6 +111,7 @@ fun test_divergence_freezes_and_records() {
     assert!(vault::deployed(&v) == 0, 202);        // nothing executed
     assert!(ledger::seq(&led) == 1, 203);          // but it IS on the record
 
+    feed::destroy_for_testing(market);
     teardown(v, ocap, pol, reg, creg, ccap, led);
     clock::destroy_for_testing(clk);
 }
@@ -131,12 +143,14 @@ fun test_per_tx_cap_breach_aborts() {
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
     let t = warden::propose(&v, amount, guardian::dir_reduce(), derived, digest);
     let verdict = critic::judge(&ccap, digest, true);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
-        1_000_000, 100_000_000, b"x", b"y", &clk,
+        &market, b"x", b"y", &clk,
     );
     ledger::receipt_seq(&r); // unreachable
 
+    feed::destroy_for_testing(market);
     teardown(v, ocap, pol, reg, creg, ccap, led);
     clock::destroy_for_testing(clk);
 }
@@ -156,12 +170,37 @@ fun test_revocation_kills_policy() {
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
     let t = warden::propose(&v, amount, guardian::dir_reduce(), derived, digest);
     let verdict = critic::judge(&ccap, digest, true);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
-        1_000_000, 100_000_000, b"x", b"y", &clk,
+        &market, b"x", b"y", &clk,
     );
     ledger::receipt_seq(&r); // unreachable
 
+    feed::destroy_for_testing(market);
     teardown(v, ocap, pol, reg, creg, ccap, led);
+    clock::destroy_for_testing(clk);
+}
+
+#[test]
+#[expected_failure(abort_code = 1, location = feed)] // EStale
+fun test_feed_stale_read_aborts() {
+    let mut ctx = tx_context::dummy();
+    let mut clk = clock::create_for_testing(&mut ctx);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx); // max_age 1h
+    clock::increment_for_testing(&mut clk, 3_600_001); // older than max_age
+    let (_p, _d) = feed::read(&market, &clk); // stale → abort
+    feed::destroy_for_testing(market);
+    clock::destroy_for_testing(clk);
+}
+
+#[test]
+#[expected_failure(abort_code = 0, location = feed)] // ENotFeeder
+fun test_feed_only_feeder_updates() {
+    let mut ctx = tx_context::dummy();
+    let clk = clock::create_for_testing(&mut ctx);
+    let mut f = feed::new(@0xA, 3_600_000, &clk, &mut ctx); // feeder 0xA, sender 0x0
+    feed::update(&mut f, 1, 1, &clk, &ctx); // sender != feeder → abort
+    feed::destroy_for_testing(f);
     clock::destroy_for_testing(clk);
 }

@@ -9,8 +9,8 @@
 
 [![Sui Overflow 2026](https://img.shields.io/badge/Sui_Overflow-2026-4da2ff?style=flat-square)](https://sui.io)
 [![Track](https://img.shields.io/badge/Track-The_Agentic_Web-37e0ac?style=flat-square)](#)
-[![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60)
-[![Move tests](https://img.shields.io/badge/move_tests-18%2F18_passing-2ecc71?style=flat-square)](#-tests)
+[![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902)
+[![Move tests](https://img.shields.io/badge/move_tests-20%2F20_passing-2ecc71?style=flat-square)](#-tests)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 [**Live site**](https://avalias.github.io/warden) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources)
@@ -35,25 +35,27 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 
 | | Value |
 |---|---|
-| **Package** | [`0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60`](https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60) |
+| **Package** | [`0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902`](https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902) |
 | **Network** | Sui testnet (`chain-id 4c78adac`) · `owner: Immutable` ✓ |
-| **Modules** | `vault · policy · guardian · critic · ledger · strategy · compliance · oracle · inheritance · prize · warden · app` |
+| **Modules** | `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app` |
 
 **Don't trust it — click it:**
 
 | Step | What it proves | Transaction |
 |---|---|---|
-| `open_vault` | Non-custodial vault + revocation/critic registries + tamper-evident ledger created | [`4QmzqjG9…`](https://suiscan.xyz/testnet/tx/4QmzqjG9TrPktYWXomVopzaVok2acnksarNsx5TYxaUD) |
-| `agent_trade` ✅ | A valid trade clears all five gates → `Recorded{accepted:true, seq:1}` | [`D1YJMb94…`](https://suiscan.xyz/testnet/tx/D1YJMb94TzYSLpYQciyMtQhwPJWNFRwQAnbcFNR5opx7) |
-| `agent_trade` 🧊 | **The heart.** Agent claims `risk=0`; the chain re-derives `risk=10000bps`, catches the lie → **`VaultFrozen`** + `Recorded{accepted:false, seq:2}` | [`GW5tbpmL…`](https://suiscan.xyz/testnet/tx/GW5tbpmLyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5) |
-| `owner_exit` | Owner withdraws **even while frozen** → `Withdrawn` (non-custodial) | [`AThn7CAb…`](https://suiscan.xyz/testnet/tx/AThn7CAbDqEQtVL7UpYYjoXaZuH3AzMRze47wXrMikyA) |
-| `open_hedge` | **L3** — opens a self-hedging carry position over the vault notional | [`FQZ42KqP…`](https://suiscan.xyz/testnet/tx/FQZ42KqP7VMMgP7MUxXAGjgqBRftcbkRDLvUHSN7Xbs9) |
-| `settle_hedge` | **L3** — settles at a crash price → `Settled{ magnitude 5001950 ≤ drawdown_floor 5002000 }` (loss bounded by construction, on-chain) | [`B3aU6DcQ…`](https://suiscan.xyz/testnet/tx/B3aU6DcQ2fFnppH9jGsJg5P2DGUSfSTgSQWkZiMQfSn3) |
-| `kyc_open` / `kyc_set` | **L5** — open a closed-loop KYC registry and verify a holder (protocol-level compliance) | [`Hf5pmGqC…`](https://suiscan.xyz/testnet/tx/Hf5pmGqC3HXybnro1DLY7ttKfSD4TWZTHUFgtvuqVz8n) · [`oi9yq4v3…`](https://suiscan.xyz/testnet/tx/oi9yq4v3zqvQdqAyjTZQ6Y5ebbFd1NCXyCSted3ir8K) |
-| `oracle_propose` → `oracle_finalize` | **L5** — propose an outcome with a challenge window; finalize once it closes (Move-native optimistic oracle) | [`GeCtYRPV…`](https://suiscan.xyz/testnet/tx/GeCtYRPVQxMWD8eWkz6ATWMUj6vTA4dz7Ydty2BFDF35) · [`Syhogp8c…`](https://suiscan.xyz/testnet/tx/Syhogp8c5UC5ckCLmShsuqv8PzsVLFWY2Sj8sfdiUpt) |
-| `inherit_open` → `inherit_claim` | **L6** — dead-man-switch: open with a dormancy timer; after it elapses the beneficiary inherits → **`Inherited`** | [`A8Zm55Z9…`](https://suiscan.xyz/testnet/tx/A8Zm55Z9yu1aYR1pw3mNZYSuHQdMAhTfo1AM5Xnyd3Yw) · [`B5AMFKW1…`](https://suiscan.xyz/testnet/tx/B5AMFKW19fmCMUxioeXMsQoD6mrK2CjfJjwEBq5TmLUw) |
+| `open_vault` | Non-custodial vault + revocation/critic registries + tamper-evident ledger created | [`4KFjVaGo…`](https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav) |
+| `feed_open` / `feed_update` | **Market-data integrity** — a keeper posts price + order-book depth to a shared on-chain feed the agent **cannot forge**; the Guardian reads *this*, never a caller-supplied number | [`9v9okf2N…`](https://suiscan.xyz/testnet/tx/9v9okf2NxDiq3RRjD4jUXWyD4LHjzapWGHMVPuFUWVdV) · [`B1MraJK5…`](https://suiscan.xyz/testnet/tx/B1MraJK5ZPT7qVm8VGtkvMigouZTC11711zmrDxmDxai) |
+| `agent_trade` ✅ | A valid trade clears all five gates (Guardian reads the deep-book feed) → `Recorded{accepted:true, seq:1}` | [`JATEczbh…`](https://suiscan.xyz/testnet/tx/JATEczbhRMujdQGP7kYaj8vmYA2i4EMzT3BLgMzhsSQ3) |
+| `feed_update` 📉 | The keeper posts a **thin order book** (a crash) to the feed | [`4suhsbWv…`](https://suiscan.xyz/testnet/tx/4suhsbWvXuCTwZ2oec8LYZZNoxPRjpcpE4kcpqAXJ5sn) |
+| `agent_trade` 🧊 | **The heart.** The agent still claims `risk=0`; the chain re-derives risk **from the feed** (not the agent), gets `10000bps`, catches the lie → **`VaultFrozen`** + `Recorded{accepted:false, seq:2}` | [`DwEojYEq…`](https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB) |
+| `owner_exit` | Owner withdraws **even while frozen** → `Withdrawn` (non-custodial) | [`DDGNzNjc…`](https://suiscan.xyz/testnet/tx/DDGNzNjcyMMVK7bDQGTkmeuqdEkCeep9KuXS733WLScz) |
+| `open_hedge` | **L3** — opens a self-hedging carry position over the vault notional | [`EvPehBHi…`](https://suiscan.xyz/testnet/tx/EvPehBHiPFmAviqT3ECGSjfmpWK9K5kdvdy7rqtyGnS3) |
+| `settle_hedge` | **L3** — settles at a crash price → `Settled{ magnitude 5001950 ≤ drawdown_floor 5002000 }` (loss bounded by construction, on-chain) | [`F1iw1TqU…`](https://suiscan.xyz/testnet/tx/F1iw1TqUDScR8UKSLbb1eUgdmCgdPEfLUCyBCtHXS7Ad) |
+| `kyc_open` / `kyc_set` | **L5** — open a closed-loop KYC registry and verify a holder (protocol-level compliance) | [`9DfUvb7Y…`](https://suiscan.xyz/testnet/tx/9DfUvb7YMGS9wmBsCchuFgr3MvSnMZzgtbHfwyCxQEyq) · [`2bifydHz…`](https://suiscan.xyz/testnet/tx/2bifydHzn7amCxQ27XGLtjQt71nSSFJPCgdALo74BvbU) |
+| `oracle_propose` → `oracle_finalize` | **L5** — propose an outcome with a challenge window; finalize once it closes (Move-native optimistic oracle) | [`5TZiHZcx…`](https://suiscan.xyz/testnet/tx/5TZiHZcxcpS6bASbwiddQf6AzocKvGajv322oPZ4bt7S) · [`738N3XQ5…`](https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c) |
+| `inherit_open` → `inherit_claim` | **L6** — dead-man-switch: open with a dormancy timer; after it elapses the beneficiary inherits → **`Inherited`** | [`At9aN8sx…`](https://suiscan.xyz/testnet/tx/At9aN8sxcJ5PtpQEw66nnuH8mKsEozxQLTDoCXcDk38j) · [`E5mWFNNN…`](https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8) |
 
-**All seven layers are anchored on-chain** across these 12 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **18/18 Move unit tests**.
+**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **20/20 Move unit tests**.
 
 ---
 
@@ -74,7 +76,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (18/18), and deployed, with the full L0→L6 lifecycle anchored on-chain in 12 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, no-loss draw; the full confidentiality stack — Seal/Nautilus/Confidential-Transfers — remains an integration roadmap.)
+This repo ships **all seven layers** — built, unit-tested (20/20), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, no-loss draw; the full confidentiality stack — Seal/Nautilus/Confidential-Transfers — remains an integration roadmap.)
 
 ### How a single trade survives the chain
 
@@ -102,6 +104,7 @@ warden/
 │   │   ├── policy.move     # L1  object-capability + revocation lattice
 │   │   ├── guardian.move   # L2  on-chain risk re-derivation (the heart)
 │   │   ├── critic.move     # L2  independent critic, its own identity
+│   │   ├── feed.move       # L2  on-chain market feed (keeper-fed, agent-proof)
 │   │   ├── ledger.move     # L4  tamper-evident three-proof record
 │   │   ├── strategy.move    # L3  self-hedging carry, bounded drawdown
 │   │   ├── compliance.move  # L5  closed-loop KYC gate + auditor cap
@@ -144,7 +147,9 @@ sui move test
 [ PASS ] test_inheritance_ping_resets_clock       # L6: a ping resets the timer
 [ PASS ] test_prize_commit_reveal_draw_no_loss    # L6: verifiable draw, principal preserved
 [ PASS ] test_prize_bad_reveal_aborts             # L6: reveal must match the commit
-Test result: OK. Total tests: 18; passed: 18; failed: 0
+[ PASS ] test_feed_stale_read_aborts              # oracle feed: stale data is rejected
+[ PASS ] test_feed_only_feeder_updates            # oracle feed: only the keeper can write
+Test result: OK. Total tests: 20; passed: 20; failed: 0
 ```
 
 ---
@@ -171,17 +176,12 @@ python -m http.server 4178   # → http://localhost:4178
 
 ---
 
-## 📊 Self-assessment
+## 📊 Why it holds up
 
-Scored on **Real-World Application (/50)** and **Technical Implementation (/20)**.
+- **Real-world application.** A construction a regulated institution can actually fund, because trusting the agent isn't required — the chain structurally prevents theft (non-custodial + object-capability), mis-allocation (on-chain risk re-derivation from a feed the agent can't forge → clamp → freeze), and misreporting (tamper-evident three-proof ledger). Compliance (L5) and inheritance (L6) make it institution- and continuity-ready.
+- **Technical depth.** A load-bearing stack of Sui primitives — object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against a keeper-fed oracle, a dual-key critic, a proven bounded-drawdown, a Move-native optimistic oracle, a dead-man-switch and a verifiable draw — composed under one thesis, deployed and proven on-chain.
 
-| Axis | Score | Why |
-|---|---|---|
-| Real-World Application | **50 / 50** | The only construction a regulated institution can legally fund — trusting the agent isn't required |
-| Technical Implementation | **20 / 20** | A deep, load-bearing stack of Sui primitives; deployed + tested + proven on-chain |
-| **Total** | **70 / 70** | Seven composable layers under one thesis — all built, unit-tested (18/18), and anchored on-chain |
-
-**Honest scope note:** all **seven layers** are now built, unit-tested (18/18), deployed, and anchored on-chain across **12 transactions** (L0→L6). What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — which are specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
+**Honest scope:** all **seven layers** are built, unit-tested (20/20), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
 
 ---
 

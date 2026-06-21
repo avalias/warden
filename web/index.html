@@ -324,21 +324,22 @@
     <h2>Not a mock. <span class="grad">Click it.</span></h2>
     <p class="sectlead">The package is deployed and verified, and the full lifecycle ran on testnet — including the heart: the chain catching the agent in a lie and freezing the vault.</p></div>
     <div class="rv" style="margin-top:26px;padding:18px 20px;border:1px solid var(--line2);border-radius:14px;background:var(--card);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
-      <div><span class="mono" style="color:var(--dim2);font-size:12px">PACKAGE · testnet</span><br/><a class="mono grad" style="font-size:13.5px;word-break:break-all" href="https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60" target="_blank" rel="noopener">0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60</a></div>
-      <a class="btn btn-ghost" href="https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60" target="_blank" rel="noopener">View on Suiscan ↗</a>
+      <div><span class="mono" style="color:var(--dim2);font-size:12px">PACKAGE · testnet</span><br/><a class="mono grad" style="font-size:13.5px;word-break:break-all" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902</a></div>
+      <a class="btn btn-ghost" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">View on Suiscan ↗</a>
     </div>
     <div class="fgrid" style="margin-top:16px">
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/4QmzqjG9TrPktYWXomVopzaVok2acnksarNsx5TYxaUD" target="_blank" rel="noopener"><div class="fi">🏦</div><h3>open_vault</h3><p>Non-custodial vault + revocation/critic registries + tamper-evident ledger created.</p><div class="from mono">tx 4QmzqjG9… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/D1YJMb94TzYSLpYQciyMtQhwPJWNFRwQAnbcFNR5opx7" target="_blank" rel="noopener"><div class="fi">✅</div><h3>agent_trade — accepted</h3><p>A valid trade clears all five gates → <span class="mono">Recorded{accepted:true, seq:1}</span>.</p><div class="from mono">tx D1YJMb94… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/GW5tbpmLyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5" target="_blank" rel="noopener"><div class="fi">🧊</div><h3>agent_trade — the heart</h3><p>Agent claims <span class="mono">risk=0</span>; the chain re-derives <span class="mono">10000bps</span>, catches the lie → <b>VaultFrozen</b> + <span class="mono">seq:2 rejected</span>.</p><div class="from mono">tx GW5tbpmL… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/AThn7CAbDqEQtVL7UpYYjoXaZuH3AzMRze47wXrMikyA" target="_blank" rel="noopener"><div class="fi">🔓</div><h3>owner_exit</h3><p>Owner withdraws <b>even while frozen</b> → <span class="mono">Withdrawn</span>. The freeze stops the agent, never the owner.</p><div class="from mono">tx AThn7CAb… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/FQZ42KqP7VMMgP7MUxXAGjgqBRftcbkRDLvUHSN7Xbs9" target="_blank" rel="noopener"><div class="fi">📈</div><h3>open_hedge — L3</h3><p>Opens a self-hedging carry position over the vault's notional.</p><div class="from mono">tx FQZ42KqP… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/B3aU6DcQ2fFnppH9jGsJg5P2DGUSfSTgSQWkZiMQfSn3" target="_blank" rel="noopener"><div class="fi">🛡️</div><h3>settle_hedge — L3</h3><p>Settles at a crash price → <span class="mono">magnitude 5001950 ≤ floor 5002000</span>. Loss bounded by construction.</p><div class="from mono">tx B3aU6DcQ… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/oi9yq4v3zqvQdqAyjTZQ6Y5ebbFd1NCXyCSted3ir8K" target="_blank" rel="noopener"><div class="fi">🏛️</div><h3>kyc_set — L5</h3><p>Closed-loop KYC registry verifies a holder. Regulated value only moves between verified addresses.</p><div class="from mono">tx oi9yq4v3… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/Syhogp8c5UC5ckCLmShsuqv8PzsVLFWY2Sj8sfdiUpt" target="_blank" rel="noopener"><div class="fi">🛰️</div><h3>oracle_finalize — L5</h3><p>A Move-native optimistic oracle finalizes an outcome after its challenge window closes.</p><div class="from mono">tx Syhogp8c… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/B5AMFKW19fmCMUxioeXMsQoD6mrK2CjfJjwEBq5TmLUw" target="_blank" rel="noopener"><div class="fi">♾️</div><h3>inherit_claim — L6</h3><p>Dead-man-switch: after the dormancy timer elapses, the beneficiary inherits → <b>Inherited</b>.</p><div class="from mono">tx B5AMFKW1… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav" target="_blank" rel="noopener"><div class="fi">🏦</div><h3>open_vault</h3><p>Non-custodial vault + revocation/critic registries + tamper-evident ledger created.</p><div class="from mono">tx 4KFjVaGo… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/B1MraJK5ZPT7qVm8VGtkvMigouZTC11711zmrDxmDxai" target="_blank" rel="noopener"><div class="fi">📡</div><h3>oracle feed — keeper writes</h3><p>A keeper posts price + order-book depth to a shared on-chain feed the agent <b>cannot forge</b>. The Guardian reads this — never a number the agent passed in.</p><div class="from mono">tx B1MraJK5… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/JATEczbhRMujdQGP7kYaj8vmYA2i4EMzT3BLgMzhsSQ3" target="_blank" rel="noopener"><div class="fi">✅</div><h3>agent_trade — accepted</h3><p>A valid trade clears all five gates (Guardian reads the deep-book feed) → <span class="mono">Recorded{accepted:true, seq:1}</span>.</p><div class="from mono">tx JATEczbh… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB" target="_blank" rel="noopener"><div class="fi">🧊</div><h3>agent_trade — the heart</h3><p>The keeper posts a thin book; the agent still claims <span class="mono">risk=0</span>; the chain re-derives <span class="mono">10000bps</span> <b>from the feed</b>, catches the lie → <b>VaultFrozen</b>.</p><div class="from mono">tx DwEojYEq… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/DDGNzNjcyMMVK7bDQGTkmeuqdEkCeep9KuXS733WLScz" target="_blank" rel="noopener"><div class="fi">🔓</div><h3>owner_exit</h3><p>Owner withdraws <b>even while frozen</b> → <span class="mono">Withdrawn</span>. The freeze stops the agent, never the owner.</p><div class="from mono">tx DDGNzNjc… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/EvPehBHiPFmAviqT3ECGSjfmpWK9K5kdvdy7rqtyGnS3" target="_blank" rel="noopener"><div class="fi">📈</div><h3>open_hedge — L3</h3><p>Opens a self-hedging carry position over the vault's notional.</p><div class="from mono">tx EvPehBHi… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/F1iw1TqUDScR8UKSLbb1eUgdmCgdPEfLUCyBCtHXS7Ad" target="_blank" rel="noopener"><div class="fi">🛡️</div><h3>settle_hedge — L3</h3><p>Settles at a crash price → <span class="mono">magnitude 5001950 ≤ floor 5002000</span>. Loss bounded by construction.</p><div class="from mono">tx F1iw1TqU… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/2bifydHzn7amCxQ27XGLtjQt71nSSFJPCgdALo74BvbU" target="_blank" rel="noopener"><div class="fi">🏛️</div><h3>kyc_set — L5</h3><p>Closed-loop KYC registry verifies a holder. Regulated value only moves between verified addresses.</p><div class="from mono">tx 2bifydHz… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c" target="_blank" rel="noopener"><div class="fi">🛰️</div><h3>oracle_finalize — L5</h3><p>A Move-native optimistic oracle finalizes an outcome after its challenge window closes.</p><div class="from mono">tx 738N3XQ5… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8" target="_blank" rel="noopener"><div class="fi">♾️</div><h3>inherit_claim — L6</h3><p>Dead-man-switch: after the dormancy timer elapses, the beneficiary inherits → <b>Inherited</b>.</p><div class="from mono">tx E5mWFNNN… ↗</div></a>
     </div>
-    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — twelve transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>18/18 Move unit tests</b>.</p>
+    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — fifteen transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>20/20 Move unit tests</b>.</p>
   </div>
 </section>
 
@@ -368,15 +369,14 @@
 <!-- SCORE -->
 <section id="score">
   <div class="wrap">
-    <div class="rv"><div class="eyebrow">Self-assessment</div>
-    <h2>Top marks on both axes.</h2>
-    <p class="sectlead">Self-assessed on Real-World Application (/50) and Technical Implementation (/20) — the two judgeable axes. Here's the case.</p></div>
+    <div class="rv"><div class="eyebrow">Why it holds up</div>
+    <h2>Strong where it's judged.</h2>
+    <p class="sectlead">Two things matter: does it solve a real problem, and is it technically deep. WARDEN is built for both.</p></div>
     <div class="score">
-      <div class="sb rv"><div class="sl">Real-World</div><div class="sn grad">50<span style="font-size:20px;color:var(--dim2)">/50</span></div><div class="bar"><i data-w="100"></i></div><p>The only construction a regulated institution can legally fund — because trusting the agent isn't required.</p></div>
-      <div class="sb rv"><div class="sl">Technical</div><div class="sn grad">20<span style="font-size:20px;color:var(--dim2)">/20</span></div><div class="bar"><i data-w="100"></i></div><p>A deep, load-bearing stack of Sui primitives — deployed and proven on-chain. Nothing decorative.</p></div>
-      <div class="sb tot rv"><div class="sl">Total</div><div class="sn grad">70<span style="font-size:20px;color:var(--dim2)">/70</span></div><div class="bar"><i data-w="100"></i></div><p>Seven composable layers under one thesis — non-custodial custody, on-chain trust-minimization, a self-hedging strategy, a verifiable ledger, compliance and continuity — all built, tested, and anchored on-chain.</p></div>
+      <div class="sb rv"><div class="sl">Real-world application</div><div class="sn grad">Fundable</div><div class="bar"><i data-w="100"></i></div><p>A construction a regulated institution can actually fund — because trusting the agent isn't required. The chain structurally prevents theft, mis-allocation, and misreporting.</p></div>
+      <div class="sb tot rv"><div class="sl">Technical depth</div><div class="sn grad">Load-bearing</div><div class="bar"><i data-w="100"></i></div><p>Object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against an oracle feed the agent can't forge, a dual-key critic, a proven bounded-drawdown, a Move-native oracle, a dead-man-switch — composed under one thesis, deployed and proven on-chain.</p></div>
     </div>
-    <div class="note rv"><b>Honest scope (stated once).</b> All <b>seven layers</b> are built, unit-tested (18/18), deployed, and anchored on-chain across <b>12 transactions</b> (L0→L6) — nothing here is a mockup.
+    <div class="note rv"><b>Honest scope.</b> All <b>seven layers</b> are built, unit-tested (20/20), deployed, and anchored on-chain (L0→L6) — nothing here is a mockup.
       <span class="mvp">L0 non-custodial vault · L1 object-capability + revocation · L2 on-chain re-derivation + freeze + dual-key critic · L3 bounded-drawdown hedge · L4 three-proof tamper-evident ledger · L5 KYC gate + optimistic oracle · L6 dead-man-switch + no-loss draw.</span>
       What remains a roadmap is not a <i>layer</i> but the heaviest <i>integrations</i> inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc, not claimed as shipped.</div>
   </div>
@@ -391,14 +391,14 @@
       </div>
       <div class="fcta">
         <a href="https://github.com/avalias/warden" target="_blank" rel="noopener" id="ghFoot" class="btn btn-fill">★ GitHub</a>
-        <a href="https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60" target="_blank" rel="noopener" id="demoFoot" class="btn btn-ghost">On-chain ↗</a>
+        <a href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener" id="demoFoot" class="btn btn-ghost">On-chain ↗</a>
         <a href="https://github.com/avalias/warden#readme" target="_blank" rel="noopener" id="docsFoot" class="btn btn-ghost">Docs</a>
       </div>
     </div>
     <div class="fmeta">
       Sui Overflow 2026 · The Agentic Web (Autonomous Agent Wallet) — also qualifies across DeFi &amp; Payments, Special-DeepBook, Special-Walrus.<br/>
       Built on Sui · Move · DeepBook · Walrus · Seal · Nautilus. Seven composable layers under one thesis: trust-minimization.<br/>
-      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed &amp; verified on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60" target="_blank" rel="noopener">0x98da8c…8a60</a> · 18/18 Move tests passing.</span>
+      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed &amp; verified on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902" target="_blank" rel="noopener">0x823f84…6902</a> · 20/20 Move tests passing.</span>
     </div>
   </div>
 </footer>

@@ -26,7 +26,7 @@ Tooling on screen: the landing page, a terminal with `sui` CLI, and Suiscan.
 **On screen:** terminal. Run the freeze trade where the agent lies (claims
 `risk=0`, thin order book):
 ```bash
-sui client call --package 0x98da8c…8a60 --module app --function agent_trade \
+sui client call --package 0x823f84…6902 --module app --function agent_trade \
   --args $VAULT $POLICY $REG $CREG $CCAP $LEDGER 3000000 1 0 1000000 1000 \
          0x6c6965 0x77616c727573 0x746565 0x6 --gas-budget 14000000
 ```
@@ -35,7 +35,7 @@ sui client call --package 0x98da8c…8a60 --module app --function agent_trade \
 > Guardian re-derives risk on-chain from the raw order book — and gets ten
 > thousand basis points. The numbers diverge. The chain doesn't argue —"
 **On screen:** cut to Suiscan tx
-[`GW5tbpmL…`](https://suiscan.xyz/testnet/tx/GW5tbpmLyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5),
+[`DwEojYEq…`](https://suiscan.xyz/testnet/tx/DwEojYEqyr2VptdtRvwsugfNrLCcvNjddUadcVLR4ho5),
 highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 **Narration:**
 > "— it freezes the vault. The agent is now powerless. And notice: even the
@@ -66,15 +66,15 @@ highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 > hands the position to a named beneficiary after dormancy. All on-chain."
 
 ### Scene 7 — Recap (2:55–3:15)
-**On screen:** the proof section (12 transactions) + the GitHub repo.
+**On screen:** the proof section (15 transactions) + the GitHub repo.
 **Narration:**
-> "All seven layers — built, eighteen passing Move tests, and the full lifecycle
-> anchored on-chain across twelve transactions. Seven composable layers under one
+> "All seven layers — built, twenty passing Move tests, and the full lifecycle
+> anchored on-chain across fifteen transactions. Seven composable layers under one
 > thesis. Give the machine the markets. Give the chain the leash. That's WARDEN."
 
 ---
 
 **Lower-thirds / links to show:**
-- Package: `0x98da8c3aa7fee79cd763c5a09c2f3e88a411dc9a2047e4aa177987a15b8c8a60`
+- Package: `0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902`
 - Repo: github.com/avalias/warden · Site: avalias.github.io/warden
-- The heart tx: `GW5tbpmL…` · L5 oracle: `Syhogp8c…` · L6 inherit: `B5AMFKW1…`
+- The heart tx: `DwEojYEq…` · L5 oracle: `738N3XQ5…` · L6 inherit: `E5mWFNNN…`

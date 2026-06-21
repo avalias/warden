@@ -18,6 +18,7 @@ use warden::policy::{Self, WardenPolicy, GenerationRegistry};
 use warden::guardian;
 use warden::critic::{Self, CriticRegistry, Verdict};
 use warden::ledger::{Self, TradeLedger, Receipt};
+use warden::feed::{Self, OracleFeed};
 
 const EVaultMismatch: u64 = 0;
 const ECriticDigestMismatch: u64 = 1;
@@ -63,8 +64,7 @@ public fun settle<T>(
     creg: &CriticRegistry,
     verdict: Verdict,
     l: &mut TradeLedger,
-    price_e6: u64,
-    depth: u64,
+    market: &OracleFeed,
     walrus_blob: vector<u8>,
     tee_attestation: vector<u8>,
     clock: &Clock,
@@ -79,7 +79,9 @@ public fun settle<T>(
     let judged = critic::consume(creg, verdict);
     assert!(judged == digest, ECriticDigestMismatch);
 
-    // L2 — the chain re-derives risk (does not trust the agent's number)
+    // L2 — read market data from the on-chain feed the agent does NOT control,
+    // then re-derive risk from it (never from a caller-supplied number).
+    let (price_e6, depth) = feed::read(market, clock);
     let a = guardian::evaluate(claimed_risk_bps, direction, exposure_after, price_e6, depth);
 
     if (guardian::ok(&a)) {

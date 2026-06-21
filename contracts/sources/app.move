@@ -15,6 +15,7 @@ use warden::strategy::{Self, HedgedCarry};
 use warden::compliance::{Self, KycRegistry};
 use warden::oracle::{Self, Claim};
 use warden::inheritance::{Self, Switch};
+use warden::feed::{Self, OracleFeed};
 
 /// Open a non-custodial vault funded by `seed`, wire its revocation
 /// registry, critic registry and tamper-evident ledger, share the shared
@@ -66,11 +67,10 @@ entry fun agent_trade(
     creg: &critic::CriticRegistry,
     ccap: &critic::CriticCap,
     led: &mut ledger::TradeLedger,
+    market: &OracleFeed,
     amount: u64,
     direction: u8,
     claimed_risk_bps: u64,
-    price_e6: u64,
-    depth: u64,
     digest: vector<u8>,
     walrus_blob: vector<u8>,
     tee_attestation: vector<u8>,
@@ -80,8 +80,18 @@ entry fun agent_trade(
     let verdict = critic::judge(ccap, digest, true);
     warden::settle(
         t, v, pol, reg, creg, verdict, led,
-        price_e6, depth, walrus_blob, tee_attestation, clock,
+        market, walrus_blob, tee_attestation, clock,
     ); // returns a Receipt (drop) — the Recorded event carries the proof
+}
+
+/// Open the shared market-data feed (caller becomes the keeper/feeder).
+entry fun feed_open(max_age_ms: u64, clock: &Clock, ctx: &mut TxContext) {
+    feed::share(feed::new(ctx.sender(), max_age_ms, clock, ctx));
+}
+
+/// The keeper writes market data (production: pulled from Pyth + DeepBook).
+entry fun feed_update(market: &mut OracleFeed, price_e6: u64, depth: u64, clock: &Clock, ctx: &TxContext) {
+    feed::update(market, price_e6, depth, clock, ctx);
 }
 
 /// L3 — open a self-hedging carry position over the vault's notional.
