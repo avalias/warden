@@ -28,10 +28,11 @@ Tooling on screen: the landing page, a terminal with `sui` CLI, and Suiscan.
 ```bash
 # the keeper has already posted a THIN order book to the shared on-chain feed
 # ($FEED); the agent lies and claims risk=0 against it.
-# args: VAULT POLICY REG CREG CCAP LEDGER FEED  amount dir claimed  digest walrus tee  clock
+# args: VAULT POLICY REG CREG CCAP LEDGER FEED  amount dir claimed  walrus tee  clock
+# (the trade digest is derived ON-CHAIN from the trade fields — not passed in)
 sui client call --package 0xfd6131…7437 --module app --function agent_trade \
   --args $VAULT $POLICY $REG $CREG $CCAP $LEDGER $FEED 3000000 1 0 \
-         0x6c6965 0x77616c727573 0x746565 0x6 --gas-budget 60000000
+         0x77616c727573 0x746565 0x6 --gas-budget 60000000
 ```
 **Narration:**
 > "Watch. The agent proposes a trade and *claims* the risk is zero. But the

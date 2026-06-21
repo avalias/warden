@@ -6,7 +6,7 @@ authors = ["avalias"]
 
 [dependencies]
 # Sui framework is bundled into the CLI binary and injected automatically
-# (sui >= 1.45). `cd contracts && sui move test` → 26/26.
+# (sui >= 1.45). `cd contracts && sui move test` → 43/43.
 # If your toolchain needs it explicit, uncomment:
 # Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet-v1.73.1" }
 

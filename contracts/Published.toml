@@ -10,3 +10,6 @@ version = 1
 toolchain-version = "1.73.2"
 build-config = { flavor = "sui", edition = "2024" }
 upgrade-capability = "0x8c6b9c18b9a3924459302ab281fd105419fcc9a334ad9b2548d6c0d8114d282e"
+# NOTE: this UpgradeCap was BURNED via 0x2::package::make_immutable
+# (tx G9rS4pWStqjx6K5GC9dKZa8sZF3ymybEpWiE6DKTDPuW); the object is deleted and
+# the package is now immutable. The id above is a historical record only.

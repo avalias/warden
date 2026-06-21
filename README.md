@@ -128,7 +128,7 @@ warden/
 │   │   ├── prize.move       # L6  no-loss commit-reveal prize draw
 │   │   ├── warden.move     # orchestrator (hot-potato Trade flow)
 │   │   └── app.move        # entry points (CLI/PTB-callable)
-│   └── tests/  warden_tests · guardian_tests · strategy_tests · l5_l6_tests
+│   └── tests/  warden_tests · guardian_tests · gate_tests · strategy_tests · l5_l6_tests
 ├── app/                    # interactive dApp (live dashboard + wallet actions)
 ├── agent/                  # the Claude-powered trading agent (agent.py)
 ├── scripts/                # deploy.sh + demo.sh (reproduce the on-chain run)
