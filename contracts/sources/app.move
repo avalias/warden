@@ -17,6 +17,8 @@ use warden::oracle::{Self, Claim};
 use warden::inheritance::{Self, Switch};
 use warden::feed::{Self, OracleFeed};
 
+const EBadDirection: u64 = 0;
+
 /// Open a non-custodial vault funded by `seed`, wire its revocation
 /// registry, critic registry and tamper-evident ledger, share the shared
 /// objects, and hand the caller their `OwnerCap`, a scoped `WardenPolicy`,
@@ -71,13 +73,15 @@ entry fun agent_trade(
     amount: u64,
     direction: u8,
     claimed_risk_bps: u64,
-    digest: vector<u8>,
     walrus_blob: vector<u8>,
     tee_attestation: vector<u8>,
     clock: &Clock,
 ) {
-    let t = warden::propose(v, amount, direction, claimed_risk_bps, digest);
-    let verdict = critic::judge(ccap, digest, true);
+    assert!(direction <= 1, EBadDirection);
+    // The digest is derived ON-CHAIN from the trade contents (not passed in),
+    // so the critic signs over exactly what the agent proposed.
+    let t = warden::propose(v, amount, direction, claimed_risk_bps);
+    let verdict = critic::judge(ccap, warden::trade_digest(&t), true);
     warden::settle(
         t, v, pol, reg, creg, verdict, led,
         market, walrus_blob, tee_attestation, clock,

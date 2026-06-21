@@ -19,7 +19,7 @@ Copy-paste fields for the DeepSurge submission form.
 
 Every autonomous "AI wallet" shares one flaw: you must **trust the agent** — it holds a broad key, you trust its own risk numbers, and its reasoning is off-chain and deniable.
 
-WARDEN inverts this. The AI emits an unsigned intent; then a deterministic, fail-closed **Guardian re-derives the risk on-chain** from a keeper-fed feed the agent can't forge, a separable **critic capability** co-signs (single-operator in the demo; a distinct critic signer in multi-party deployment), the agent is **clamped to the risk-reducing direction**, and on any divergence the **vault freezes** — while the owner can always withdraw. Every decision is recorded in an append-only, monotonic, no-delete three-proof ledger.
+WARDEN inverts this. The AI emits an unsigned intent; then a deterministic, fail-closed **Guardian re-derives the risk on-chain** from a keeper-fed feed the agent can't forge, a separable **critic capability** co-signs (single-operator in the demo; a distinct critic signer in multi-party deployment), the agent is **clamped to the risk-reducing direction**, and on any divergence the **vault freezes** — while the owner can always withdraw. The critic signs a digest **derived on-chain** from the trade, and every decision is recorded in a keccak **hash-chained**, no-delete three-proof ledger.
 
 That single inversion turns "a cute agent" into infrastructure a regulated institution can actually fund, because trusting the agent is no longer required.
 
@@ -28,31 +28,31 @@ The design is organized into seven composable layers under one thesis: **trust-m
 ## What's built (and verifiable)
 
 - **Sui Move package**, 13 modules: `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app`.
-- **39/39 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
+- **41/41 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
 - **Deployed + verified on Sui testnet.** (The `UpgradeCap` is retained by the deployer; burning it for immutability is a deliberate, pending step.)
 - **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **15 clickable transactions**. Reproducible via `scripts/demo.sh`.
 
 ## How to verify
 
-- **Package:** `0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902`
-  → https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902
+- **Package:** `0xe65932ac7cba6db749d3deea0a6fbaeb0ea4fb64f7bcbb2b8446cb112fc736dc`
+  → https://suiscan.xyz/testnet/object/0xe65932ac7cba6db749d3deea0a6fbaeb0ea4fb64f7bcbb2b8446cb112fc736dc
 - **The 15-tx lifecycle** (all on testnet):
-  - open_vault — https://suiscan.xyz/testnet/tx/4KFjVaGoGaQyW6wArhTH3xsPNViyR3Tc8nR3rdhz7Mav
-  - feed_open (keeper market feed) — https://suiscan.xyz/testnet/tx/9v9okf2NxDiq3RRjD4jUXWyD4LHjzapWGHMVPuFUWVdV
-  - feed_update (deep book) — https://suiscan.xyz/testnet/tx/B1MraJK5ZPT7qVm8VGtkvMigouZTC11711zmrDxmDxai
-  - accepted trade (Guardian reads the feed) — https://suiscan.xyz/testnet/tx/JATEczbhRMujdQGP7kYaj8vmYA2i4EMzT3BLgMzhsSQ3
-  - feed_update (keeper posts a thin book / crash) — https://suiscan.xyz/testnet/tx/4suhsbWvXuCTwZ2oec8LYZZNoxPRjpcpE4kcpqAXJ5sn
-  - **the heart** (chain reads the feed → freeze) — https://suiscan.xyz/testnet/tx/DwEojYEqLWPkNw2LVNPNKuDEhcFzvyvZxArN4y9jaSHB
-  - owner exit while frozen — https://suiscan.xyz/testnet/tx/DDGNzNjcyMMVK7bDQGTkmeuqdEkCeep9KuXS733WLScz
-  - open hedge (L3) — https://suiscan.xyz/testnet/tx/EvPehBHiPFmAviqT3ECGSjfmpWK9K5kdvdy7rqtyGnS3
-  - settle hedge — bounded drawdown (L3) — https://suiscan.xyz/testnet/tx/F1iw1TqUDScR8UKSLbb1eUgdmCgdPEfLUCyBCtHXS7Ad
-  - kyc_open (L5) — https://suiscan.xyz/testnet/tx/9DfUvb7YMGS9wmBsCchuFgr3MvSnMZzgtbHfwyCxQEyq
-  - kyc_set / verify (L5) — https://suiscan.xyz/testnet/tx/2bifydHzn7amCxQ27XGLtjQt71nSSFJPCgdALo74BvbU
-  - oracle_propose (L5) — https://suiscan.xyz/testnet/tx/5TZiHZcxcpS6bASbwiddQf6AzocKvGajv322oPZ4bt7S
-  - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c
-  - inherit_open (L6) — https://suiscan.xyz/testnet/tx/At9aN8sxcJ5PtpQEw66nnuH8mKsEozxQLTDoCXcDk38j
-  - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8
-- **Tests:** `cd contracts && sui move test` → 39/39.
+  - open_vault — https://suiscan.xyz/testnet/tx/AMrkW41hV29bumhxHkWzg8AZiLawC6bPy21LREh3sGkR
+  - feed_open (keeper market feed) — https://suiscan.xyz/testnet/tx/5MdGhMu7gu9LqnFdEnF7J9iLXEfipkMgoMhXLmLrkwTp
+  - feed_update (deep book) — https://suiscan.xyz/testnet/tx/3iThjDcCtQvTDE61KC7akytXkMcZdA7LHG1Jts19iU57
+  - accepted trade (Guardian reads the feed) — https://suiscan.xyz/testnet/tx/3xe3ZTwyXsbYN1o8bc9Dx6RpuE3cK5A5aFaM71ASpUeN
+  - feed_update (keeper posts a thin book / crash) — https://suiscan.xyz/testnet/tx/FazP2eW81Fg1B7xLkDmRPLcXAFaxQDdwhNmPiNxDfhaW
+  - **the heart** (chain reads the feed → freeze) — https://suiscan.xyz/testnet/tx/AtjSozeLGYdgAR7efSqQCgpTMoewWAyYUPisx8Ez9Thb
+  - owner exit while frozen — https://suiscan.xyz/testnet/tx/DPFwzNt62ecpL8ye981ReEDE9ikRXCbRNpYrdrQ3FWK4
+  - open hedge (L3) — https://suiscan.xyz/testnet/tx/5vHuVv7zx151bDEbrQCXNkAMxnKa8ksyFhN2qt6He9zG
+  - settle hedge — bounded drawdown (L3) — https://suiscan.xyz/testnet/tx/5VCMrBhoDoj6aur7rcGJwW7VCeVsoC5nG7hRtkuX3FdU
+  - kyc_open (L5) — https://suiscan.xyz/testnet/tx/FwnwGcw53bJt9gd9yTDQyauP8k35uukzyT6bxe1moFPb
+  - kyc_set / verify (L5) — https://suiscan.xyz/testnet/tx/583MyhQKn6iHYzwSQCU2viEoKc3XeHVeHoKhQ6uLgWek
+  - oracle_propose (L5) — https://suiscan.xyz/testnet/tx/Chu8hy4THzMZnUeFq8C8At2VUbUqacpMPQtqv6ztwRyR
+  - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/CXi2xuVithoDhwK5jFKmfJMg9RwAMyvXrPQTE4BHohyz
+  - inherit_open (L6) — https://suiscan.xyz/testnet/tx/FrUpWum8JJrf2KPUdEVuQQ4ucGB55Hpen46MUAe8M8bk
+  - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/BizxznXJ6fzDhLr842ocVjEVSwDWnT4VSgepNav5RFFJ
+- **Tests:** `cd contracts && sui move test` → 41/41.
 
 ## Tech stack
 

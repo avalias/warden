@@ -46,14 +46,15 @@ echo "== L2: feed_update (keeper posts a DEEP book: price 1.0, depth 1e12) =="
 call feed_update "$FEED" 1000000 1000000000000 0x6 | show
 
 echo "== L2: accepted trade (Guardian reads the feed; claim matches chain) =="
-# args: V POL REG CREG CCAP LED FEED  amount dir claimed_risk  digest walrus tee  clock
-call agent_trade "$V" "$POL" "$REG" "$CREG" "$CCAP" "$LED" "$FEED" 10000000 0 0 0x7472 0x7772 0x7474 0x6 | show
+# args: V POL REG CREG CCAP LED FEED  amount dir claimed_risk  walrus tee  clock
+# (the trade digest is derived ON-CHAIN from the trade fields — not passed in)
+call agent_trade "$V" "$POL" "$REG" "$CREG" "$CCAP" "$LED" "$FEED" 10000000 0 0 0x7772 0x7474 0x6 | show
 
 echo "== L2: feed_update (keeper posts a THIN book — a crash: depth 1000) =="
 call feed_update "$FEED" 1000000 1000 0x6 | show
 
 echo "== L2: the heart (agent lies: claims risk=0 on a thin book) -> FREEZE =="
-call agent_trade "$V" "$POL" "$REG" "$CREG" "$CCAP" "$LED" "$FEED" 10000000 1 0 0x6c6965 0x7772 0x7474 0x6 | show
+call agent_trade "$V" "$POL" "$REG" "$CREG" "$CCAP" "$LED" "$FEED" 10000000 1 0 0x7772 0x7474 0x6 | show
 
 echo "== L0: owner_exit (works while frozen) =="
 call owner_exit "$V" "$OCAP" 5000000 | show

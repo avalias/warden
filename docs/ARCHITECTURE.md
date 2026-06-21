@@ -48,9 +48,10 @@ re-derives the risk on-chain** from raw market state, clamps the agent to the
 risk-reducing direction inside a danger zone, and rejects fills above a hard
 ceiling. A **critic capability** (`CriticCap`) — a separable approval identity,
 held by the owner in the single-operator demo and by a distinct critic signer in
-the intended multi-party deployment — co-signs the proposal. If the chain's
-re-derivation diverges from the agent's claim, the **vault freezes** and only
-governance can lift it.
+the intended multi-party deployment — co-signs the proposal over a digest
+**derived on-chain** from the trade contents, so its approval is bound to exactly
+what was proposed. If the chain's re-derivation diverges from the agent's claim,
+the **vault freezes** and only governance can lift it.
 *Modules: `guardian`, `critic`.*
 
 ### L3 — Structured-product engine (it hedges itself)
@@ -61,11 +62,12 @@ so the **maximum drawdown is bounded by construction** — verified by the
 realized magnitude and the drawdown floor for on-chain checking.
 *Module: `strategy`.*
 
-### L4 — Verifiable, append-only record
-Every decision is appended to a monotonic, **non-backdated, no-delete** ledger —
-you cannot quietly drop a losing trade. Each entry carries a three-proof receipt
-(the Sui tx digest, a Walrus blob id for the sealed reasoning, and a TEE
-attestation hash). Rejected attempts are recorded too.
+### L4 — Verifiable, tamper-evident record
+Every decision is appended to a monotonic, **non-backdated, no-delete, keccak
+hash-chained** ledger — you cannot drop or forge an entry without breaking the
+chain — and each trade digest is **replay-protected**. Each entry carries a
+three-proof receipt (the Sui tx digest, plus Walrus-blob and TEE-attestation
+placeholder fields). Rejected attempts are recorded too.
 *Module: `ledger`.*
 
 ### L5 — Compliance & confidentiality (institution-ready)
@@ -122,7 +124,7 @@ any divergence freezes the position and records the rejection.
 
 ## Engineering rigor
 
-- **39/39 Move unit tests** — the heart (direct guardian coverage: the risk
+- **41/41 Move unit tests** — the heart (direct guardian coverage: the risk
   arithmetic, the divergence boundary, the hard ceiling, and the safe-direction
   clamp both ways), every gate's negative path (L1 per-tx / window / expiry /
   pause / wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0

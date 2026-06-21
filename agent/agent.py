@@ -23,7 +23,7 @@ by `scripts/demo.sh` (open_vault) — see warden.config.example.json.
 
 Requires: pip install anthropic ; the `sui` CLI on PATH (only for --submit).
 """
-import argparse, hashlib, json, os, struct, subprocess, sys, urllib.request
+import argparse, json, os, subprocess, sys, urllib.request
 
 RPC = "https://fullnode.testnet.sui.io:443"
 
@@ -48,15 +48,6 @@ def get_market(feed_id):
 def get_vault(vault_id):
     f = read_object_fields(vault_id)
     return {"idle": int(f["idle"]), "deployed": int(f["deployed"]), "frozen": bool(f["frozen"])}
-
-
-def trade_digest(amount, direction, claimed_risk_bps, exposure_after):
-    """Bind the digest the critic signs to the actual trade contents, instead of
-    random bytes — so the signature commits to (amount, direction, risk,
-    exposure). (On-chain re-derivation of this digest is a roadmap item; today
-    the chain checks digest consistency, not that it binds the fields.)"""
-    body = struct.pack("<QBQQ", amount, direction, claimed_risk_bps, exposure_after)
-    return "0x" + hashlib.sha3_256(body).hexdigest()
 
 
 # ---- the AI decision ----
@@ -130,16 +121,15 @@ def main():
           f"claimed_risk_bps={intent.claimed_risk_bps} confidence={intent.confidence}")
     print(f"[agent ] rationale: {intent.rationale}")
 
-    # bind the digest the critic signs to the trade contents (not random bytes)
-    exposure_after = vault["deployed"] + amount
-    digest = trade_digest(amount, int(intent.direction), int(intent.claimed_risk_bps), exposure_after)
+    # the trade digest is derived ON-CHAIN from the trade fields (the agent does
+    # not supply it), so the critic's approval is bound to exactly what was proposed.
     call = [
         "sui", "client", "call", "--package", cfg["package"], "--module", "app",
         "--function", "agent_trade", "--args",
         cfg["vault"], cfg["policy"], cfg["gen_registry"], cfg["critic_registry"],
         cfg["critic_cap"], cfg["ledger"], cfg["feed"],
         str(amount), str(int(intent.direction)), str(int(intent.claimed_risk_bps)),
-        digest, "0x" + "7761726c7573",  # walrus_blob placeholder
+        "0x" + "7761726c7573",  # walrus_blob placeholder
         "0x" + "746565",                # tee_attestation placeholder
         "0x6", "--gas-budget", "60000000",
     ]

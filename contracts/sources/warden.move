@@ -13,6 +13,8 @@
 module warden::warden;
 
 use sui::clock::Clock;
+use sui::hash;
+use std::bcs;
 use warden::vault::{Self, Vault};
 use warden::policy::{Self, WardenPolicy, GenerationRegistry};
 use warden::guardian;
@@ -35,22 +37,26 @@ public struct Trade {
 }
 
 /// 1) The AI proposes an intent. Nothing is trusted or executed yet.
+/// The digest is derived ON-CHAIN from the trade contents (it is NOT a
+/// caller-supplied number) so the critic's approval is cryptographically
+/// bound to exactly (amount, direction, claimed risk, resulting exposure).
 public fun propose<T>(
     v: &Vault<T>,
     amount: u64,
     direction: u8,
     claimed_risk_bps: u64,
-    digest: vector<u8>,
 ): Trade {
-    Trade {
-        vault: vault::vault_id(v),
-        amount,
-        direction,
-        claimed_risk_bps,
-        exposure_after: vault::deployed(v) + amount,
-        digest,
-    }
+    let exposure_after = vault::deployed(v) + amount;
+    let mut bytes = bcs::to_bytes(&amount);
+    vector::append(&mut bytes, bcs::to_bytes(&direction));
+    vector::append(&mut bytes, bcs::to_bytes(&claimed_risk_bps));
+    vector::append(&mut bytes, bcs::to_bytes(&exposure_after));
+    let digest = hash::keccak256(&bytes);
+    Trade { vault: vault::vault_id(v), amount, direction, claimed_risk_bps, exposure_after, digest }
 }
+
+/// The on-chain-derived digest the critic must sign — bound to the trade.
+public fun trade_digest(t: &Trade): vector<u8> { t.digest }
 
 /// 2) Run every gate and discharge the hot potato. On a guardian fault
 ///    the vault is FROZEN and a rejected entry is recorded (the freeze

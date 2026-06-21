@@ -71,8 +71,10 @@ public fun owner_withdraw<T>(
     coin::from_balance(balance::split(&mut v.idle, amount), ctx)
 }
 
-/// Freeze the agent. Callable by the guardian path on a detected fault.
-public fun freeze_vault<T>(v: &mut Vault<T>, reason: u8) {
+/// Freeze the agent. `public(package)` so ONLY the guardian/settle path can
+/// freeze — never an arbitrary third party (that would be a griefing DoS on a
+/// shared vault). The owner still lifts it via `unfreeze` (OwnerCap-gated).
+public(package) fun freeze_vault<T>(v: &mut Vault<T>, reason: u8) {
     v.frozen = true;
     event::emit(VaultFrozen { vault: object::id(v), reason });
 }

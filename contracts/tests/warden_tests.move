@@ -66,12 +66,11 @@ fun test_happy_path() {
     let clk = clock::create_for_testing(&mut ctx);
     let (mut v, ocap, mut pol, reg, creg, ccap, mut led) = setup(&mut ctx, &clk);
 
-    let digest = b"trade-1";
     // low exposure, deep book → low risk; claim ~matches derived
     let amount = 10_000;
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
-    let t = warden::propose(&v, amount, guardian::dir_increase(), derived, digest);
-    let verdict = critic::judge(&ccap, digest, true);
+    let t = warden::propose(&v, amount, guardian::dir_increase(), derived);
+    let verdict = critic::judge(&ccap, warden::trade_digest(&t), true);
     let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx); // deep book
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
@@ -94,11 +93,10 @@ fun test_divergence_freezes_and_records() {
     let clk = clock::create_for_testing(&mut ctx);
     let (mut v, ocap, mut pol, reg, creg, ccap, mut led) = setup(&mut ctx, &clk);
 
-    let digest = b"trade-bad";
     let amount = 10_000;
     // agent LIES: claims 10 bps while the chain will derive far higher
-    let t = warden::propose(&v, amount, guardian::dir_increase(), 10, digest);
-    let verdict = critic::judge(&ccap, digest, true); // critic even approved it
+    let t = warden::propose(&v, amount, guardian::dir_increase(), 10);
+    let verdict = critic::judge(&ccap, warden::trade_digest(&t), true); // critic even approved it
     // thin book (depth 1000) on the on-chain feed → derived risk explodes
     let market = feed_with(1_000_000, 1_000, &clk, &mut ctx);
     let r = warden::settle(
@@ -132,17 +130,40 @@ fun test_owner_withdraw_works_even_when_frozen() {
 }
 
 #[test]
+#[expected_failure(abort_code = 1, location = warden)] // ECriticDigestMismatch
+fun test_critic_must_sign_the_real_digest() {
+    let mut ctx = tx_context::dummy();
+    let clk = clock::create_for_testing(&mut ctx);
+    let (mut v, ocap, mut pol, reg, creg, ccap, mut led) = setup(&mut ctx, &clk);
+
+    let amount = 10_000;
+    let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
+    let t = warden::propose(&v, amount, guardian::dir_increase(), derived);
+    // critic signs a DIFFERENT digest than the one bound to the trade
+    let verdict = critic::judge(&ccap, b"a-forged-digest", true);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
+    let r = warden::settle(
+        t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
+        &market, b"x", b"y", &clk,
+    ); // judged != trade.digest -> ECriticDigestMismatch
+    ledger::receipt_seq(&r); // unreachable
+
+    feed::destroy_for_testing(market);
+    teardown(v, ocap, pol, reg, creg, ccap, led);
+    clock::destroy_for_testing(clk);
+}
+
+#[test]
 #[expected_failure(abort_code = 3, location = policy)] // EPerTxCap
 fun test_per_tx_cap_breach_aborts() {
     let mut ctx = tx_context::dummy();
     let clk = clock::create_for_testing(&mut ctx);
     let (mut v, ocap, mut pol, reg, creg, ccap, mut led) = setup(&mut ctx, &clk);
 
-    let digest = b"too-big";
     let amount = 200_000; // > per_tx_cap (100_000)
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
-    let t = warden::propose(&v, amount, guardian::dir_reduce(), derived, digest);
-    let verdict = critic::judge(&ccap, digest, true);
+    let t = warden::propose(&v, amount, guardian::dir_reduce(), derived);
+    let verdict = critic::judge(&ccap, warden::trade_digest(&t), true);
     let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
@@ -165,11 +186,10 @@ fun test_revocation_kills_policy() {
     // admin (the dummy sender) revokes the whole generation
     policy::revoke_all(&mut reg, &ctx);
 
-    let digest = b"after-revoke";
     let amount = 10_000;
     let derived = guardian::derive_risk_bps(amount, 1_000_000, 100_000_000);
-    let t = warden::propose(&v, amount, guardian::dir_reduce(), derived, digest);
-    let verdict = critic::judge(&ccap, digest, true);
+    let t = warden::propose(&v, amount, guardian::dir_reduce(), derived);
+    let verdict = critic::judge(&ccap, warden::trade_digest(&t), true);
     let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
     let r = warden::settle(
         t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,

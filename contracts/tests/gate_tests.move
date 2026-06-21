@@ -143,6 +143,20 @@ fun test_ledger_seq_is_monotonic_no_delete() {
     let _r2 = ledger::record(&mut l, 9000, 0, 1, false, 1, b"d2", b"w", b"t", &clk); // a rejection, still recorded
     assert!(ledger::seq(&l) == 2, 0);
     assert!(ledger::count(&l) == 2, 1);
+    let head = ledger::chain_head(&l);
+    assert!(vector::length(&head) == 32, 2);   // keccak hash-chain head present (tamper-evident)
+    ledger::destroy_for_testing(l);
+    clock::destroy_for_testing(clk);
+}
+
+#[test]
+#[expected_failure(abort_code = 1, location = ledger)] // EReplayedDigest
+fun test_ledger_rejects_replayed_digest() {
+    let mut ctx = tx_context::dummy();
+    let clk = clock::create_for_testing(&mut ctx);
+    let mut l = ledger::new(object::id_from_address(@0x11), &mut ctx);
+    let _r1 = ledger::record(&mut l, 1000, 10, 0, true, 0, b"same", b"w", b"t", &clk);
+    let _r2 = ledger::record(&mut l, 1000, 10, 0, true, 0, b"same", b"w", b"t", &clk); // replay -> abort
     ledger::destroy_for_testing(l);
     clock::destroy_for_testing(clk);
 }

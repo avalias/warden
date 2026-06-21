@@ -105,13 +105,13 @@
 
 <script>
 const RPC = "https://fullnode.testnet.sui.io:443";
-const PKG = "0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902";
+const PKG = "0xe65932ac7cba6db749d3deea0a6fbaeb0ea4fb64f7bcbb2b8446cb112fc736dc";
 const CLOCK = "0x6";
 // defaults for the read-only dashboard (a live deployed vault + feed)
 const STATE = {
-  feed: "0x56711d4dd4826e78125303538a6e00786c3beb87abf8a756636e37a3399401ea",
-  vault: "0xe41a661ccbdcaaf16870db18438f78912e8172cb0dde7c649565de9256418c71",
-  ledger: "0x8efbdb64e67c40e8f1912743c702e8f4519a89f96554f5d6859ce412c1d2d826",
+  feed: "0xdecdbec5ee3fb56715b7ec0074b07a1e27b86d0b345f510e4a9d289e3e8e03fd",
+  vault: "0x4f8cfb0d1bae2f7c7c41fdca84f54ee36895061d2228a1dc9472574f2aa5d38d",
+  ledger: "0x4c6e4876f78f163572b800d2b26cb83134100c21d703f059e8256b1daa5aab11",
   policy:null, gen:null, creg:null, ccap:null, ocap:null,
   wallet:null, account:null,
 };
@@ -213,7 +213,7 @@ const ACTS = {
       tx.object(STATE.vault), tx.object(STATE.policy), tx.object(STATE.gen), tx.object(STATE.creg),
       tx.object(STATE.ccap), tx.object(STATE.ledger), tx.object(STATE.feed),
       tx.pure.u64($('#i-amount').value||'0'), tx.pure.u8(Number($('#i-dir').value)), tx.pure.u64($('#i-risk').value||'0'),
-      tx.pure.vector('u8', bytes('trade')), tx.pure.vector('u8', bytes('walrus')), tx.pure.vector('u8', bytes('tee')), tx.object(CLOCK) ] });
+      tx.pure.vector('u8', bytes('walrus')), tx.pure.vector('u8', bytes('tee')), tx.object(CLOCK) ] });
     const f = await sign(tx,'propose trade'); if(!f) return;
     const evs = (f.events||[]).map(e=>e.type.split('::').pop());
     if(evs.includes('VaultFrozen')) log('❄ the chain re-derived risk from the feed, caught the divergence, and FROZE the vault.', 'frz');
