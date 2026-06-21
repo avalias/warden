@@ -107,7 +107,6 @@
 <body>
 <div class="orb a"></div><div class="orb b"></div><div class="grid"></div>
 <div class="brand"><span class="mk">W</span>WARDEN</div>
-<div class="hint">→ / Space / click = next · ◀▶ keys · F = fullscreen · N = captions</div>
 
 <div class="stage" id="stage">
 
@@ -191,32 +190,20 @@
 
 </div>
 
-<div class="narr" id="narr"><div class="box" id="narrText"></div></div>
-
 <div class="bar">
   <button class="ctl" id="back">◀ Back</button>
   <span class="counter" id="counter">1 / 6</span>
   <div class="dots" id="dots"></div>
-  <button class="ctl" id="play">▶ Play with audio</button>
-  <button class="ctl fill" id="next">Next ▶</button>
 </div>
 
 <script>
-// --- narration scripts (for your AI voiceover, per part) ---
-const NARRATION = [
-  "Every autonomous AI fund has the same fatal flaw — you have to trust the agent. It holds the keys, you trust its own numbers, and its reasoning is off-chain and deniable. WARDEN is the first AI fund you don't have to trust. The agent is powerful, and structurally powerless to do harm. Here's how.",
-  "The inversion is simple. The AI never holds authority — it only proposes. Then the chain re-derives the truth, clamps the agent to safe moves, freezes on any divergence, and proves every decision. The agent proposes; the chain disposes. That single flip turns a risky toy into infrastructure an institution can actually fund.",
-  "Watch the heart of it. The agent proposes a trade and swears its risk is zero. But the Guardian re-derives risk on-chain, from a market feed the agent cannot forge — and gets ten thousand basis points. The numbers diverge. The chain doesn't argue. It freezes the vault. A lying, hallucinating, or hijacked agent simply cannot move the fund. And this isn't a slide — it's a real transaction on Sui.",
-  "None of this is a mockup. Thirteen Move modules. Twenty out of twenty tests passing. Deployed and verified on Sui testnet, with the entire lifecycle anchored on-chain across fifteen clickable transactions. A real AI agent running on Claude proposes the trades — and a live dApp lets you drive the whole thing yourself.",
-  "And it goes all the way. Seven composable layers under one thesis: trust-minimization. Non-custodial custody. Object-capability authority. The chain-never-trusts-the-AI core. A self-hedging strategy with provably bounded losses. A tamper-evident ledger. Compliance gating. And inheritance, so the fund outlives its owner. All built, all on-chain.",
-  "WARDEN is the only autonomous AI fund a regulated institution can legally fund — because trusting the agent is no longer required. Give the machine the markets. Give the chain the leash. That's WARDEN."
-];
-
+// Clean visual deck — no on-screen narration, no Next/Play (voiceover + montage done separately).
+// Advance: click anywhere / → / Space ; back: ← / Back button / dots ; F = fullscreen.
 const scenes = [...document.querySelectorAll('.scene')];
 const dotsWrap = document.getElementById('dots');
 scenes.forEach((_,i)=>{ const d=document.createElement('div'); d.className='dot'; d.onclick=e=>{e.stopPropagation();go(i)}; dotsWrap.appendChild(d); });
 const dots=[...document.querySelectorAll('.dot')];
-let cur=-1, playing=false, audio=null, timer=null;
+let cur=-1;
 
 function animateCounters(scene){
   scene.querySelectorAll('[data-c]').forEach(el=>{
@@ -227,42 +214,20 @@ function animateCounters(scene){
 }
 function go(i){
   if(i<0||i>=scenes.length) return;
-  if(timer){clearTimeout(timer);timer=null;}
-  if(audio){audio.pause();audio=null;}
   scenes.forEach((s,k)=>{ s.classList.toggle('active',k===i); s.classList.remove('play'); });
   dots.forEach((d,k)=>d.classList.toggle('on',k===i));
   cur=i;
   document.getElementById('counter').textContent=(i+1)+' / '+scenes.length;
-  document.getElementById('narrText').textContent=NARRATION[i];
   const sc=scenes[i];
-  // trigger scene-internal animation a beat later
   setTimeout(()=>{ sc.classList.add('play'); animateCounters(sc); }, 120);
-  if(playing) playScene(i);
 }
 function next(){ go(Math.min(cur+1,scenes.length-1)); }
 function back(){ go(Math.max(cur-1,0)); }
 
-// audio-synced playback (drop audio/part-1.mp3 … part-6.mp3 to enable real voiceover sync)
-function playScene(i){
-  const src='audio/part-'+(i+1)+'.mp3';
-  audio=new Audio(src);
-  audio.onended=()=>{ if(playing) (i<scenes.length-1?next():stopPlay()); };
-  audio.onerror=()=>{ // no audio file yet → fall back to data-dur timing
-    const dur=(+scenes[i].dataset.dur||26)*1000;
-    timer=setTimeout(()=>{ if(playing)(i<scenes.length-1?next():stopPlay()); }, dur);
-  };
-  audio.play().catch(()=>{});
-}
-function startPlay(){ playing=true; document.getElementById('play').textContent='⏸ Stop'; if(cur<0)go(0); else playScene(cur); }
-function stopPlay(){ playing=false; document.getElementById('play').textContent='▶ Play with audio'; if(audio){audio.pause();audio=null;} if(timer){clearTimeout(timer);timer=null;} }
-
-document.getElementById('next').onclick=e=>{e.stopPropagation();next()};
 document.getElementById('back').onclick=e=>{e.stopPropagation();back()};
-document.getElementById('play').onclick=e=>{e.stopPropagation(); playing?stopPlay():startPlay()};
 addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
   else if(e.key==='ArrowLeft'){back()}
-  else if(e.key.toLowerCase()==='n'){document.getElementById('narr').classList.toggle('hide')}
   else if(e.key.toLowerCase()==='f'){ document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); }
 });
 addEventListener('click',e=>{ if(e.target.closest('.bar')||e.target.closest('a')) return; next(); });
