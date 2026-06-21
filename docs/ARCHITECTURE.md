@@ -122,11 +122,14 @@ any divergence freezes the position and records the rejection.
 
 ## Engineering rigor
 
-- **26/26 Move unit tests** — the heart (direct guardian coverage: the risk
+- **39/39 Move unit tests** — the heart (direct guardian coverage: the risk
   arithmetic, the divergence boundary, the hard ceiling, and the safe-direction
-  clamp both ways), freeze-on-divergence, non-custodial withdraw, capability
-  scope, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating
-  + the oracle window, and L6 inheritance + the no-loss draw.
+  clamp both ways), every gate's negative path (L1 per-tx / window / expiry /
+  pause / wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0
+  reserve floor / frozen / owner-only / unfreeze), freeze-on-divergence,
+  non-custodial withdraw, generation revocation, the L3 bounded-drawdown
+  invariant, L5 KYC gating + the oracle window, and L6 inheritance + the
+  no-loss draw.
 - **Deployed + verified on Sui testnet**, with the full L0→L6 lifecycle anchored
   on-chain across **15 clickable transactions** and reproducible via
   `scripts/demo.sh`. (The `UpgradeCap` is retained by the deployer; burning it to

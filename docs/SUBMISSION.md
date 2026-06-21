@@ -28,7 +28,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
 ## What's built (and verifiable)
 
 - **Sui Move package**, 13 modules: `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app`.
-- **26/26 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways) + freeze-on-divergence, non-custodial withdraw, capability scope, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
+- **39/39 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
 - **Deployed + verified on Sui testnet.** (The `UpgradeCap` is retained by the deployer; burning it for immutability is a deliberate, pending step.)
 - **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **15 clickable transactions**. Reproducible via `scripts/demo.sh`.
 
@@ -52,7 +52,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
   - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c
   - inherit_open (L6) — https://suiscan.xyz/testnet/tx/At9aN8sxcJ5PtpQEw66nnuH8mKsEozxQLTDoCXcDk38j
   - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8
-- **Tests:** `cd contracts && sui move test` → 26/26.
+- **Tests:** `cd contracts && sui move test` → 39/39.
 
 ## Tech stack
 

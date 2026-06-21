@@ -10,7 +10,7 @@
 [![Sui Overflow 2026](https://img.shields.io/badge/Sui_Overflow-2026-4da2ff?style=flat-square)](https://sui.io)
 [![Track](https://img.shields.io/badge/Track-The_Agentic_Web-37e0ac?style=flat-square)](#)
 [![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0x823f8490c1ce2d576a4d3ed3631fda93d7327f4daaea4fe6ecabf8ea64826902)
-[![Move tests](https://img.shields.io/badge/move_tests-26%2F26_passing-2ecc71?style=flat-square)](#-tests)
+[![Move tests](https://img.shields.io/badge/move_tests-39%2F39_passing-2ecc71?style=flat-square)](#-tests)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 [**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources)
@@ -55,7 +55,7 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 | `oracle_propose` → `oracle_finalize` | **L5** — propose an outcome with a challenge window; finalize once it closes (Move-native optimistic oracle) | [`5TZiHZcx…`](https://suiscan.xyz/testnet/tx/5TZiHZcxcpS6bASbwiddQf6AzocKvGajv322oPZ4bt7S) · [`738N3XQ5…`](https://suiscan.xyz/testnet/tx/738N3XQ5NhoeMrFDWkcEukcpk1Tg9ZRmdKEUm143653c) |
 | `inherit_open` → `inherit_claim` | **L6** — dead-man-switch: open with a dormancy timer; after it elapses the beneficiary inherits → **`Inherited`** | [`At9aN8sx…`](https://suiscan.xyz/testnet/tx/At9aN8sxcJ5PtpQEw66nnuH8mKsEozxQLTDoCXcDk38j) · [`E5mWFNNN…`](https://suiscan.xyz/testnet/tx/E5mWFNNNoYiUdxbxgEJo39aSGG3kGsdoig26QJiufum8) |
 
-**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **26/26 Move unit tests**.
+**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **39/39 Move unit tests**.
 
 ---
 
@@ -76,7 +76,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (26/26), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, no-loss draw; the full confidentiality stack — Seal/Nautilus/Confidential-Transfers — remains an integration roadmap.)
+This repo ships **all seven layers** — built, unit-tested (39/39), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, no-loss draw; the full confidentiality stack — Seal/Nautilus/Confidential-Transfers — remains an integration roadmap.)
 
 ### How a single trade survives the chain
 
@@ -172,7 +172,20 @@ sui move test
 [ PASS ] test_prize_bad_reveal_aborts             # L6: reveal must match the commit
 [ PASS ] test_feed_stale_read_aborts              # oracle feed: stale data is rejected
 [ PASS ] test_feed_only_feeder_updates            # oracle feed: only the keeper can write
-Test result: OK. Total tests: 26; passed: 26; failed: 0
+[ PASS ] test_window_cap_trips                    # L1: rolling-window cap enforced
+[ PASS ] test_window_resets_after_window_ms       # L1: window resets after window_ms
+[ PASS ] test_policy_expiry_aborts                # L1: an expired policy is rejected
+[ PASS ] test_paused_blocks_spend                 # L1: pause halts the agent
+[ PASS ] test_policy_wrong_vault_aborts           # L1: a policy is bound to its vault
+[ PASS ] test_critic_approval_returns_digest      # L2: critic approval binds the trade digest
+[ PASS ] test_critic_rejection_aborts_settlement  # L2: the critic veto blocks settlement
+[ PASS ] test_unsanctioned_critic_aborts          # L2: only the sanctioned critic counts
+[ PASS ] test_ledger_seq_is_monotonic_no_delete   # L4: monotonic append, no delete path
+[ PASS ] test_deploy_respects_reserve_floor       # L0: the reserve floor is enforced
+[ PASS ] test_deploy_blocked_while_frozen         # L0: a frozen vault blocks the agent
+[ PASS ] test_withdraw_rejects_wrong_cap          # L0: only the right OwnerCap withdraws
+[ PASS ] test_unfreeze_restores_agent             # L0: owner unfreeze restores the agent
+Test result: OK. Total tests: 39; passed: 39; failed: 0
 ```
 
 ---
@@ -204,7 +217,7 @@ python -m http.server 4178   # → http://localhost:4178
 - **Real-world application.** A construction a regulated institution can actually fund, because trusting the agent isn't required — the chain structurally prevents theft (non-custodial + object-capability), mis-allocation (on-chain risk re-derivation from a feed the agent can't forge → clamp → freeze), and misreporting (append-only, monotonic, no-delete three-proof ledger). Compliance (L5) and inheritance (L6) make it institution- and continuity-ready.
 - **Technical depth.** A load-bearing stack of Sui primitives — object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against a keeper-fed oracle, a dual-key critic, a proven bounded-drawdown, a Move-native optimistic oracle, a dead-man-switch and a verifiable draw — composed under one thesis, deployed and proven on-chain.
 
-**Honest scope:** all **seven layers** are built, unit-tested (26/26), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
+**Honest scope:** all **seven layers** are built, unit-tested (39/39), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
 
 ---
 

@@ -71,7 +71,7 @@ highlight the `VaultFrozen` and `Recorded{accepted:false}` events.
 ### Scene 7 — Recap (2:55–3:15)
 **On screen:** the proof section (15 transactions) + the GitHub repo.
 **Narration:**
-> "All seven layers — built, twenty-six passing Move tests, and the full lifecycle
+> "All seven layers — built, thirty-nine passing Move tests, and the full lifecycle
 > anchored on-chain across fifteen transactions. Seven composable layers under one
 > thesis. Give the machine the markets. Give the chain the leash. That's WARDEN."
 
