@@ -58,7 +58,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
 
 ## Tech stack
 
-**Used today (in the on-chain code + agent):** Sui Move (object-capabilities, hot-potato settlement, `Clock`, events, `keccak256`), the on-chain `OracleFeed` (keeper-written price + order-book depth the guardian re-derives from), and the off-chain agent on the Claude API (`claude-opus-4-8`).
+**Used today (in the on-chain code + agent):** Sui Move (object-capabilities, hot-potato settlement, `Clock`, events, `keccak256`), the on-chain `OracleFeed` (keeper-written price + order-book depth the guardian re-derives from), and the off-chain agent on a frontier LLM.
 
 **Designed-for integrations (roadmap — not yet wired into the Move code):** DeepBook v3 (execution venue + the depth source the guardian would re-derive from), Pyth (signed price source for the feed), Walrus + Seal + Nautilus TEE (sealed reasoning, confidentiality, attested facts), zkLogin/Enoki (onboarding).
 
@@ -77,4 +77,4 @@ The seven layers are built and on-chain. What remains is not a *layer* but the h
 - **L5 deepening:** wire the KYC gate into compliance-gated DeepBook/CLMM venue adapters; add native **Confidential Transfers** and **Seal threshold-IBE + Nautilus/Nitro attestation** for private risk models.
 - **L6 distribution:** the **x402** agent-payment rail, an **MCP** server + TS/Py/Rust SDKs, and Walrus-Sites hosting with byte-level integrity.
 
-An **AI agent** is included — [`agent/agent.py`](agent/agent.py), a Claude (`claude-opus-4-8`) loop that reads the on-chain feed and proposes `agent_trade` under the policy. Productionizing it (sealing the reasoning to Walrus, scheduling, multi-asset) is roadmap; the trust-minimization is the point: the chain vets whatever the agent proposes.
+An **AI agent** is included — [`agent/agent.py`](agent/agent.py), an LLM-powered loop that reads the on-chain feed and proposes `agent_trade` under the policy. Productionizing it (sealing the reasoning to Walrus, scheduling, multi-asset) is roadmap; the trust-minimization is the point: the chain vets whatever the agent proposes.

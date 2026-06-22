@@ -2,9 +2,9 @@
 """
 WARDEN — the autonomous AI trading agent.
 
-This is the "agent" half of the agentic fund: a Claude-powered loop that reads
-the on-chain market feed, reasons about whether and how to trade within the
-vault's policy bounds, and submits an `agent_trade` proposal to the chain.
+This is the "agent" half of the agentic fund: an LLM-powered loop that reads the
+on-chain market feed, reasons about whether and how to trade within the vault's
+policy bounds, and submits an `agent_trade` proposal to the chain.
 
 The crucial point: the agent only *proposes*. Whatever it decides, the on-chain
 Guardian re-derives risk from the same feed and freezes the vault if the agent's
@@ -13,17 +13,20 @@ mis-calibrated, or adversarial agent cannot move the fund out of bounds — the
 chain is the backstop. This script is the thing the trust-minimization layer is
 built to contain.
 
+The LLM is provider-agnostic: it talks to any OpenAI-compatible endpoint, set by
+`llm_model` + `llm_base_url` in the config and the `LLM_API_KEY` env var.
+
 Usage:
-    export ANTHROPIC_API_KEY=...            # never hardcode the key
+    export LLM_API_KEY=...                  # never hardcode the key
     python agent/agent.py --config warden.config.json            # dry-run
     python agent/agent.py --config warden.config.json --submit   # send the tx
 
 `warden.config.json` holds the package id + the shared/owned object ids printed
 by `scripts/demo.sh` (open_vault) — see warden.config.example.json.
 
-Requires: pip install anthropic ; the `sui` CLI on PATH (only for --submit).
+Requires: pip install -r agent/requirements.txt ; the `sui` CLI on PATH (--submit).
 """
-import argparse, json, os, subprocess, sys, urllib.request
+import argparse, json, os, re, subprocess, sys, urllib.request
 
 RPC = "https://fullnode.testnet.sui.io:443"
 
@@ -62,32 +65,35 @@ Risk rule of thumb the chain uses: thin order-book depth + large exposure => hig
 If the book is thin or the vault is stressed, propose a small, de-risking trade (direction 0)."""
 
 
-def decide(market_price_e6, depth, vault, per_tx_cap, reserve_floor):
-    import anthropic
+def decide(market_price_e6, depth, vault, per_tx_cap, reserve_floor, model, base_url):
     from pydantic import BaseModel, Field
+    from openai import OpenAI
 
     class TradeIntent(BaseModel):
         amount: int = Field(description="notional to deploy this trade, in MIST; must be <= per_tx_cap")
         direction: int = Field(description="0 = reduce/keep risk, 1 = increase exposure")
-        claimed_risk_bps: int = Field(description="your honest estimate of resulting risk in basis points (0-10000)")
+        claimed_risk_bps: int = Field(description="honest estimate of resulting risk in basis points (0-10000)")
         confidence: int = Field(description="0-100")
         rationale: str = Field(description="one or two sentences explaining the decision")
 
-    client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from the environment
+    client = OpenAI(api_key=os.environ["LLM_API_KEY"], base_url=base_url or None)
     user = (
         f"Market feed: price_e6={market_price_e6}, order-book depth={depth}.\n"
         f"Vault: idle={vault['idle']} MIST, deployed={vault['deployed']} MIST, frozen={vault['frozen']}.\n"
         f"Policy: per_tx_cap={per_tx_cap} MIST, reserve_floor={reserve_floor} MIST.\n\n"
-        f"Propose one trade within policy. Keep amount <= per_tx_cap and leave the reserve intact."
+        "Propose one trade within policy. Keep amount <= per_tx_cap and leave the reserve intact.\n"
+        "Reply with ONLY a JSON object with keys: amount (int, MIST), direction (0 or 1), "
+        "claimed_risk_bps (int, 0-10000), confidence (int, 0-100), rationale (string)."
     )
-    resp = client.messages.parse(
-        model="claude-opus-4-8",
+    resp = client.chat.completions.create(
+        model=model,
         max_tokens=2000,
-        system=SYSTEM,
-        messages=[{"role": "user", "content": user}],
-        output_format=TradeIntent,
+        messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}],
+        response_format={"type": "json_object"},
     )
-    return resp.parsed_output
+    content = resp.choices[0].message.content.strip()
+    m = re.search(r"\{.*\}", content, re.S)   # tolerate fences / stray prose
+    return TradeIntent.model_validate_json(m.group(0) if m else content)
 
 
 def main():
@@ -96,10 +102,14 @@ def main():
     ap.add_argument("--submit", action="store_true", help="actually send the agent_trade tx via sui CLI")
     args = ap.parse_args()
 
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("Set ANTHROPIC_API_KEY in your environment (never hardcode it).")
+    if not os.environ.get("LLM_API_KEY"):
+        sys.exit("Set LLM_API_KEY in your environment (never hardcode it).")
 
     cfg = json.load(open(args.config))
+    model = cfg.get("llm_model")
+    base_url = cfg.get("llm_base_url")
+    if not model:
+        sys.exit("Set 'llm_model' (and optionally 'llm_base_url') in the config.")
     try:
         price, depth = get_market(cfg["feed"])
         vault = get_vault(cfg["vault"])
@@ -110,10 +120,10 @@ def main():
 
     print(f"[market] price_e6={price} depth={depth}")
     print(f"[vault ] idle={vault['idle']} deployed={vault['deployed']} frozen={vault['frozen']}")
-    print("[agent ] asking Claude (claude-opus-4-8) to decide...")
+    print(f"[agent ] asking the model ({model}) to decide...")
 
     try:
-        intent = decide(price, depth, vault, per_tx_cap, reserve_floor)
+        intent = decide(price, depth, vault, per_tx_cap, reserve_floor, model, base_url)
     except Exception as e:
         sys.exit(f"[error] agent decision failed (LLM call or schema validation): {e}")
     amount = min(int(intent.amount), per_tx_cap)
@@ -143,9 +153,9 @@ def main():
         events = [e["type"].split("::")[-1] for e in d.get("events", [])]
         print(f"[chain ] tx {d['digest']} events={events}")
         if "VaultFrozen" in events:
-            print("[chain ] ❄  the chain caught a divergence and FROZE the vault — agent contained.")
+            print("[chain ] the chain caught a divergence and FROZE the vault — agent contained.")
         else:
-            print("[chain ] ✅ trade accepted within the leash.")
+            print("[chain ] trade accepted within the leash.")
     else:
         print("[dry-run] would run:\n  " + " ".join(call))
         print("[dry-run] re-run with --submit to send it (the chain will vet it).")

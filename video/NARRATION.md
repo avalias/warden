@@ -19,7 +19,7 @@ Watch the heart of it, live on Sui testnet. The agent proposes a trade and swear
 
 ## Part 4 — It's real (~28s)
 
-None of this is a mockup. Thirteen Move modules. Forty-three out of forty-three tests passing. The full lifecycle anchored on-chain across fifteen clickable transactions — and the package is immutable: the upgrade key has been burned, so not even we can change the leash. A real AI agent on Claude proposes the trades, and a live dApp lets you drive the whole thing yourself.
+None of this is a mockup. Thirteen Move modules. Forty-three out of forty-three tests passing. The full lifecycle anchored on-chain across fifteen clickable transactions — and the package is immutable: the upgrade key has been burned, so not even we can change the leash. A real AI agent proposes the trades, and a live dApp lets you drive the whole thing yourself.
 
 ## Part 5 — Seven layers (~34s)
 

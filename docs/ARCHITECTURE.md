@@ -146,7 +146,7 @@ any divergence freezes the position and records the rejection.
 
 **Built, tested, deployed, on-chain:** all seven layers (13 modules), every
 primitive unit-tested, the full L0→L6 lifecycle in 15 transactions on Sui
-testnet. The off-chain AI agent (`agent/agent.py`, Claude-powered) is built and
+testnet. The off-chain AI agent (`agent/agent.py`, LLM-powered) is built and
 proposes `agent_trade` under the policy.
 
 **Roadmap** — not a *layer*, but the heaviest *integrations* inside L5/L6: full

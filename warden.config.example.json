@@ -7,6 +7,8 @@
   "critic_cap": "0x...your_critic_cap",
   "ledger": "0x...your_ledger",
   "feed": "0x...your_feed",
+  "llm_model": "your-llm-model",
+  "llm_base_url": "https://your-openai-compatible-endpoint/v1",
   "per_tx_cap": 50000000,
   "reserve_floor": 20000000
 }

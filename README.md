@@ -92,12 +92,12 @@ The `Trade` is a Move **hot potato** (no abilities): once proposed it *must* pas
 
 ## 🤖 The AI agent
 
-[`agent/agent.py`](agent/agent.py) is the agent half of the fund: a **Claude-powered** loop (`claude-opus-4-8`, structured outputs) that reads the on-chain market feed and vault state, reasons about a trade within the policy bounds, and submits an `agent_trade` proposal.
+[`agent/agent.py`](agent/agent.py) is the agent half of the fund: an **LLM-powered** loop (structured outputs) that reads the on-chain market feed and vault state, reasons about a trade within the policy bounds, and submits an `agent_trade` proposal.
 
-The point of the whole architecture is that this agent is *untrusted*. Whatever Claude decides — even a hallucinated or mis-calibrated risk number — the on-chain Guardian re-derives risk from the same feed and freezes the vault on divergence. The agent proposes; the chain disposes.
+The point of the whole architecture is that this agent is *untrusted*. Whatever the model decides — even a hallucinated or mis-calibrated risk number — the on-chain Guardian re-derives risk from the same feed and freezes the vault on divergence. The agent proposes; the chain disposes.
 
 ```bash
-export ANTHROPIC_API_KEY=...                       # never hardcoded
+export LLM_API_KEY=...                              # never hardcoded
 pip install -r agent/requirements.txt
 python agent/agent.py --config warden.config.json            # dry-run (prints the decision)
 python agent/agent.py --config warden.config.json --submit   # send it; the chain vets it
@@ -130,7 +130,7 @@ warden/
 │   │   └── app.move        # entry points (CLI/PTB-callable)
 │   └── tests/  warden_tests · guardian_tests · gate_tests · strategy_tests · l5_l6_tests
 ├── app/                    # interactive dApp (live dashboard + wallet actions)
-├── agent/                  # the Claude-powered trading agent (agent.py)
+├── agent/                  # the LLM-powered trading agent (agent.py)
 ├── scripts/                # deploy.sh + demo.sh (reproduce the on-chain run)
 ├── docs/ARCHITECTURE.md    # full 7-layer architecture spec
 └── web/                    # same landing page, for separate hosting
