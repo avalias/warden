@@ -11,9 +11,10 @@
 [![Track](https://img.shields.io/badge/Track-The_Agentic_Web-37e0ac?style=flat-square)](#)
 [![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437)
 [![Move tests](https://img.shields.io/badge/move_tests-43%2F43_passing-2ecc71?style=flat-square)](#-tests)
+[![on-chain verified](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml/badge.svg)](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources)
+[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources) · [**Roadmap**](ROADMAP.md)
 
 </div>
 
@@ -204,6 +205,11 @@ python scripts/verify_ledger.py        # reads warden.config.json (package + vau
 It re-walks every `Recorded` event, recomputes each `entry_digest`, and prints
 **`CHAIN INTACT`** when the on-chain record is untampered. Self-contained
 keccak256 (self-tested, zero dependencies); runs green against the live ledger.
+
+And `python scripts/verify_onchain.py` re-checks, with no Sui CLI, that the
+package is still **immutable** and all **15 lifecycle transactions** are live and
+succeeded. Both run in CI on every push **and daily** (badge above) — the on-chain
+proof is continuously, automatically re-verified.
 
 ---
 

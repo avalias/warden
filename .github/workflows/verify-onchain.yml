@@ -1,0 +1,28 @@
+name: verify-onchain
+
+# Continuously prove the submission is live and true — on every push and once a
+# day — with no trust in this repo: pure stdlib Python re-queries Sui testnet.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * *'   # daily at 06:17 UTC
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Package immutable + 15-tx lifecycle live on Sui testnet
+        run: python scripts/verify_onchain.py
+
+      - name: Re-derive the L4 ledger hash-chain from on-chain events
+        run: >
+          python scripts/verify_ledger.py
+          --package 0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437
+          --vault 0xa50d1f6a8d0fd5966ed757967b6c34c084b8f74a94f392b6111b086f0ddc6288
