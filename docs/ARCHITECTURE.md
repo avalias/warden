@@ -81,10 +81,12 @@ closes, escalate disputes to a resolver.
 *Modules: `compliance`, `oracle`.*
 
 ### L6 — Continuity, governance & distribution
-A **dead-man-switch** keeps an asset the owner's via a heartbeat; after a
-dormancy period a named beneficiary inherits control. A **no-loss prize draw**
-selects a winner by commit-reveal (`keccak256`), with principal preserved by
-construction.
+A **dead-man-switch** primitive keeps an asset the owner's via a heartbeat; after
+a dormancy period the named beneficiary inherits control. A **commit-reveal prize
+draw** primitive (`keccak256`) selects a winner against a principal counter.
+*(These L6 primitives are unit-tested and on-chain; production hardening — sharing
+the switch so a third-party beneficiary can trigger the claim, and a VRF-fair,
+real-`Coin` no-loss draw — is roadmap.)*
 *Modules: `inheritance`, `prize`.*
 
 ### Orchestration

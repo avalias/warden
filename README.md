@@ -76,7 +76,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (43/43), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, no-loss draw; the full confidentiality stack — Seal/Nautilus/Confidential-Transfers — remains an integration roadmap.)
+This repo ships **all seven layers** — built, unit-tested (43/43), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap.)
 
 ### How a single trade survives the chain
 
@@ -168,7 +168,7 @@ sui move test
 [ PASS ] test_inheritance_claim_after_dormancy    # L6: beneficiary inherits after dormancy
 [ PASS ] test_inheritance_claim_too_early_aborts  # L6: cannot claim early
 [ PASS ] test_inheritance_ping_resets_clock       # L6: a ping resets the timer
-[ PASS ] test_prize_commit_reveal_draw_no_loss    # L6: verifiable draw, principal preserved
+[ PASS ] test_prize_commit_reveal_draw_no_loss    # L6: commit-reveal draw primitive (principal counter)
 [ PASS ] test_prize_bad_reveal_aborts             # L6: reveal must match the commit
 [ PASS ] test_feed_stale_read_aborts              # oracle feed: stale data is rejected
 [ PASS ] test_feed_only_feeder_updates            # oracle feed: only the keeper can write

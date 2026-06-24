@@ -23,7 +23,7 @@ WARDEN inverts this. The AI emits an unsigned intent; then a deterministic, fail
 
 That single inversion turns "a cute agent" into infrastructure a regulated institution can actually fund, because trusting the agent is no longer required.
 
-The design is organized into seven composable layers under one thesis: **trust-minimization**. This submission ships **all seven** — L0 non-custodial custody, L1 object-capability + revocation, L2 the chain-never-trusts-the-AI core, L3 a self-hedging bounded-drawdown strategy, L4 the append-only ledger, L5 a closed-loop KYC gate + Move-native optimistic oracle, and L6 dead-man-switch inheritance + a no-loss commit-reveal draw — built, unit-tested, and deployed.
+The design is organized into seven composable layers under one thesis: **trust-minimization**. This submission ships **all seven** — L0 non-custodial custody, L1 object-capability + revocation, L2 the chain-never-trusts-the-AI core, L3 a self-hedging bounded-drawdown strategy, L4 the append-only ledger, L5 a closed-loop KYC gate + Move-native optimistic oracle, and L6 dead-man-switch + commit-reveal draw primitives — built, unit-tested, and deployed. (L5/L6 are demo-level primitives; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, and a VRF + real-`Coin` no-loss draw — is roadmap.)
 
 ## What's built (and verifiable)
 
