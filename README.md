@@ -10,7 +10,7 @@
 [![Sui Overflow 2026](https://img.shields.io/badge/Sui_Overflow-2026-4da2ff?style=flat-square)](https://sui.io)
 [![Track](https://img.shields.io/badge/Track-The_Agentic_Web-37e0ac?style=flat-square)](#)
 [![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437)
-[![Move tests](https://img.shields.io/badge/move_tests-43%2F43_passing-2ecc71?style=flat-square)](#-tests)
+[![Move tests](https://img.shields.io/badge/move_tests-48%2F48_passing-2ecc71?style=flat-square)](#-tests)
 [![on-chain verified](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml/badge.svg)](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
@@ -56,7 +56,7 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 | `oracle_propose` → `oracle_finalize` | **L5** — propose an outcome with a challenge window; finalize once it closes (Move-native optimistic oracle) | [`8dfTVWEN…`](https://suiscan.xyz/testnet/tx/8dfTVWENwsHmRhcWpYc8g282zz1eaMwcTdgV8NCVGNSx) · [`BxXzCrkS…`](https://suiscan.xyz/testnet/tx/BxXzCrkSZzCJT2f2cx6VS4Tou7aBnZfMkcMJkurfPVdz) |
 | `inherit_open` → `inherit_claim` | **L6** — dead-man-switch: open with a dormancy timer; after it elapses the beneficiary inherits → **`Inherited`** | [`JxYNBvnF…`](https://suiscan.xyz/testnet/tx/JxYNBvnFtcBCkkDsFgoLaAVZVpANKMJVxP32N85qw91) · [`EiDvSwCa…`](https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU) |
 
-**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **43/43 Move unit tests**.
+**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **48/48 Move unit tests**.
 
 ---
 
@@ -77,7 +77,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (43/43), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap.)
+This repo ships **all seven layers** — built, unit-tested (48/48), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap.)
 
 ### How a single trade survives the chain
 
@@ -141,6 +141,14 @@ warden/
 
 ## 🧪 Tests
 
+**48/48 passing** — every gate's negative path is pinned by name, and an
+**adversarial property layer** sweeps thousands of synthetic inputs to show the
+safety invariants hold for *all* of them, not just hand-picked cases: ~2.4k
+market states where the guardian never approves an over-ceiling or lowballed-risk
+trade, 400 random agent moves that never change the vault's NAV, and a 200-entry
+ledger whose keccak hash-chain advances on every append. The deployed bytecode is
+immutable — these are test-only and add coverage without touching the package.
+
 ```bash
 cd contracts
 sui move test
@@ -190,7 +198,12 @@ sui move test
 [ PASS ] test_ledger_rejects_replayed_digest      # L4: a replayed trade digest is rejected
 [ PASS ] test_value_plane_moves_real_balance      # L0: deploy/undeploy move REAL balance; NAV conserved
 [ PASS ] test_owner_undeploy_rejects_wrong_cap    # L0: only the OwnerCap can pull capital home
-Test result: OK. Total tests: 43; passed: 43; failed: 0
+[ PASS ] prop_guardian_never_approves_unsafe      # L2: ~2.4k swept states — never approves over-ceiling / a lowballed risk
+[ PASS ] prop_derive_is_monotone                  # L2: risk ↑ with exposure/price, ↓ with depth (can't thin a book to look safe)
+[ PASS ] prop_custody_nav_conserved_under_agent_ops # L0: 400 random agent moves — NAV never changes; only the owner shrinks it
+[ PASS ] prop_reserve_floor_always_respected      # L0: the reserve floor survives every permitted deploy
+[ PASS ] prop_ledger_chain_advances_and_is_monotone # L4: 200 entries — seq never skips, keccak chain advances every append
+Test result: OK. Total tests: 48; passed: 48; failed: 0
 ```
 
 ### 🔗 Verify the tamper-evidence yourself
@@ -240,7 +253,7 @@ python -m http.server 4178   # → http://localhost:4178
 - **Real-world application.** A construction a regulated institution can actually fund, because trusting the agent isn't required — the chain structurally prevents theft (non-custodial + object-capability), mis-allocation (on-chain risk re-derivation from a feed the agent can't forge → clamp → freeze), and misreporting (a keccak **hash-chained**, no-delete three-proof ledger, with the trade digest derived on-chain). Compliance (L5) and inheritance (L6) make it institution- and continuity-ready.
 - **Technical depth.** A load-bearing stack of Sui primitives — object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against a keeper-fed oracle, a dual-key critic, a proven bounded-drawdown, a Move-native optimistic oracle, a dead-man-switch and a verifiable draw — composed under one thesis, deployed and proven on-chain.
 
-**Honest scope:** all **seven layers** are built, unit-tested (43/43), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
+**Honest scope:** all **seven layers** are built, unit-tested (48/48), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
 
 ---
 

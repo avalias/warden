@@ -28,7 +28,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
 ## What's built (and verifiable)
 
 - **Sui Move package**, 13 modules: `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app`.
-- **43/43 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw.
+- **48/48 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw. On top of the hand-picked cases, an **adversarial property layer** sweeps thousands of synthetic inputs — the guardian never approves an over-ceiling or lowballed-risk trade across ~2.4k market states, 400 random agent moves never move the vault's NAV, and a 200-entry ledger's keccak chain advances on every append.
 - **Deployed + verified on Sui testnet, `owner: Immutable`** — the `UpgradeCap` was **burned** ([make_immutable tx](https://suiscan.xyz/testnet/tx/G9rS4pWStqjx6K5GC9dKZa8sZF3ymybEpWiE6DKTDPuW)), so the package can never be changed, not even by us.
 - **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **15 clickable transactions**. Reproducible via `scripts/demo.sh`.
 
@@ -52,7 +52,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
   - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/BxXzCrkSZzCJT2f2cx6VS4Tou7aBnZfMkcMJkurfPVdz
   - inherit_open (L6) — https://suiscan.xyz/testnet/tx/JxYNBvnFtcBCkkDsFgoLaAVZVpANKMJVxP32N85qw91
   - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU
-- **Tests:** `cd contracts && sui move test` → 43/43.
+- **Tests:** `cd contracts && sui move test` → 48/48.
 - **Verify the ledger hash-chain (no trust required):** `python scripts/verify_ledger.py` re-derives every entry from the on-chain `Recorded` events and prints `CHAIN INTACT`.
 - **Real capital, not a counter:** after the accepted trade the vault's `deployed` holds **10,000,000 real MIST**; the frozen trade kept the rest safe in `idle`. NAV (`idle + deployed`) is conserved — funds never leave the vault.
 

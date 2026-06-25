@@ -128,7 +128,7 @@ any divergence freezes the position and records the rejection.
 
 ## Engineering rigor
 
-- **43/43 Move unit tests** — the heart (direct guardian coverage: the risk
+- **48/48 Move unit tests** — the heart (direct guardian coverage: the risk
   arithmetic, the divergence boundary, the hard ceiling, and the safe-direction
   clamp both ways), every gate's negative path (L1 per-tx / window / expiry /
   pause / wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0
