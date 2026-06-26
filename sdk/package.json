@@ -1,0 +1,22 @@
+{
+  "name": "@warden/sdk",
+  "version": "0.1.0",
+  "description": "Typed TypeScript client for the WARDEN autonomous-agent custody package on Sui — live-state readers + unsigned PTB builders.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/warden.ts"
+  },
+  "scripts": {
+    "read-state": "tsx examples/read-state.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.30.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
