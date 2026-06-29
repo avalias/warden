@@ -28,7 +28,7 @@ Status is tracked honestly: what's **on-chain today**, and what's **next**.
 
 ## Next — confidentiality & distribution
 - **Seal** threshold-IBE + **Nautilus/Nitro** TEE attestation; native **Confidential Transfers**; a real **Walrus** write of the agent's sealed reasoning (turning two of the three receipt proofs real).
-- **x402** agent-payment rail; an **MCP** server. *(Typed TypeScript **and** dependency-free Python SDKs — live-state readers + transaction builders — have shipped in [`sdk/`](sdk/).)*
+- **x402** agent-payment rail. *(An **MCP server** (agent-runtime tools) plus typed **TypeScript** and dependency-free **Python** SDKs — live-state readers + transaction builders — have shipped in [`sdk/`](sdk/).)*
 
 ## Tooling / assurance
 - **Move Prover** specs for the custody invariant (only `owner_withdraw` reduces withdrawable `idle`) and the guardian safety invariant (`ok ⇒ derived ≤ ceiling`, danger-zone ⇒ `REDUCE`-only).

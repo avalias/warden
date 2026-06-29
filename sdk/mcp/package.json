@@ -1,0 +1,22 @@
+{
+  "name": "@warden/mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing the WARDEN custody package to agent runtimes — read tools (live state) + build tools (unsigned transactions).",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "tsx server.ts",
+    "smoke": "tsx smoke.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@mysten/sui": "^1.30.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
