@@ -47,3 +47,18 @@ subprocess.run(w.feed_update_cmd(1_000_000, 1_000))
 | `owner_undeploy_cmd` | `app::owner_undeploy` | the owner (close the deployed leg) |
 
 Each returns the `sui client call` argv; sign and run it yourself.
+
+## Watch the leash (`monitor.py`)
+
+A read-only watchdog built on the readers above. It tails the vault, ledger and
+feed and reacts to state changes — a freeze (the agent has been halted), an
+unfreeze, new ledger entries (accepted *and* rejected), a stale feed, NAV moves —
+and checks that the keccak hash-chain head advances as entries arrive
+(tamper-evidence in real time).
+
+```bash
+python monitor.py --once          # one snapshot + any alerts, then exit
+python monitor.py --interval 5    # watch forever, polling every 5s
+```
+
+No keys, no gas — the operational counterpart to the thesis: watch the leash hold.
