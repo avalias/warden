@@ -130,7 +130,7 @@ warden/
 │   │   ├── warden.move     # orchestrator (hot-potato Trade flow)
 │   │   └── app.move        # entry points (CLI/PTB-callable)
 │   └── tests/  warden_tests · guardian_tests · gate_tests · strategy_tests · l5_l6_tests · property_tests
-├── sdk/                    # @warden/sdk — typed TS client (live readers + unsigned PTB builders)
+├── sdk/                    # SDKs — typed TS client + dependency-free Python client (live readers + builders)
 ├── app/                    # interactive dApp (live dashboard + wallet actions)
 ├── agent/                  # the LLM-powered trading agent (agent.py)
 ├── scripts/                # deploy.sh + demo.sh (reproduce the on-chain run)
