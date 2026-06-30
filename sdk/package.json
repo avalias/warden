@@ -9,6 +9,7 @@
   },
   "scripts": {
     "read-state": "tsx examples/read-state.ts",
+    "simulate": "tsx examples/simulate-guardian.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

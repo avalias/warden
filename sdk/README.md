@@ -55,6 +55,26 @@ await client.signAndExecuteTransaction({ signer, transaction: tx });
 
 Each returns an unsigned `Transaction`; sign and execute it yourself.
 
+## Simulate the guardian (no keys, no gas)
+
+Ask the chain *itself* what it would rule for a hypothetical trade — `devInspect`
+runs the guardian's pure re-derivation and returns its verdict, changing nothing.
+Preview the leash before you ever sign.
+
+```ts
+const v = await warden.simulateGuardian({
+  claimedRiskBps: 100, direction: 0,        // the agent's claim
+  exposure: 1_000_000, priceE6: 1_000_000, depth: 100_000, // the market it lies about
+});
+// { ok: false, derived_bps: 10000n, fault: 1 }  -> the chain catches the lie (diverged)
+
+await warden.deriveRisk({ exposure: 50_000, priceE6: 1_000_000, depth: 100_000 }); // 5000n bps
+```
+
+```bash
+npm run simulate     # runs examples/simulate-guardian.ts against testnet
+```
+
 ## Verify the ledger off-chain
 
 The readers expose `chain_head` and each entry's `entry_digest`. To re-derive the

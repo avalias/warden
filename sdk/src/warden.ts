@@ -90,6 +90,21 @@ function toHex(x: unknown): string {
   return '';
 }
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+/** Little-endian u64 from the first 8 bytes (BCS return-value decoding). */
+function leU64(b: ArrayLike<number>): bigint {
+  let v = 0n;
+  for (let i = 0; i < 8; i++) v += BigInt(b[i] ?? 0) << BigInt(8 * i);
+  return v;
+}
+
+export interface GuardianVerdict {
+  ok: boolean;        // would the chain approve this trade?
+  derived_bps: bigint; // the risk the chain itself re-derives
+  fault: number;       // 0 none · 1 diverged · 2 ceiling · 3 unsafe-direction
+}
+
 export class WardenClient {
   constructor(
     private readonly client: SuiClient,
@@ -172,6 +187,51 @@ export class WardenClient {
         entry_digest: toHex(p.entry_digest),
       };
     });
+  }
+
+  // ------------------------ chain simulation -------------------------
+  // Ask the chain ITSELF what it would rule — no keys, no gas, no state change.
+  // devInspect runs the guardian's pure re-derivation and returns its verdict,
+  // so you can preview the leash before ever signing a trade.
+
+  private async devInspectReturn(tx: Transaction): Promise<Uint8Array> {
+    const res = await this.client.devInspectTransactionBlock({ sender: ZERO_ADDRESS, transactionBlock: tx });
+    const rv = res.results?.[0]?.returnValues?.[0];
+    if (!rv) throw new Error('devInspect returned no value' + (res.error ? `: ${res.error}` : ''));
+    return Uint8Array.from(rv[0] as number[]);
+  }
+
+  /** The chain's own risk number (bps) for a hypothetical position — the exact
+   *  value the guardian would re-derive on-chain. */
+  async deriveRisk(p: { exposure: bigint | number; priceE6: bigint | number; depth: bigint | number }): Promise<bigint> {
+    const tx = new Transaction();
+    tx.moveCall({
+      target: `${this.addr.package}::guardian::derive_risk_bps`,
+      arguments: [tx.pure.u64(p.exposure), tx.pure.u64(p.priceE6), tx.pure.u64(p.depth)],
+    });
+    return leU64(await this.devInspectReturn(tx));
+  }
+
+  /** The full guardian verdict for a hypothetical trade: would it be approved,
+   *  what risk does the chain derive, and which fault (if any) trips. Lets an
+   *  agent preview the leash before signing anything. */
+  async simulateGuardian(p: {
+    claimedRiskBps: bigint | number;
+    direction: 0 | 1;
+    exposure: bigint | number;
+    priceE6: bigint | number;
+    depth: bigint | number;
+  }): Promise<GuardianVerdict> {
+    const tx = new Transaction();
+    tx.moveCall({
+      target: `${this.addr.package}::guardian::evaluate`,
+      arguments: [
+        tx.pure.u64(p.claimedRiskBps), tx.pure.u8(p.direction),
+        tx.pure.u64(p.exposure), tx.pure.u64(p.priceE6), tx.pure.u64(p.depth),
+      ],
+    });
+    const b = await this.devInspectReturn(tx); // BCS Assessment { ok: bool, derived_bps: u64, fault: u8 }
+    return { ok: b[0] === 1, derived_bps: leU64(b.slice(1, 9)), fault: b[9] ?? 0 };
   }
 
   // -------------------------- PTB builders ---------------------------
