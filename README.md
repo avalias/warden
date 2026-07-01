@@ -14,7 +14,7 @@
 [![on-chain verified](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml/badge.svg)](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Pitch deck**](https://avalias.github.io/warden/video/) · [**The freeze, on-chain ↗**](https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources) · [**Roadmap**](ROADMAP.md)
+[**▶ Demo video (2.5 min)**](https://youtu.be/BMIjmKbcnXE) · [**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Pitch deck**](https://avalias.github.io/warden/video/) · [**The freeze, on-chain ↗**](https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources) · [**Roadmap**](ROADMAP.md)
 
 </div>
 

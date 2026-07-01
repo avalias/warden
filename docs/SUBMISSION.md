@@ -71,7 +71,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
 - **Architecture (full 7-layer spec):** [docs/ARCHITECTURE.md](ARCHITECTURE.md)
 - **Pitch deck (live, animated):** https://avalias.github.io/warden/video/
 - **Demo video script:** [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md)
-- **Demo video:** the 2.5-minute recording linked in the submission form
+- **Demo video (2.5 min):** https://youtu.be/BMIjmKbcnXE
 
 ## Roadmap (honestly labeled, not claimed as built)
 
