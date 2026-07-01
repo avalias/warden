@@ -43,6 +43,8 @@ def report_initial(w, s):
         _log("ALERT", "vault is FROZEN -- the agent is halted (owner withdraw still works)")
     if f["stale"]:
         _log("WARN", "feed is STALE -- the guardian will reject reads until the keeper updates it")
+    if f["price_e6"] == 0:
+        _log("WARN", "feed price is ZERO (uninitialized?) -- guardian would derive 0 risk; do NOT trade until the keeper posts a real price")
     # show the most recent entry for context
     hist = w.get_ledger_history(1)
     if hist:
@@ -70,6 +72,9 @@ def report_diff(w, prev, cur):
         _log("WARN", "feed went STALE -- guardian reads will be rejected")
     elif not cf["stale"] and pf["stale"]:
         _log("OK", "feed is FRESH again")
+
+    if cf["price_e6"] == 0 and pf["price_e6"] != 0:
+        _log("WARN", "feed price is ZERO (uninitialized?) -- guardian would derive 0 risk; do NOT trade until the keeper posts a real price")
 
     new = int(cl["seq"]) - int(pl["seq"])
     if new > 0:

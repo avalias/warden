@@ -18,6 +18,7 @@ set -euo pipefail
 
 : "${PKG:?set PKG to the published packageId}"
 : "${SEED:?set SEED to a Coin<SUI> object id to fund the vault}"
+PY=${PYTHON:-python3}
 ME=$(sui client active-address)
 
 # call <function> <args...> -> prints raw json (use with `> file` or `| show`)
@@ -29,9 +30,9 @@ call() {
     sui client call --package "$PKG" --module app --function "$fn" --gas-budget 60000000 --json
   fi
 }
-show() { python -c "import json,sys;d=json.load(sys.stdin);print('   ',d['digest'],d['effects']['status']['status'],[e['type'].split('::')[-1] for e in d.get('events',[])])"; }
+show() { "$PY" -c "import json,sys;d=json.load(sys.stdin);print('   ',d['digest'],d['effects']['status']['status'],[e['type'].split('::')[-1] for e in d.get('events',[])])"; }
 # id <jsonfile> <TypeSuffix> -> objectId of the first created object of that type
-oid() { python -c "import json,sys;d=json.load(open(sys.argv[1]));print([c['objectId'] for c in d['objectChanges'] if c['type']=='created' and sys.argv[2] in c['objectType']][0])" "$1" "$2"; }
+oid() { "$PY" -c "import json,sys;d=json.load(open(sys.argv[1]));print([c['objectId'] for c in d['objectChanges'] if c['type']=='created' and sys.argv[2] in c['objectType']][0])" "$1" "$2"; }
 T=$(mktemp -d)
 
 echo "== L0/L1: open_vault =="

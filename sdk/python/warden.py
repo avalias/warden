@@ -22,6 +22,7 @@ The deployed package is immutable, so this is a thin, stable shim over a fixed A
 import json
 import base64
 import os
+import re
 import urllib.request
 
 TESTNET_RPC = "https://fullnode.testnet.sui.io:443"
@@ -46,7 +47,7 @@ def load_addresses(path=None):
     for p in candidates:
         if p and os.path.exists(p):
             cfg = json.load(open(p))
-            if isinstance(cfg.get("vault"), str) and cfg["vault"].startswith("0x") and len(cfg["vault"]) > 10:
+            if isinstance(cfg.get("vault"), str) and re.fullmatch(r"0x[0-9a-fA-F]{64}", cfg["vault"]):
                 return {k: cfg[k] for k in _ADDRESS_KEYS}
     raise RuntimeError("no usable warden.config.json found (copy warden.config.example.json and fill in your ids)")
 
@@ -151,25 +152,35 @@ class WardenClient:
         }
 
     def get_ledger_history(self, limit=10):
-        """The verifiable track record: most recent Recorded events, newest
-        first. Rejected trades are here too -- the chain records what the agent
-        was NOT allowed to do."""
-        res = self._rpc("suix_queryEvents", [
-            {"MoveEventType": "%s::ledger::Recorded" % self.addr["package"]},
-            None, limit, True,
-        ]) or {}
+        """The verifiable track record: most recent Recorded events for THIS
+        vault, newest first. Rejected trades are here too -- the chain records
+        what the agent was NOT allowed to do. The Recorded event is per-package,
+        so we filter on its `vault` field and paginate until `limit` entries."""
         out = []
-        for e in res.get("data", []):
-            p = e.get("parsedJson", {}) or {}
-            out.append({
-                "seq": int(p.get("seq", 0)),
-                "ts_ms": int(p.get("ts_ms", 0)),
-                "risk_bps": int(p.get("risk_bps", 0)),
-                "accepted": bool(p.get("accepted")),
-                "fault": int(p.get("fault", 0)),
-                "trade_digest": _to_hex(p.get("trade_digest")),
-                "entry_digest": _to_hex(p.get("entry_digest")),
-            })
+        cursor = None
+        for _ in range(5):  # safety cap: 5 pages of 50
+            res = self._rpc("suix_queryEvents", [
+                {"MoveEventType": "%s::ledger::Recorded" % self.addr["package"]},
+                cursor, 50, True,
+            ]) or {}
+            for e in res.get("data", []):
+                p = e.get("parsedJson", {}) or {}
+                if p.get("vault") != self.addr["vault"]:
+                    continue
+                out.append({
+                    "seq": int(p.get("seq", 0)),
+                    "ts_ms": int(p.get("ts_ms", 0)),
+                    "risk_bps": int(p.get("risk_bps", 0)),
+                    "accepted": bool(p.get("accepted")),
+                    "fault": int(p.get("fault", 0)),
+                    "trade_digest": _to_hex(p.get("trade_digest")),
+                    "entry_digest": _to_hex(p.get("entry_digest")),
+                })
+                if len(out) >= limit:
+                    return out
+            if not res.get("hasNextPage"):
+                break
+            cursor = res.get("nextCursor")
         return out
 
     # ------------------------- command builders -----------------------

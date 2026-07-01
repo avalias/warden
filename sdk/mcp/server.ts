@@ -24,7 +24,7 @@ function loadAddresses(): WardenAddresses {
   for (const name of ['../../warden.config.json', '../../warden.config.example.json']) {
     try {
       const raw = JSON.parse(readFileSync(resolve(here, name), 'utf8'));
-      if (typeof raw.vault === 'string' && raw.vault.startsWith('0x') && raw.vault.length > 10) {
+      if (typeof raw.vault === 'string' && /^0x[0-9a-fA-F]{64}$/.test(raw.vault)) {
         const { package: pkg, vault, policy, gen_registry, critic_registry, critic_cap, ledger, feed } = raw;
         return { package: pkg, vault, policy, gen_registry, critic_registry, critic_cap, ledger, feed };
       }
@@ -52,7 +52,7 @@ const TOOLS = [
   { name: 'warden_get_feed_state', description: 'The market feed the agent cannot forge: price_e6, depth, and whether a read would be rejected as stale right now.', inputSchema: { type: 'object', properties: {} } },
   { name: 'warden_get_ledger_history', description: 'Recent trade records — accepted AND rejected — newest first. The chain records what the agent was NOT allowed to do.', inputSchema: { type: 'object', properties: { limit: { type: 'number', description: 'how many entries (default 10)' } } } },
   { name: 'warden_build_feed_update', description: 'Build an UNSIGNED feed_update transaction (the keeper posts market data). Returns the serialized tx for your wallet to sign.', inputSchema: { type: 'object', properties: { priceE6: { type: 'string', description: 'price * 1e6' }, depth: { type: 'string', description: 'order-book depth' } }, required: ['priceE6', 'depth'] } },
-  { name: 'warden_build_agent_trade', description: 'Build an UNSIGNED agent_trade transaction. On submit it flows through all five gates atomically; a guardian fault freezes the vault and records the rejection. Returns the serialized tx to sign.', inputSchema: { type: 'object', properties: { amount: { type: 'string' }, direction: { type: 'number', enum: [0, 1], description: '0 = reduce risk, 1 = increase' }, claimedRiskBps: { type: 'string', description: "the agent's claimed risk in bps (the chain re-derives the truth and checks it)" }, walrusBlobHex: { type: 'string' }, teeAttestationHex: { type: 'string' } }, required: ['amount', 'direction', 'claimedRiskBps'] } },
+  { name: 'warden_build_agent_trade', description: 'Build an UNSIGNED agent_trade transaction. On submit it flows through all five gates atomically; a guardian fault freezes the vault and records the rejection. Returns the serialized tx to sign.', inputSchema: { type: 'object', properties: { amount: { type: 'string' }, direction: { type: 'number', enum: [0, 1], description: '0 = reduce-risk label, 1 = increase. NOTE: in the current immutable package the executed leg is deploy-only — direction is a guardian gate label, it does not trigger an undeploy.' }, claimedRiskBps: { type: 'string', description: "the agent's claimed risk in bps (the chain re-derives the truth and checks it)" }, walrusBlobHex: { type: 'string' }, teeAttestationHex: { type: 'string' } }, required: ['amount', 'direction', 'claimedRiskBps'] } },
 ];
 
 const server = new Server({ name: 'warden', version: '0.1.0' }, { capabilities: { tools: {} } });
@@ -70,14 +70,17 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       case 'warden_get_ledger_history': return J(await warden.getLedgerHistory(Number(args.limit ?? 10)));
       case 'warden_build_feed_update':
         return warden.buildFeedUpdateTx({ priceE6: BigInt(args.priceE6), depth: BigInt(args.depth) }).serialize();
-      case 'warden_build_agent_trade':
+      case 'warden_build_agent_trade': {
+        const d = Number(args.direction);
+        if (d !== 0 && d !== 1) throw new Error('direction must be 0 (reduce-risk label) or 1 (increase)');
         return warden.buildAgentTradeTx({
           amount: BigInt(args.amount),
-          direction: Number(args.direction) === 1 ? 1 : 0,
+          direction: d as 0 | 1,
           claimedRiskBps: BigInt(args.claimedRiskBps),
           walrusBlob: hexToBytes(args.walrusBlobHex),
           teeAttestation: hexToBytes(args.teeAttestationHex),
         }).serialize();
+      }
       default: throw new Error(`unknown tool: ${name}`);
     }
   };

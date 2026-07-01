@@ -18,7 +18,8 @@ cd sdk/python
 python read_state.py        # prints live vault / feed / ledger state from testnet
 ```
 
-Reads object ids from `../../warden.config.json` (falls back to the example).
+Reads object ids from `../../warden.config.json` (falls back to the example,
+which ships the real public testnet ids — the package is immutable).
 
 ## Use it
 
@@ -47,6 +48,9 @@ subprocess.run(w.feed_update_cmd(1_000_000, 1_000))
 | `owner_undeploy_cmd` | `app::owner_undeploy` | the owner (close the deployed leg) |
 
 Each returns the `sui client call` argv; sign and run it yourself.
+
+`direction`: 0 = reduce-risk label, 1 = increase (guardian gate; the executed
+leg in the current immutable package is deploy-only).
 
 ## Watch the leash (`monitor.py`)
 

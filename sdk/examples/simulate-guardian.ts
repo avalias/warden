@@ -18,7 +18,7 @@ function loadAddresses(): WardenAddresses {
   for (const name of ['../../warden.config.json', '../../warden.config.example.json']) {
     try {
       const raw = JSON.parse(readFileSync(resolve(here, name), 'utf8'));
-      if (typeof raw.vault === 'string' && raw.vault.startsWith('0x') && raw.vault.length > 10) {
+      if (typeof raw.vault === 'string' && /^0x[0-9a-fA-F]{64}$/.test(raw.vault)) {
         const { package: pkg, vault, policy, gen_registry, critic_registry, critic_cap, ledger, feed } = raw;
         return { package: pkg, vault, policy, gen_registry, critic_registry, critic_cap, ledger, feed };
       }

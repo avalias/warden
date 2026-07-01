@@ -126,9 +126,13 @@ def main():
         intent = decide(price, depth, vault, per_tx_cap, reserve_floor, model, base_url)
     except Exception as e:
         sys.exit(f"[error] agent decision failed (LLM call or schema validation): {e}")
-    amount = min(int(intent.amount), per_tx_cap)
-    print(f"[agent ] proposal: amount={amount} direction={intent.direction} "
-          f"claimed_risk_bps={intent.claimed_risk_bps} confidence={intent.confidence}")
+    # clamp everything the LLM produced before it touches argv — the chain would
+    # reject out-of-range values anyway, but never forward garbage.
+    amount = max(0, min(int(intent.amount), per_tx_cap))
+    direction = 1 if int(intent.direction) == 1 else 0
+    claimed_risk_bps = max(0, min(int(intent.claimed_risk_bps), 10000))
+    print(f"[agent ] proposal: amount={amount} direction={direction} "
+          f"claimed_risk_bps={claimed_risk_bps} confidence={intent.confidence}")
     print(f"[agent ] rationale: {intent.rationale}")
 
     # the trade digest is derived ON-CHAIN from the trade fields (the agent does
@@ -138,7 +142,7 @@ def main():
         "--function", "agent_trade", "--args",
         cfg["vault"], cfg["policy"], cfg["gen_registry"], cfg["critic_registry"],
         cfg["critic_cap"], cfg["ledger"], cfg["feed"],
-        str(amount), str(int(intent.direction)), str(int(intent.claimed_risk_bps)),
+        str(amount), str(direction), str(claimed_risk_bps),
         "0x" + "7761726c7573",  # walrus_blob placeholder
         "0x" + "746565",                # tee_attestation placeholder
         "0x6", "--gas-budget", "60000000",

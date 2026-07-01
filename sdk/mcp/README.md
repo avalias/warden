@@ -34,6 +34,9 @@ npm install
 npm run smoke      # spawns the server, does a real MCP round-trip against testnet
 ```
 
+Works from a fresh clone: `npm install` here also installs the parent
+[`@warden/sdk`](../README.md) deps that `../src/warden.ts` needs (postinstall).
+
 ## Wire it into a client
 
 Add to your MCP client's config (the `mcpServers` JSON block), using an absolute
@@ -43,13 +46,16 @@ path to `server.ts`:
 {
   "mcpServers": {
     "warden": {
-      "command": "node",
-      "args": ["--import", "tsx", "/abs/path/to/warden/sdk/mcp/server.ts"],
+      "command": "npx",
+      "args": ["-y", "tsx", "/abs/path/to/warden/sdk/mcp/server.ts"],
       "env": { "WARDEN_NETWORK": "testnet" }
     }
   }
 }
 ```
+
+Hosts that support a `cwd` field can instead set it to `sdk/mcp` and use a
+relative `server.ts`.
 
 Object ids come from `warden.config.json` at the repo root (falls back to the
 example). `WARDEN_NETWORK` defaults to `testnet`. For production, `tsc`-build the

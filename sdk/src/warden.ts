@@ -166,27 +166,38 @@ export class WardenClient {
     };
   }
 
-  /** The verifiable track record: the most recent `Recorded` events, newest
-   *  first. Rejected trades are in here too — the chain records what the agent
-   *  was NOT allowed to do. */
+  /** The verifiable track record: the most recent `Recorded` events for THIS
+   *  vault, newest first. Rejected trades are in here too — the chain records
+   *  what the agent was NOT allowed to do. The event is per-package, so we
+   *  filter on its `vault` field and paginate until `limit` entries. */
   async getLedgerHistory(limit: number = 10): Promise<LedgerEntry[]> {
-    const res = await this.client.queryEvents({
-      query: { MoveEventType: `${this.addr.package}::ledger::Recorded` },
-      limit,
-      order: 'descending',
-    });
-    return res.data.map((e) => {
-      const p = e.parsedJson as Record<string, unknown>;
-      return {
-        seq: Number(p.seq ?? 0),
-        ts_ms: Number(p.ts_ms ?? 0),
-        risk_bps: Number(p.risk_bps ?? 0),
-        accepted: Boolean(p.accepted),
-        fault: Number(p.fault ?? 0),
-        trade_digest: toHex(p.trade_digest),
-        entry_digest: toHex(p.entry_digest),
-      };
-    });
+    const out: LedgerEntry[] = [];
+    let cursor: { txDigest: string; eventSeq: string } | null = null;
+    for (let page = 0; page < 5; page++) { // safety cap: 5 pages of 50
+      const res = await this.client.queryEvents({
+        query: { MoveEventType: `${this.addr.package}::ledger::Recorded` },
+        cursor,
+        limit: 50,
+        order: 'descending',
+      });
+      for (const e of res.data) {
+        const p = e.parsedJson as Record<string, unknown>;
+        if (p.vault !== this.addr.vault) continue;
+        out.push({
+          seq: Number(p.seq ?? 0),
+          ts_ms: Number(p.ts_ms ?? 0),
+          risk_bps: Number(p.risk_bps ?? 0),
+          accepted: Boolean(p.accepted),
+          fault: Number(p.fault ?? 0),
+          trade_digest: toHex(p.trade_digest),
+          entry_digest: toHex(p.entry_digest),
+        });
+        if (out.length >= limit) return out;
+      }
+      if (!res.hasNextPage || !res.nextCursor) break;
+      cursor = res.nextCursor;
+    }
+    return out;
   }
 
   // ------------------------ chain simulation -------------------------

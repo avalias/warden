@@ -23,7 +23,9 @@ npm run read-state     # prints live vault / feed / ledger state from testnet
 ```
 
 `read-state` reads object ids from `../warden.config.json` (falls back to
-`warden.config.example.json`). Only on-chain ids are used.
+`warden.config.example.json`, which ships the real public testnet ids — the
+package is immutable; only the `llm_*` fields are placeholders). Only on-chain
+ids are used.
 
 ## Use it
 
@@ -54,6 +56,9 @@ await client.signAndExecuteTransaction({ signer, transaction: tx });
 | `buildOwnerUndeployTx` | `app::owner_undeploy` | the owner (close the deployed leg) |
 
 Each returns an unsigned `Transaction`; sign and execute it yourself.
+
+`direction`: 0 = reduce-risk label, 1 = increase (guardian gate; the executed
+leg in the current immutable package is deploy-only).
 
 ## Simulate the guardian (no keys, no gas)
 

@@ -26,18 +26,23 @@ async function main() {
   console.log('TOOLS:', tools.map((t) => t.name).join(', '), '\n');
 
   const text = (r: any) => String(r.content?.[0]?.text ?? '');
+  const check = (r: any) => {
+    if (r.isError) { console.error('TOOL FAILED:', text(r)); process.exit(1); }
+    return r;
+  };
 
   console.log('warden_get_vault_state ->');
-  console.log(text(await client.callTool({ name: 'warden_get_vault_state', arguments: {} })), '\n');
+  console.log(text(check(await client.callTool({ name: 'warden_get_vault_state', arguments: {} }))), '\n');
 
   console.log('warden_get_ledger_history(3) ->');
-  console.log(text(await client.callTool({ name: 'warden_get_ledger_history', arguments: { limit: 3 } })), '\n');
+  console.log(text(check(await client.callTool({ name: 'warden_get_ledger_history', arguments: { limit: 3 } }))), '\n');
 
   console.log('warden_build_feed_update -> serialized UNSIGNED tx (first 120 chars):');
-  const tx = text(await client.callTool({ name: 'warden_build_feed_update', arguments: { priceE6: '1000000', depth: '1000' } }));
+  const tx = text(check(await client.callTool({ name: 'warden_build_feed_update', arguments: { priceE6: '1000000', depth: '1000' } })));
   console.log('  ' + tx.slice(0, 120) + '…\n');
 
   await client.close();
+  if (!tx.length || !tx.startsWith('{')) { console.error('TOOL FAILED: built tx is not a serialized transaction:', tx.slice(0, 120)); process.exit(1); }
   console.log('OK — MCP round-trip works: tools listed + called, live state via testnet, unsigned tx built.');
 }
 

@@ -6,6 +6,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "postinstall": "npm --prefix .. install",
     "start": "tsx server.ts",
     "smoke": "tsx smoke.ts",
     "typecheck": "tsc --noEmit"
