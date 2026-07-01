@@ -113,7 +113,7 @@ const STATE = {
   vault: "0xa50d1f6a8d0fd5966ed757967b6c34c084b8f74a94f392b6111b086f0ddc6288",
   ledger: "0x6430faf2036c5de48a92e6f89816574c14dbe9887e93fb4a3a60b26e3fac8e64",
   policy:null, gen:null, creg:null, ccap:null, ocap:null,
-  wallet:null, account:null,
+  wallet:null, account:null, myFeed:false,
 };
 const $ = s => document.querySelector(s);
 const fmtSui = m => (Number(m)/1e9).toFixed(4)+" SUI";
@@ -137,9 +137,11 @@ async function refresh(){
     if(v){ $('#d-idle').textContent = fmtSui(v.idle); $('#d-deployed').textContent = fmtSui(v.deployed);
       const fr=$('#d-frozen'); fr.textContent = v.frozen?"FROZEN":"live"; fr.className = "pill "+(v.frozen?"frozen":"ok"); }
     if(l){ $('#d-seq').textContent = l.seq; }
-    // last ledger risk via the most recent Recorded event
-    try{ const ev = await rpc('suix_queryEvents',[{MoveModule:{package:PKG,module:'ledger'}},null,1,true]);
-      const e = ev.data?.[0]?.parsedJson; if(e) $('#d-risk').textContent = e.risk_bps; }catch(_){}
+    // last ledger risk via the most recent Recorded event FOR THIS VAULT
+    // (the package is shared — other vaults emit Recorded too, so filter)
+    try{ const ev = await rpc('suix_queryEvents',[{MoveEventType:PKG+'::ledger::Recorded'},null,25,true]);
+      const e = (ev.data||[]).map(x=>x.parsedJson).find(p=>p && p.vault===STATE.vault);
+      $('#d-risk').textContent = e ? e.risk_bps : '—'; }catch(_){}
   }catch(e){ /* keep last values */ }
 }
 refresh(); setInterval(refresh, 5000);
@@ -176,8 +178,14 @@ async function sign(tx, label){
     res = await w.features['sui:signAndExecuteTransactionBlock'].signAndExecuteTransactionBlock({ transactionBlock: tx, account:a, chain:'sui:testnet', options:{showObjectChanges:true,showEvents:true} });
   const digest = res.digest;
   log(label+' → tx <a href="https://suiscan.xyz/testnet/tx/'+digest+'" target="_blank" rel="noopener" class="mono">'+digest.slice(0,12)+'…</a>');
-  // fetch full effects (object changes + events) for ids/events
-  const full = await rpc('sui_getTransactionBlock',[digest,{showObjectChanges:true,showEvents:true}]);
+  // fetch full effects (object changes + events) — the wallet executes via its own
+  // node, so the public fullnode may not have indexed the digest yet: retry.
+  let full = null;
+  for(let i=0;i<10 && !full;i++){
+    try{ full = await rpc('sui_getTransactionBlock',[digest,{showObjectChanges:true,showEvents:true}]); }
+    catch(_){ await new Promise(r=>setTimeout(r,600)); }
+  }
+  if(!full) log('tx landed but the public fullnode has not indexed it yet — ids may appear after a refresh.', 'err');
   return full;
 }
 function created(full, typeSuffix){
@@ -189,7 +197,8 @@ const ACTS = {
     const tx = await newTx();
     tx.moveCall({ target:`${PKG}::app::feed_open`, arguments:[ tx.pure.u64(3600000), tx.object(CLOCK) ] });
     const f = await sign(tx,'open feed'); if(!f) return;
-    STATE.feed = created(f,'feed::OracleFeed') || STATE.feed;
+    const fid = created(f,'feed::OracleFeed');
+    if(fid){ STATE.feed = fid; STATE.myFeed = true; }
     log('feed ready: <span class="mono">'+STATE.feed.slice(0,12)+'…</span> (dashboard now tracks yours)', 'ok');
   },
   async openVault(){
@@ -208,6 +217,7 @@ const ACTS = {
   async feedThin(){ return setFeed(1000000, 1000, 'thin book (crash)'); },
   async trade(){
     if(!STATE.policy){ log('Open a vault first (step 2).', 'err'); return; }
+    if(!STATE.myFeed){ log('› press <b>1 · Open oracle feed</b> first — the default feed belongs to the demo keeper and is stale by now (the tx would abort).', 'err'); return; }
     const tx = await newTx();
     tx.moveCall({ target:`${PKG}::app::agent_trade`, arguments:[
       tx.object(STATE.vault), tx.object(STATE.policy), tx.object(STATE.gen), tx.object(STATE.creg),
@@ -228,6 +238,7 @@ const ACTS = {
   },
 };
 async function setFeed(price, depth, label){
+  if(!STATE.myFeed){ log('› press <b>1 · Open oracle feed</b> first — the default feed belongs to the demo keeper (only its keeper can write).', 'err'); return; }
   const tx = await newTx();
   tx.moveCall({ target:`${PKG}::app::feed_update`, arguments:[ tx.object(STATE.feed), tx.pure.u64(price), tx.pure.u64(depth), tx.object(CLOCK) ] });
   const f = await sign(tx,'post '+label); if(f) log('feed updated: '+label, 'ok');
