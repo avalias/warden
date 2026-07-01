@@ -87,6 +87,44 @@ fun test_happy_path() {
     clock::destroy_for_testing(clk);
 }
 
+// PIN (audit finding "DIR_REDUCE never reduces exposure"): documents that
+// `direction` is a guardian gate label only — the executed leg is deploy-only
+// in this package; a future package will branch settle() to undeploy on the
+// reduce direction. A fully valid REDUCE-labelled trade (all five gates green)
+// still moves idle -> deployed, INCREASING exposure by exactly `amount`.
+#[test]
+fun test_reduce_label_still_deploys() {
+    let mut ctx = tx_context::dummy();
+    let clk = clock::create_for_testing(&mut ctx);
+    let (mut v, ocap, mut pol, reg, creg, ccap, mut led) = setup(&mut ctx, &clk);
+
+    let idle_before = vault::idle_value(&v);
+    let deployed_before = vault::deployed(&v);
+    let nav_before = vault::nav(&v);
+
+    // low exposure, deep fresh feed → guardian passes; direction = REDUCE
+    let amount = 10_000;
+    let derived = guardian::derive_risk_bps(deployed_before + amount, 1_000_000, 100_000_000);
+    let t = warden::propose(&v, amount, guardian::dir_reduce(), derived);
+    let verdict = critic::judge(&ccap, warden::trade_digest(&t), true);
+    let market = feed_with(1_000_000, 100_000_000, &clk, &mut ctx);
+    let r = warden::settle(
+        t, &mut v, &mut pol, &reg, &creg, verdict, &mut led,
+        &market, b"walrus-blob-reduce", b"tee-att-reduce", &clk,
+    );
+
+    assert!(ledger::receipt_accepted(&r), 400);       // trade went through
+    assert!(!vault::is_frozen(&v), 401);
+    // exposure INCREASED by exactly `amount` despite the REDUCE label
+    assert!(vault::deployed(&v) == deployed_before + amount, 402);
+    assert!(vault::idle_value(&v) == idle_before - amount, 403);
+    assert!(vault::nav(&v) == nav_before, 404);       // conserved: funds never left
+
+    feed::destroy_for_testing(market);
+    teardown(v, ocap, pol, reg, creg, ccap, led);
+    clock::destroy_for_testing(clk);
+}
+
 #[test]
 fun test_divergence_freezes_and_records() {
     let mut ctx = tx_context::dummy();

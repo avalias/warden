@@ -62,3 +62,43 @@ fun test_extreme_inputs_saturate() {
     let bps = guardian::derive_risk_bps(18_446_744_073_709_551_615, 1_000_000, 1);
     assert!(bps == 10_000, 0);
 }
+
+// PIN (audit): a zero-price feed derives ZERO risk. With price_e6 == 0 the
+// notional is 0 regardless of exposure, so derive_risk_bps returns 0 and
+// evaluate() approves an honest claim of 0. This documents that an
+// uninitialized/zero-price feed reads as risk-free — the keeper MUST post a
+// non-zero price before trading (see ROADMAP).
+#[test]
+fun test_zero_price_feed_derives_zero_risk() {
+    // price 0 (and depth 0, hitting the div-by-zero guard) → 0 bps
+    assert!(guardian::derive_risk_bps(1_000_000, 0, 0) == 0, 0);
+    // the full gate agrees: honest 0-claim at price 0 is approved as fault-free
+    let a = guardian::evaluate(0, guardian::dir_increase(), 1_000_000, 0, 1000);
+    assert!(guardian::ok(&a), 1);
+    assert!(guardian::derived(&a) == 0, 2);
+    assert!(guardian::fault(&a) == 0, 3);
+}
+
+// PIN (audit): boundary of the zero-price blind spot. With price_e6 == 0, ANY
+// exposure — even near u64::MAX on a paper-thin book — derives 0 bps, so an
+// honest claim of 0 passes every gate (divergence, ceiling, direction clamp).
+// The gates themselves are sound: the SAME shape with a non-zero price is
+// rejected at the hard ceiling even when the agent claims the derived number
+// truthfully. The blind spot is the zero price, not the gate logic.
+#[test]
+fun test_zero_price_feed_evaluate_boundary() {
+    // huge exposure, thin book, price 0 → derived 0 → honest 0-claim is ok
+    let a = guardian::evaluate(
+        0, guardian::dir_increase(), 18_446_744_073_709_551_615, 0, 1,
+    );
+    assert!(guardian::ok(&a), 0);
+    assert!(guardian::derived(&a) == 0, 1);
+    assert!(guardian::fault(&a) == 0, 2);
+    // non-zero price: exposure 1e6 at price 1.0 over depth 100_000 derives
+    // 1e6 * 1e4 / 1e5 = 100_000 bps → saturates to 10_000 > 7_000 ceiling.
+    // Even a truthful claim of 10_000 is NOT ok → FAULT_CEILING (2).
+    let b = guardian::evaluate(10_000, guardian::dir_increase(), 1_000_000, 1_000_000, 100_000);
+    assert!(guardian::derived(&b) == 10_000, 3);
+    assert!(!guardian::ok(&b), 4);
+    assert!(guardian::fault(&b) == 2, 5);
+}
