@@ -19,7 +19,10 @@ Status is tracked honestly: what's **on-chain today**, and what's **next**.
 - **L6 dead-man-switch:** share the `Switch` object so a third-party beneficiary (not just the owner) can trigger the claim after dormancy; assert `sender == beneficiary`.
 - **L6 prize draw:** take real `Coin` custody (not a counter) and replace `acc % n` with VRF / a commit-reveal seed that the last revealer cannot grind.
 - **L5 oracle:** escrow a real bond on `dispute`, slashed/paid on resolution, so the optimistic fast-path can't be griefed for free.
-- **L2 critic:** enforce `critic ≠ agent` at mint, and ship a real second-signer veto flow (a distinct critic key escrowing its verdict).
+- **L2 critic:** enforce `critic ≠ agent` at mint, and ship a real second-signer veto flow (a distinct critic key escrowing its verdict) — as shipped, the same-tx hot-potato `Verdict` reduces to a same-signer approval.
+- **L2 value plane:** branch `settle()` to `undeploy` on the reduce direction — in the shipped package `direction` is a guardian gate label only and the executed leg is deploy-only (pinned by `test_reduce_label_still_deploys`); the ceiling and divergence checks do operate on the true post-trade exposure.
+- **L2 feed:** reject `price_e6 == 0` on read/update — an uninitialized or zero-price feed currently derives 0 risk (pinned by `test_zero_price_feed_derives_zero_risk`); the keeper must post a non-zero price, and the SDK monitor flags a zero-price feed.
+- **L4 ledger:** replace the O(n) `seen` replay-guard (`VecSet` linear scan) with a `Table`/dynamic-field so per-append gas stays O(1) as history grows; the keccak hash chain already provides the tamper-evidence.
 
 ## Next — the value plane (real venue)
 - Wire `vault::deploy` to a **DeepBook v3** market/limit order against `idle`; `strategy::settle` against the live feed with real PnL movement.

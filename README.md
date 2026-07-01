@@ -10,11 +10,11 @@
 [![Sui Overflow 2026](https://img.shields.io/badge/Sui_Overflow-2026-4da2ff?style=flat-square)](https://sui.io)
 [![Track](https://img.shields.io/badge/Track-The_Agentic_Web-37e0ac?style=flat-square)](#)
 [![Testnet](https://img.shields.io/badge/testnet-deployed_%26_verified-2ecc71?style=flat-square)](https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437)
-[![Move tests](https://img.shields.io/badge/move_tests-48%2F48_passing-2ecc71?style=flat-square)](#-tests)
+[![Move tests](https://img.shields.io/badge/move_tests-51%2F51_passing-2ecc71?style=flat-square)](#-tests)
 [![on-chain verified](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml/badge.svg)](https://github.com/avalias/warden/actions/workflows/verify-onchain.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources) · [**Roadmap**](ROADMAP.md)
+[**Live site**](https://avalias.github.io/warden) · [**Live dApp**](https://avalias.github.io/warden/app/) · [**Pitch deck**](https://avalias.github.io/warden/video/) · [**The freeze, on-chain ↗**](https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m) · [**Architecture**](docs/ARCHITECTURE.md) · [**On-chain proof**](#-proven-on-chain-testnet) · [**Contracts**](contracts/sources) · [**Roadmap**](ROADMAP.md)
 
 </div>
 
@@ -26,7 +26,19 @@ Every autonomous "AI wallet" asks you to **trust the agent** — it holds a broa
 
 **WARDEN inverts this.** The AI only *proposes*. The chain *re-derives the truth, clamps the agent, freezes on divergence, and proves every move*. The agent is powerful — and structurally **powerless to do harm**.
 
-That single inversion turns "a cute agent" into **infrastructure a regulated institution can legally fund** — because trusting the agent is no longer required.
+That single inversion turns "a cute agent" into **infrastructure a regulated institution can credibly fund** — because trusting the agent is no longer required.
+
+## ⚡ Judge mode — verify everything in 90 seconds
+
+Zero dependencies, no Sui CLI, no trust in us required:
+
+```bash
+git clone https://github.com/avalias/warden && cd warden
+python scripts/verify_onchain.py   # package is immutable + all 15 lifecycle txs live on testnet
+python scripts/verify_ledger.py    # re-derives the keccak hash-chain from on-chain events → CHAIN INTACT
+```
+
+Optional, with the Sui CLI: `cd contracts && sui move test` → all tests green.
 
 ---
 
@@ -46,7 +58,7 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 |---|---|---|
 | `open_vault` | Non-custodial vault + revocation/critic registries + hash-chained ledger created | [`6A3E24RD…`](https://suiscan.xyz/testnet/tx/6A3E24RDkxY4NZuFKXGqYuEHC26ErSvFWA2oU9RHTErP) |
 | `feed_open` / `feed_update` | **Market-data integrity** — a keeper posts price + order-book depth to a shared on-chain feed the agent **cannot forge**; the Guardian reads *this*, never a caller-supplied number | [`AXoLFcpi…`](https://suiscan.xyz/testnet/tx/AXoLFcpihLzFLDzdFzRk6QkTbsivXSVCNTdNuE5DZQRW) · [`5yVaWE8n…`](https://suiscan.xyz/testnet/tx/5yVaWE8nvXYeWw6ZBWbnNHk7MXh5cWKxZ8uGqXftzNUL) |
-| `agent_trade` ✅ | A valid trade clears all five gates (Guardian reads the deep-book feed) → `Recorded{accepted:true, seq:1}` | [`7xhJysZx…`](https://suiscan.xyz/testnet/tx/7xhJysZxJpQJ5t7sucLRdxc2o1nNSHtpumof8FBbKBRR) |
+| `agent_trade` ✅ | A valid trade clears all five gates (Guardian reads the keeper-fed order-book feed) → `Recorded{accepted:true, seq:1}` | [`7xhJysZx…`](https://suiscan.xyz/testnet/tx/7xhJysZxJpQJ5t7sucLRdxc2o1nNSHtpumof8FBbKBRR) |
 | `feed_update` 📉 | The keeper posts a **thin order book** (a crash) to the feed | [`3pWWdm6V…`](https://suiscan.xyz/testnet/tx/3pWWdm6Vz3twFjLEmJcoB5jYvgzwM3793Cy6RBZtHtpH) |
 | `agent_trade` 🧊 | **The heart.** The agent still claims `risk=0`; the chain re-derives risk **from the feed** (not the agent), gets `10000bps`, catches the lie → **`VaultFrozen`** + `Recorded{accepted:false, seq:2}` | [`9BbwxdsR…`](https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m) |
 | `owner_exit` | Owner withdraws **even while frozen** → `Withdrawn` (non-custodial) | [`AwXb1KEe…`](https://suiscan.xyz/testnet/tx/AwXb1KEesP3YxFYAmjrZ3SsTHdDfuuubAH8L4YjUVpM8) |
@@ -56,7 +68,7 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 | `oracle_propose` → `oracle_finalize` | **L5** — propose an outcome with a challenge window; finalize once it closes (Move-native optimistic oracle) | [`8dfTVWEN…`](https://suiscan.xyz/testnet/tx/8dfTVWENwsHmRhcWpYc8g282zz1eaMwcTdgV8NCVGNSx) · [`BxXzCrkS…`](https://suiscan.xyz/testnet/tx/BxXzCrkSZzCJT2f2cx6VS4Tou7aBnZfMkcMJkurfPVdz) |
 | `inherit_open` → `inherit_claim` | **L6** — dead-man-switch: open with a dormancy timer; after it elapses the beneficiary inherits → **`Inherited`** | [`JxYNBvnF…`](https://suiscan.xyz/testnet/tx/JxYNBvnFtcBCkkDsFgoLaAVZVpANKMJVxP32N85qw91) · [`EiDvSwCa…`](https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU) |
 
-**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **48/48 Move unit tests**.
+**All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **51/51 Move unit tests**.
 
 ---
 
@@ -77,7 +89,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (48/48), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap.)
+This repo ships **all seven layers** — built, unit-tested (51/51), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap. The L4 receipt's Walrus-blob + TEE fields are anchored placeholders until those integrations land — the Sui-tx-digest proof is live.)
 
 ### How a single trade survives the chain
 
@@ -142,7 +154,7 @@ warden/
 
 ## 🧪 Tests
 
-**48/48 passing** — every gate's negative path is pinned by name, and an
+**51/51 passing** — every gate's negative path is pinned by name, and an
 **adversarial property layer** sweeps thousands of synthetic inputs to show the
 safety invariants hold for *all* of them, not just hand-picked cases: ~2.4k
 market states where the guardian never approves an over-ceiling or lowballed-risk
@@ -204,7 +216,10 @@ sui move test
 [ PASS ] prop_custody_nav_conserved_under_agent_ops # L0: 400 random agent moves — NAV never changes; only the owner shrinks it
 [ PASS ] prop_reserve_floor_always_respected      # L0: the reserve floor survives every permitted deploy
 [ PASS ] prop_ledger_chain_advances_and_is_monotone # L4: 200 entries — seq never skips, keccak chain advances every append
-Test result: OK. Total tests: 48; passed: 48; failed: 0
+[ PASS ] test_reduce_label_still_deploys          # honesty pin: direction is a guardian gate label; the executed leg is deploy-only
+[ PASS ] test_zero_price_feed_derives_zero_risk   # honesty pin: a zero-price feed derives 0 risk — keeper must post a real price
+[ PASS ] test_zero_price_feed_evaluate_boundary   # honesty pin: zero-price passes the gates; a real price trips the ceiling
+Test result: OK. Total tests: 51; passed: 51; failed: 0
 ```
 
 ### 🔗 Verify the tamper-evidence yourself
@@ -254,7 +269,7 @@ python -m http.server 4178   # → http://localhost:4178
 - **Real-world application.** A construction a regulated institution can actually fund, because trusting the agent isn't required — the chain structurally prevents theft (non-custodial + object-capability), mis-allocation (on-chain risk re-derivation from a feed the agent can't forge → clamp → freeze), and misreporting (a keccak **hash-chained**, no-delete three-proof ledger, with the trade digest derived on-chain). Compliance (L5) and inheritance (L6) make it institution- and continuity-ready.
 - **Technical depth.** A load-bearing stack of Sui primitives — object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against a keeper-fed oracle, a dual-key critic, a proven bounded-drawdown, a Move-native optimistic oracle, a dead-man-switch and a verifiable draw — composed under one thesis, deployed and proven on-chain.
 
-**Honest scope:** all **seven layers** are built, unit-tested (48/48), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
+**Honest scope:** all **seven layers** are built, unit-tested (51/51), deployed, and anchored on-chain. What remains a roadmap is not a *layer* but the heaviest *integrations* inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc and not claimed as shipped. Every on-chain primitive here is real, tested, and clickable.
 
 ---
 

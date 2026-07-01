@@ -192,14 +192,14 @@
     <p class="tag rv">Give the machine the markets. Give the chain the leash. <span>// Машине — рынки. Цепи — поводок.</span></p>
     <div class="cta rv">
       <a href="app/index.html" class="btn btn-fill">Launch the live dApp →</a>
+      <a href="https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m" target="_blank" rel="noopener" class="btn btn-ghost">See the chain catch the AI lying ↗</a>
       <a href="https://github.com/avalias/warden" target="_blank" rel="noopener" id="ghHero" class="btn btn-ghost">★ View on GitHub</a>
-      <a href="#inversion" class="btn btn-ghost">See how it works</a>
     </div>
     <div class="herostats rv">
-      <div class="hs"><div class="n grad" data-c="13">13</div><div class="l">Move modules, deployed</div></div>
+      <div class="hs"><div class="n grad" data-c="15">15</div><div class="l">lifecycle txs, live on testnet</div></div>
       <div class="hs"><div class="n grad" data-c="7">7</div><div class="l">composable security layers</div></div>
+      <div class="hs"><div class="n grad" data-c="0">0</div><div class="l">upgrade paths — UpgradeCap burned</div></div>
       <div class="hs"><div class="n grad" data-c="1">1</div><div class="l">thesis: trust-minimization</div></div>
-      <div class="hs"><div class="n grad">∞</div><div class="l">audits — every move is on-chain</div></div>
     </div>
   </div>
 </header>
@@ -311,9 +311,9 @@
 <section class="band">
   <div class="wrap">
     <div class="bgrid">
-      <div class="bstat rv"><div class="n grad" data-c="48">48</div><div class="l">Move tests passing</div></div>
+      <div class="bstat rv"><div class="n grad" data-c="51">51</div><div class="l">Move tests passing</div></div>
       <div class="bstat rv"><div class="n grad" data-c="0" data-suf="%">0%</div><div class="l">of capital the agent can withdraw</div></div>
-      <div class="bstat rv"><div class="n grad" data-c="3">3</div><div class="l">proofs per decision (Sui·Walrus·TEE)</div></div>
+      <div class="bstat rv"><div class="n grad" data-c="1">1</div><div class="l">on-chain proof per decision (+2 reserved: Walrus·TEE)</div></div>
       <div class="bstat rv"><div class="n grad" data-c="100" data-suf="%">100%</div><div class="l">of risk numbers re-derived on-chain</div></div>
     </div>
   </div>
@@ -329,10 +329,16 @@
       <div><span class="mono" style="color:var(--dim2);font-size:12px">PACKAGE · testnet · <span style="color:var(--mint)">immutable ✓</span></span><br/><a class="mono grad" style="font-size:13.5px;word-break:break-all" href="https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437" target="_blank" rel="noopener">0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437</a></div>
       <a class="btn btn-ghost" href="https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437" target="_blank" rel="noopener">View on Suiscan ↗</a>
     </div>
+    <div class="rv" style="margin-top:14px;padding:18px 20px;border:1px solid var(--line2);border-radius:14px;background:var(--card)">
+      <span class="mono" style="color:var(--dim2);font-size:12px">VERIFY IT YOURSELF — 90 SECONDS · zero dependencies, no Sui CLI, no trust in us required</span>
+      <pre class="mono" style="margin:10px 0 0;font-size:13px;line-height:1.7;color:var(--tx);overflow-x:auto">git clone https://github.com/avalias/warden && cd warden
+python scripts/verify_onchain.py   <span style="color:var(--dim2)"># package immutable + all 15 lifecycle txs, live</span>
+python scripts/verify_ledger.py    <span style="color:var(--dim2)"># re-derives the keccak hash-chain → CHAIN INTACT</span></pre>
+    </div>
     <div class="fgrid" style="margin-top:16px">
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/6A3E24RDkxY4NZuFKXGqYuEHC26ErSvFWA2oU9RHTErP" target="_blank" rel="noopener"><div class="fi">🏦</div><h3>open_vault</h3><p>Non-custodial vault + revocation/critic registries + append-only ledger created.</p><div class="from mono">tx 6A3E24RD… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/5yVaWE8nvXYeWw6ZBWbnNHk7MXh5cWKxZ8uGqXftzNUL" target="_blank" rel="noopener"><div class="fi">📡</div><h3>oracle feed — keeper writes</h3><p>A keeper posts price + order-book depth to a shared on-chain feed the agent <b>cannot forge</b>. The Guardian reads this — never a number the agent passed in.</p><div class="from mono">tx 5yVaWE8n… ↗</div></a>
-      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/7xhJysZxJpQJ5t7sucLRdxc2o1nNSHtpumof8FBbKBRR" target="_blank" rel="noopener"><div class="fi">✅</div><h3>agent_trade — accepted</h3><p>A valid trade clears all five gates (Guardian reads the deep-book feed) → <span class="mono">Recorded{accepted:true, seq:1}</span>.</p><div class="from mono">tx 7xhJysZx… ↗</div></a>
+      <a class="fc rv" href="https://suiscan.xyz/testnet/tx/7xhJysZxJpQJ5t7sucLRdxc2o1nNSHtpumof8FBbKBRR" target="_blank" rel="noopener"><div class="fi">✅</div><h3>agent_trade — accepted</h3><p>A valid trade clears all five gates (Guardian reads the keeper-fed order-book feed) → <span class="mono">Recorded{accepted:true, seq:1}</span>.</p><div class="from mono">tx 7xhJysZx… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/9BbwxdsRB43kE63sEiZqubksMRGVJMxr5EALBx7BUi9m" target="_blank" rel="noopener"><div class="fi">🧊</div><h3>agent_trade — the heart</h3><p>The keeper posts a thin book; the agent still claims <span class="mono">risk=0</span>; the chain re-derives <span class="mono">10000bps</span> <b>from the feed</b>, catches the lie → <b>VaultFrozen</b>.</p><div class="from mono">tx 9BbwxdsR… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/AwXb1KEesP3YxFYAmjrZ3SsTHdDfuuubAH8L4YjUVpM8" target="_blank" rel="noopener"><div class="fi">🔓</div><h3>owner_exit</h3><p>Owner withdraws <b>even while frozen</b> → <span class="mono">Withdrawn</span>. The freeze stops the agent, never the owner.</p><div class="from mono">tx AwXb1KEe… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/D6czQv4oeBD2zKvRz4Tzwy1d2xTvpssVSdy6C1UoqcxW" target="_blank" rel="noopener"><div class="fi">📈</div><h3>open_hedge — L3</h3><p>Opens a self-hedging carry position over the vault's notional.</p><div class="from mono">tx D6czQv4o… ↗</div></a>
@@ -341,7 +347,7 @@
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/BxXzCrkSZzCJT2f2cx6VS4Tou7aBnZfMkcMJkurfPVdz" target="_blank" rel="noopener"><div class="fi">🛰️</div><h3>oracle_finalize — L5</h3><p>A Move-native optimistic oracle finalizes an outcome after its challenge window closes.</p><div class="from mono">tx BxXzCrkS… ↗</div></a>
       <a class="fc rv" href="https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU" target="_blank" rel="noopener"><div class="fi">♾️</div><h3>inherit_claim — L6</h3><p>Dead-man-switch: after the dormancy timer elapses, the beneficiary inherits → <b>Inherited</b>.</p><div class="from mono">tx EiDvSwCa… ↗</div></a>
     </div>
-    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — fifteen transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>48/48 Move unit tests</b>.</p>
+    <p class="sectlead rv" style="margin-top:16px;font-size:14px"><b>All seven layers anchored on-chain</b> — fifteen transactions, every one clickable — reproducible via <span class="mono">scripts/demo.sh</span> and covered by the <b>51/51 Move unit tests</b>.</p>
   </div>
 </section>
 
@@ -350,7 +356,7 @@
   <div class="wrap">
     <div class="rv"><div class="eyebrow">The mechanisms</div>
     <h2>Load-bearing, end to end.</h2>
-    <p class="sectlead">Every mechanism maps to a Move module that implements it. Nothing decorative.</p></div>
+    <p class="sectlead">Every shipped mechanism maps to a Move module that implements it — the three marked <b>roadmap</b> are labeled as such.</p></div>
     <div class="fgrid">
       <div class="fc rv"><div class="fi">🔒</div><h3>Capital the AI can't take</h3><p>User-owned vault + non-transferable capability object + a no-withdraw boundary. The agent touches positions, never the exit.</p><div class="from">module: <b>vault · policy</b></div></div>
       <div class="fc rv"><div class="fi">⛓️</div><h3>Risk re-derived on-chain</h3><p>The Guardian never trusts the agent's number — it recomputes risk from a keeper-fed market feed the agent can't forge, and freezes on divergence.</p><div class="from">module: <b>guardian</b></div></div>
@@ -372,13 +378,12 @@
 <section id="score">
   <div class="wrap">
     <div class="rv"><div class="eyebrow">Why it holds up</div>
-    <h2>Strong where it's judged.</h2>
-    <p class="sectlead">Two things matter: does it solve a real problem, and is it technically deep. WARDEN is built for both.</p></div>
+    <h2>Why institutions can fund this.</h2></div>
     <div class="score">
-      <div class="sb rv"><div class="sl">Real-world application</div><div class="sn grad">Fundable</div><div class="bar"><i data-w="100"></i></div><p>A construction a regulated institution can actually fund — because trusting the agent isn't required. The chain structurally prevents theft, mis-allocation, and misreporting.</p></div>
-      <div class="sb tot rv"><div class="sl">Technical depth</div><div class="sn grad">Load-bearing</div><div class="bar"><i data-w="100"></i></div><p>Object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against an oracle feed the agent can't forge, a dual-key critic, a proven bounded-drawdown, a Move-native oracle, a dead-man-switch — composed under one thesis, deployed and proven on-chain.</p></div>
+      <div class="sb rv"><div class="sl">Real-world application</div><div class="sn grad">0% agent-withdrawable</div><p>A construction an institution can credibly fund — because trusting the agent isn't required. The chain structurally prevents theft, mis-allocation, and misreporting; the package is immutable, so the rules can never quietly change.</p></div>
+      <div class="sb tot rv"><div class="sl">Technical depth</div><div class="sn grad">51/51 tests · 15 txs</div><p>Object-capabilities with hot-potato enforcement, a revocation lattice, on-chain risk re-derivation against an oracle feed the agent can't forge, a dual-key critic, a proven bounded-drawdown, a Move-native oracle, a dead-man-switch — composed under one thesis, deployed and proven on-chain.</p></div>
     </div>
-    <div class="note rv"><b>Honest scope.</b> All <b>seven layers</b> are built, unit-tested (48/48), deployed, and anchored on-chain (L0→L6) — nothing here is a mockup.
+    <div class="note rv"><b>Honest scope.</b> All <b>seven layers</b> are built, unit-tested (51/51), deployed, and anchored on-chain (L0→L6) — nothing here is a mockup.
       <span class="mvp">L0 non-custodial vault · L1 object-capability + revocation · L2 on-chain re-derivation + freeze + critic co-sign · L3 bounded-drawdown hedge · L4 three-proof append-only ledger · L5 KYC gate + optimistic oracle · L6 dead-man-switch + no-loss draw.</span>
       What remains a roadmap is not a <i>layer</i> but the heaviest <i>integrations</i> inside L5/L6 — full Seal threshold-IBE, Nautilus/Nitro attestation, native Confidential Transfers, and the x402/MCP distribution surface — specified in the architecture doc, not claimed as shipped.</div>
   </div>
@@ -400,7 +405,7 @@
     <div class="fmeta">
       Sui Overflow 2026 · The Agentic Web (Autonomous Agent Wallet) — also relevant to DeFi &amp; Payments.<br/>
       Built on Sui · Move · object-capabilities · hot-potato settlement. Seven composable layers under one thesis: trust-minimization.<br/>
-      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed, verified &amp; <b>immutable</b> on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437" target="_blank" rel="noopener">0xfd6131…7437</a> · 48/48 Move tests passing.</span>
+      <span style="color:var(--dim2)">Repo: <a href="https://github.com/avalias/warden" target="_blank" rel="noopener">github.com/avalias/warden</a> · Deployed, verified &amp; <b>immutable</b> on Sui testnet: <a class="mono" href="https://suiscan.xyz/testnet/object/0xfd613140878e6e12487208bc8185b119a14031daac7149de860c2d9771527437" target="_blank" rel="noopener">0xfd6131…7437</a> · 51/51 Move tests passing.</span>
     </div>
   </div>
 </footer>

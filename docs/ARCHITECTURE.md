@@ -46,14 +46,21 @@ every policy of an older generation dies in a single transaction.
 
 ### L2 — The chain never trusts the AI  ♥ (the heart)
 The AI proposes an unsigned intent. A deterministic, fail-closed **Guardian
-re-derives the risk on-chain** from raw market state, clamps the agent to the
-risk-reducing direction inside a danger zone, and rejects fills above a hard
-ceiling. A **critic capability** (`CriticCap`) — a separable approval identity,
-held by the owner in the single-operator demo and by a distinct critic signer in
-the intended multi-party deployment — co-signs the proposal over a digest
-**derived on-chain** from the trade contents, so its approval is bound to exactly
-what was proposed. If the chain's re-derivation diverges from the agent's claim,
-the **vault freezes** and only governance can lift it.
+re-derives the risk on-chain** from raw market state, gates the danger zone to
+trades labeled with the risk-reducing direction, and rejects fills above a hard
+ceiling. (Honest note: in the shipped, immutable package the executed leg is
+deploy-only — the reduce direction is a guardian gate label and does not yet
+drive an `undeploy`; the risk ceiling and divergence check operate on the true
+post-trade exposure, and branching `settle()` to undeploy on the reduce
+direction is roadmap.) A **critic capability** (`CriticCap`) — a separable
+approval identity, held by the owner in the single-operator demo and by a
+distinct critic signer in the intended multi-party deployment — co-signs the
+proposal over a digest **derived on-chain** from the trade contents, so its
+approval is bound to exactly what was proposed. (Since a `Verdict` is a same-tx
+hot potato minted with the `CriticCap`, the demo entry reduces to a same-signer
+approval; true two-party independence — a detached critic signature verified
+on-chain — is roadmap.) If the chain's re-derivation diverges from the agent's
+claim, the **vault freezes** and only governance can lift it.
 *Modules: `guardian`, `critic`.*
 
 ### L3 — Structured-product engine (it hedges itself)
@@ -128,7 +135,7 @@ any divergence freezes the position and records the rejection.
 
 ## Engineering rigor
 
-- **48/48 Move unit tests** — the heart (direct guardian coverage: the risk
+- **51/51 Move unit tests** — the heart (direct guardian coverage: the risk
   arithmetic, the divergence boundary, the hard ceiling, and the safe-direction
   clamp both ways), every gate's negative path (L1 per-tx / window / expiry /
   pause / wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0
@@ -140,7 +147,7 @@ any divergence freezes the position and records the rejection.
   on-chain across **15 clickable transactions** and reproducible via
   `scripts/demo.sh`. The `UpgradeCap` has been **burned** — the package is
   immutable; even the deployer cannot change the leash.
-- Transparent commit history; deployed package matches the source.
+- Transparent commit history; the source is published at the deploy commit (the package is immutable, so the on-chain bytecode can never drift from it).
 
 ---
 
@@ -153,5 +160,8 @@ proposes `agent_trade` under the policy.
 
 **Roadmap** — not a *layer*, but the heaviest *integrations* inside L5/L6: full
 Seal threshold-IBE, Nautilus/Nitro TEE attestation, native Confidential
-Transfers, an x402 agent-payment rail with an MCP server + SDKs, and sealing the
-agent's reasoning to Walrus. (Deployment is on testnet; mainnet-ready.)
+Transfers, an x402 agent-payment rail, and sealing the agent's reasoning to
+Walrus. *(The MCP server and the TypeScript + Python SDKs have shipped — see
+[`sdk/`](../sdk/).)* Deployment is on testnet; the mainnet path — including the
+satellite hardening tracked in [ROADMAP.md](../ROADMAP.md) — ships as a new
+package.

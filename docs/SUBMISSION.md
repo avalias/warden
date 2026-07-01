@@ -21,16 +21,18 @@ Every autonomous "AI wallet" shares one flaw: you must **trust the agent** — i
 
 WARDEN inverts this. The AI emits an unsigned intent; then a deterministic, fail-closed **Guardian re-derives the risk on-chain** from a keeper-fed feed the agent can't forge, a separable **critic capability** co-signs (single-operator in the demo; a distinct critic signer in multi-party deployment), the agent is **clamped to the risk-reducing direction**, and on any divergence the **vault freezes** — while the owner can always withdraw. The critic signs a digest **derived on-chain** from the trade, and every decision is recorded in a keccak **hash-chained**, no-delete three-proof ledger.
 
-That single inversion turns "a cute agent" into infrastructure a regulated institution can actually fund, because trusting the agent is no longer required.
+That single inversion turns "a cute agent" into infrastructure a regulated institution can credibly fund, because trusting the agent is no longer required.
 
 The design is organized into seven composable layers under one thesis: **trust-minimization**. This submission ships **all seven** — L0 non-custodial custody, L1 object-capability + revocation, L2 the chain-never-trusts-the-AI core, L3 a self-hedging bounded-drawdown strategy, L4 the append-only ledger, L5 a closed-loop KYC gate + Move-native optimistic oracle, and L6 dead-man-switch + commit-reveal draw primitives — built, unit-tested, and deployed. (L5/L6 are demo-level primitives; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, and a VRF + real-`Coin` no-loss draw — is roadmap.)
 
 ## What's built (and verifiable)
 
 - **Sui Move package**, 13 modules: `vault · policy · guardian · critic · ledger · strategy · feed · compliance · oracle · inheritance · prize · warden · app`.
-- **48/48 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw. On top of the hand-picked cases, an **adversarial property layer** sweeps thousands of synthetic inputs — the guardian never approves an over-ceiling or lowballed-risk trade across ~2.4k market states, 400 random agent moves never move the vault's NAV, and a 200-entry ledger's keccak chain advances on every append.
+- **51/51 Move unit tests passing** — the heart (direct guardian coverage: risk arithmetic, the divergence boundary, the hard ceiling, the safe-direction clamp both ways), every gate's negative path (L1 per-tx/window/expiry/pause/wrong-vault, L2 critic veto + wrong identity, L4 monotonic append, L0 reserve floor/frozen/owner-only/unfreeze), freeze-on-divergence, non-custodial withdraw, generation revocation, the L3 bounded-drawdown invariant, L5 KYC gating + the oracle window, and L6 inheritance + the no-loss draw. On top of the hand-picked cases, an **adversarial property layer** sweeps thousands of synthetic inputs — the guardian never approves an over-ceiling or lowballed-risk trade across ~2.4k market states, 400 random agent moves never move the vault's NAV, and a 200-entry ledger's keccak chain advances on every append.
 - **Deployed + verified on Sui testnet, `owner: Immutable`** — the `UpgradeCap` was **burned** ([make_immutable tx](https://suiscan.xyz/testnet/tx/G9rS4pWStqjx6K5GC9dKZa8sZF3ymybEpWiE6DKTDPuW)), so the package can never be changed, not even by us.
 - **On-chain proof:** the **full L0→L6 lifecycle is anchored on testnet** across **15 clickable transactions**. Reproducible via `scripts/demo.sh`.
+- **Builder surface (shipped in [`sdk/`](../sdk/)):** a typed **TypeScript SDK** (live-state readers, unsigned PTB builders, and on-chain guardian *simulation* via devInspect), a dependency-free **Python SDK** + a read-only **monitor** watchdog, and an **MCP server** exposing WARDEN as tools to any MCP-speaking agent runtime.
+- **Continuous verification:** a CI workflow re-checks the on-chain claims (immutability + all 15 txs + the ledger hash-chain) on every push **and daily** — `python scripts/verify_onchain.py` runs with zero dependencies if you'd rather not trust our CI.
 
 ## How to verify
 
@@ -52,7 +54,7 @@ The design is organized into seven composable layers under one thesis: **trust-m
   - oracle_finalize (L5) — https://suiscan.xyz/testnet/tx/BxXzCrkSZzCJT2f2cx6VS4Tou7aBnZfMkcMJkurfPVdz
   - inherit_open (L6) — https://suiscan.xyz/testnet/tx/JxYNBvnFtcBCkkDsFgoLaAVZVpANKMJVxP32N85qw91
   - inherit_claim (L6) — https://suiscan.xyz/testnet/tx/EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU
-- **Tests:** `cd contracts && sui move test` → 48/48.
+- **Tests:** `cd contracts && sui move test` → 51/51.
 - **Verify the ledger hash-chain (no trust required):** `python scripts/verify_ledger.py` re-derives every entry from the on-chain `Recorded` events and prints `CHAIN INTACT`.
 - **Real capital, not a counter:** after the accepted trade the vault's `deployed` holds **10,000,000 real MIST**; the frozen trade kept the rest safe in `idle`. NAV (`idle + deployed`) is conserved — funds never leave the vault.
 
@@ -67,14 +69,15 @@ The design is organized into seven composable layers under one thesis: **trust-m
 - **Repo:** https://github.com/avalias/warden
 - **Site (landing + live dApp):** https://avalias.github.io/warden  ·  dApp at /app/
 - **Architecture (full 7-layer spec):** [docs/ARCHITECTURE.md](ARCHITECTURE.md)
+- **Pitch deck (live, animated):** https://avalias.github.io/warden/video/
 - **Demo video script:** [docs/DEMO_SCRIPT.md](DEMO_SCRIPT.md)
-- **Demo video:** _(add URL)_
+- **Demo video:** the 2.5-minute recording linked in the submission form
 
 ## Roadmap (honestly labeled, not claimed as built)
 
 The seven layers are built and on-chain. What remains is not a *layer* but the heaviest *integrations* inside L5/L6:
 
 - **L5 deepening:** wire the KYC gate into compliance-gated DeepBook/CLMM venue adapters; add native **Confidential Transfers** and **Seal threshold-IBE + Nautilus/Nitro attestation** for private risk models.
-- **L6 distribution:** the **x402** agent-payment rail, an **MCP** server + TS/Py/Rust SDKs, and Walrus-Sites hosting with byte-level integrity.
+- **L6 distribution:** the **x402** agent-payment rail and Walrus-Sites hosting with byte-level integrity. *(The MCP server and the TypeScript + Python SDKs have shipped — see [`sdk/`](../sdk/).)*
 
-An **AI agent** is included — [`agent/agent.py`](agent/agent.py), an LLM-powered loop that reads the on-chain feed and proposes `agent_trade` under the policy. Productionizing it (sealing the reasoning to Walrus, scheduling, multi-asset) is roadmap; the trust-minimization is the point: the chain vets whatever the agent proposes.
+An **AI agent** is included — [`agent/agent.py`](../agent/agent.py), an LLM-powered loop that reads the on-chain feed and proposes `agent_trade` under the policy. Productionizing it (sealing the reasoning to Walrus, scheduling, multi-asset) is roadmap; the trust-minimization is the point: the chain vets whatever the agent proposes.
