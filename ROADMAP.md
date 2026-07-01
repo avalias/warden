@@ -27,7 +27,7 @@ Status is tracked honestly: what's **on-chain today**, and what's **next**.
 ## Next — the value plane (real venue)
 - Wire `vault::deploy` to a **DeepBook v3** market/limit order against `idle`; `strategy::settle` against the live feed with real PnL movement.
 - Minimal **NAV / shares / protocol fee** so depositor economics are real.
-- A **keeper service** pulling **Pyth + DeepBook** into `feed_update` (removes the single-feeder trust root).
+- A **keeper service** pulling **Pyth + DeepBook** into `feed_update` — *first leg shipped:* [`scripts/keeper/`](scripts/keeper/) reads live DeepBook v3 mid-price + level-2 depth and posts it into the feed ([tx `EXr7EPu9…`](https://suiscan.xyz/testnet/tx/EXr7EPu9W9HoEBHVnrnkNx1xaagbcDr4XyuGDeQUPPyi)); Pyth cross-checking and a permissionless feeder set (removing the single-feeder trust root) remain.
 
 ## Next — confidentiality & distribution
 - **Seal** threshold-IBE + **Nautilus/Nitro** TEE attestation; native **Confidential Transfers**; a real **Walrus** write of the agent's sealed reasoning (turning two of the three receipt proofs real).

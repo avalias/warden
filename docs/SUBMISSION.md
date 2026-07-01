@@ -60,9 +60,9 @@ The design is organized into seven composable layers under one thesis: **trust-m
 
 ## Tech stack
 
-**Used today (in the on-chain code + agent):** Sui Move (object-capabilities, hot-potato settlement, `Clock`, events, `keccak256`), the on-chain `OracleFeed` (keeper-written price + order-book depth the guardian re-derives from), and the off-chain agent on a frontier LLM.
+**Used today (in the on-chain code + agent):** Sui Move (object-capabilities, hot-potato settlement, `Clock`, events, `keccak256`), the on-chain `OracleFeed` (keeper-written price + order-book depth the guardian re-derives from), **DeepBook v3 as the live market-data source** — the keeper ([`scripts/keeper/`](../scripts/keeper/)) reads mid-price + level-2 depth from a live testnet pool and posts it into the feed ([tx `EXr7EPu9…`](https://suiscan.xyz/testnet/tx/EXr7EPu9W9HoEBHVnrnkNx1xaagbcDr4XyuGDeQUPPyi)) — and the off-chain agent on a frontier LLM.
 
-**Designed-for integrations (roadmap — not yet wired into the Move code):** DeepBook v3 (execution venue + the depth source the guardian would re-derive from), Pyth (signed price source for the feed), Walrus + Seal + Nautilus TEE (sealed reasoning, confidentiality, attested facts), zkLogin/Enoki (onboarding).
+**Designed-for integrations (roadmap — not yet wired into the Move code):** DeepBook v3 as the *execution venue* (the data side is live via the keeper), Pyth (signed price source for the feed), Walrus + Seal + Nautilus TEE (sealed reasoning, confidentiality, attested facts), zkLogin/Enoki (onboarding).
 
 ## Links
 

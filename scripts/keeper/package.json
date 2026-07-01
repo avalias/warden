@@ -1,0 +1,20 @@
+{
+  "name": "@warden/keeper-deepbook",
+  "version": "0.1.0",
+  "description": "Keeper that reads live DeepBook v3 market state (mid-price + level-2 depth) on Sui testnet and posts it into WARDEN's on-chain OracleFeed — the feed the Guardian re-derives risk from.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "read": "tsx keeper.ts",
+    "post": "tsx keeper.ts --post"
+  },
+  "dependencies": {
+    "@mysten/deepbook-v3": "^1.5.0",
+    "@mysten/sui": "^2.20.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
