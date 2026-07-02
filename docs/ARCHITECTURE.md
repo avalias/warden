@@ -75,8 +75,10 @@ realized magnitude and the drawdown floor for on-chain checking.
 Every decision is appended to a monotonic, **non-backdated, no-delete, keccak
 hash-chained** ledger — you cannot drop or forge an entry without breaking the
 chain — and each trade digest is **replay-protected**. Each entry carries a
-three-proof receipt (the Sui tx digest, plus Walrus-blob and TEE-attestation
-placeholder fields). Rejected attempts are recorded too.
+three-proof receipt: the Sui tx digest; a Walrus-blob id — **live from ledger
+seq 3**, the agent's reasoning blob sits on Walrus testnet with its id anchored
+in the recorded transaction; and a TEE-attestation field (placeholder until
+Nautilus lands). Rejected attempts are recorded too.
 *Module: `ledger`.*
 
 ### L5 — Compliance & confidentiality (institution-ready)

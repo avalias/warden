@@ -54,6 +54,7 @@ await client.signAndExecuteTransaction({ signer, transaction: tx });
 | `buildFeedUpdateTx` | `app::feed_update` | the keeper / feeder |
 | `buildOwnerExitTx` | `app::owner_exit` | the owner (works even while frozen) |
 | `buildOwnerUndeployTx` | `app::owner_undeploy` | the owner (close the deployed leg) |
+| `buildInheritOpenSharedTx` | `inheritance::new` + share | the owner — opens the L6 dead-man-switch as a **shared** object so the beneficiary can actually claim (fixes the owner-owned `Switch` of `app::inherit_open`, no new package needed) |
 
 Each returns an unsigned `Transaction`; sign and execute it yourself.
 

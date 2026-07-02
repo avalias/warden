@@ -39,6 +39,17 @@ LIFECYCLE = [
     ("inherit_claim",  "EiDvSwCajnDxhMRQm2FKVoXfMeqDMdSQXe8U6PR2RRWU", ["Inherited"]),
 ]
 
+# The lifecycle kept running after submission: the keeper feeding live DeepBook
+# v3 market data, the owner lifting the demo freeze (with a fresh policy), and
+# an accepted trade whose reasoning blob lives on Walrus testnet — the blob id
+# is anchored in the recorded transaction's inputs.
+CONTINUED = [
+    ("keeper_deepbook_feed",  "EXr7EPu9W9HoEBHVnrnkNx1xaagbcDr4XyuGDeQUPPyi", ["Updated"]),
+    ("keeper_feed_refresh",   "J9CpoXkWcQpcym6KT5NiZhVwf2Es1HdYSq1RWBcopiR9", ["Updated"]),
+    ("owner_unfreeze_policy", "311vmCEH98hnFxwp8twZZQMFHan9KAeJLMEHTvGi8PYF", []),
+    ("walrus_proof_trade",    "HHhaTYCtM9BJFDRu7qVUz8V6Q6QgvrbYQ5qgJiG7aaxn", ["Recorded"]),
+]
+
 
 def rpc(method, params):
     body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
@@ -63,21 +74,25 @@ def main():
     burn = rpc("sui_getTransactionBlock", [BURN_TX, {"showEffects": True}]).get("result")
     check(burn and burn["effects"]["status"]["status"] == "success", "make_immutable (burn) tx succeeded")
 
-    print("15-tx lifecycle:")
-    for label, dig, want in LIFECYCLE:
-        res = rpc("sui_getTransactionBlock", [dig, {"showEvents": True, "showEffects": True}]).get("result")
-        if not res:
-            check(False, f"{label}: tx missing"); continue
-        status = res["effects"]["status"]["status"]
-        events = {e["type"].split("::")[-1] for e in res.get("events", [])}
-        ok = status == "success" and all(w in events for w in want)
-        check(ok, f"{label}: {status}" + (f" events={sorted(events)}" if want else ""))
+    def check_txs(title, txs):
+        print(title + ":")
+        for label, dig, want in txs:
+            res = rpc("sui_getTransactionBlock", [dig, {"showEvents": True, "showEffects": True}]).get("result")
+            if not res:
+                check(False, f"{label}: tx missing"); continue
+            status = res["effects"]["status"]["status"]
+            events = {e["type"].split("::")[-1] for e in res.get("events", [])}
+            ok = status == "success" and all(w in events for w in want)
+            check(ok, f"{label}: {status}" + (f" events={sorted(events)}" if want else ""))
+
+    check_txs("15-tx lifecycle", LIFECYCLE)
+    check_txs("continued lifecycle (post-submission)", CONTINUED)
 
     print()
     if fails:
         print(f"VERIFICATION FAILED ({len(fails)} issue(s)).")
         sys.exit(1)
-    print(f"ALL {3 + len(LIFECYCLE)} CHECKS PASS — package immutable, full lifecycle live on Sui testnet.")
+    print(f"ALL {3 + len(LIFECYCLE) + len(CONTINUED)} CHECKS PASS — package immutable, full lifecycle live on Sui testnet.")
 
 
 if __name__ == "__main__":

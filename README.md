@@ -70,6 +70,14 @@ This is not a mock. The package is deployed and verified, and the full lifecycle
 
 **All seven layers are anchored on-chain** across these 15 transactions, reproducible via [`scripts/demo.sh`](scripts/demo.sh), and covered by the **51/51 Move unit tests**.
 
+**…and it kept running after submission — full circle:**
+
+| Step | What it proves | Transaction |
+|---|---|---|
+| `feed_update` (keeper) | The Guardian's feed is fed **live DeepBook v3 depth** (pool `SUI_DBUSDC`) by [`scripts/keeper/`](scripts/keeper/) | [`EXr7EPu9…`](https://suiscan.xyz/testnet/tx/EXr7EPu9W9HoEBHVnrnkNx1xaagbcDr4XyuGDeQUPPyi) · [`J9CpoXkW…`](https://suiscan.xyz/testnet/tx/J9CpoXkWcQpcym6KT5NiZhVwf2Es1HdYSq1RWBcopiR9) |
+| `unfreeze` + fresh policy | The owner reviews the freeze, lifts it (OwnerCap-gated) and mints a fresh scoped policy — one PTB, straight against the immutable package | [`311vmCEH…`](https://suiscan.xyz/testnet/tx/311vmCEH98hnFxwp8twZZQMFHan9KAeJLMEHTvGi8PYF) |
+| `agent_trade` ✅ with a **real Walrus proof** | The agent's reasoning lives on **Walrus testnet** ([the blob, retrievable](https://aggregator.walrus-testnet.walrus.space/v1/blobs/gUICc2caGFERGeoDztYrR4GHv6XmSFlEAL-UjtcA4HI)); its blob id is anchored in the recorded tx → `Recorded{accepted:true, seq:3, risk:2bps}`, vetted against the live DeepBook book | [`HHhaTYCt…`](https://suiscan.xyz/testnet/tx/HHhaTYCtM9BJFDRu7qVUz8V6Q6QgvrbYQ5qgJiG7aaxn) |
+
 ---
 
 ## 🏛️ Architecture — seven layers, one leash
@@ -89,7 +97,7 @@ Each layer is **load-bearing under a single thesis** (trust-minimization) — no
   └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This repo ships **all seven layers** — built, unit-tested (51/51), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap. The L4 receipt's Walrus-blob + TEE fields are anchored placeholders until those integrations land — the Sui-tx-digest proof is live.)
+This repo ships **all seven layers** — built, unit-tested (51/51), and deployed, with the full L0→L6 lifecycle anchored on-chain in 15 transactions. (L5/L6 ship their core on-chain primitives — KYC gating, optimistic oracle, dead-man-switch, commit-reveal draw; production hardening — bonded oracle disputes, sharing the dead-man-switch for third-party claim, a VRF + real-`Coin` no-loss draw — and the confidentiality stack (Seal/Nautilus/Confidential-Transfers) remain roadmap. Two of the three receipt proofs are live — the Sui tx digest and, from ledger seq 3, a real **Walrus** reasoning blob whose id is anchored in the recorded tx; the TEE field remains a placeholder until Nautilus lands.)
 
 ### How a single trade survives the chain
 

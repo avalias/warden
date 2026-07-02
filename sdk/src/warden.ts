@@ -311,4 +311,25 @@ export class WardenClient {
     });
     return tx;
   }
+
+  /** L6 fix that needs no new package: open a dead-man-switch as a SHARED
+   *  object, so the named beneficiary can actually supply it to
+   *  `inherit_claim` after dormancy. (The shipped `app::inherit_open` entry
+   *  transfers the `Switch` to the opener — an owned object on Sui can only be
+   *  used in a tx by its owner, so through that entry the beneficiary has no
+   *  claim path. `inheritance::new` is public and `Switch` has `store`, so a
+   *  PTB can share it at creation instead.) */
+  buildInheritOpenSharedTx(p: { beneficiary: string; dormancyMs: bigint | number }): Transaction {
+    const tx = new Transaction();
+    const [sw] = tx.moveCall({
+      target: `${this.addr.package}::inheritance::new`,
+      arguments: [tx.pure.address(p.beneficiary), tx.pure.u64(p.dormancyMs), tx.object(this.clockId)],
+    });
+    tx.moveCall({
+      target: '0x2::transfer::public_share_object',
+      typeArguments: [`${this.addr.package}::inheritance::Switch`],
+      arguments: [sw],
+    });
+    return tx;
+  }
 }

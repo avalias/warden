@@ -16,7 +16,7 @@ Status is tracked honestly: what's **on-chain today**, and what's **next**.
 
 ## Next — hardening the satellites (next package)
 *Surfaced by our own adversarial code review; tracked openly rather than hidden.*
-- **L6 dead-man-switch:** share the `Switch` object so a third-party beneficiary (not just the owner) can trigger the claim after dormancy; assert `sender == beneficiary`.
+- **L6 dead-man-switch:** share the `Switch` object so a third-party beneficiary (not just the owner) can trigger the claim after dormancy; assert `sender == beneficiary`. *Workaround shipped without a new package:* the SDK's `buildInheritOpenSharedTx` opens the switch as a shared object via a PTB (`inheritance::new` + `public_share_object`) — devInspect-verified against the deployed package; the `sender == beneficiary` assert still needs the new package.
 - **L6 prize draw:** take real `Coin` custody (not a counter) and replace `acc % n` with VRF / a commit-reveal seed that the last revealer cannot grind.
 - **L5 oracle:** escrow a real bond on `dispute`, slashed/paid on resolution, so the optimistic fast-path can't be griefed for free.
 - **L2 critic:** enforce `critic ≠ agent` at mint, and ship a real second-signer veto flow (a distinct critic key escrowing its verdict) — as shipped, the same-tx hot-potato `Verdict` reduces to a same-signer approval.
@@ -30,7 +30,7 @@ Status is tracked honestly: what's **on-chain today**, and what's **next**.
 - A **keeper service** pulling **Pyth + DeepBook** into `feed_update` — *first leg shipped:* [`scripts/keeper/`](scripts/keeper/) reads live DeepBook v3 mid-price + level-2 depth and posts it into the feed ([tx `EXr7EPu9…`](https://suiscan.xyz/testnet/tx/EXr7EPu9W9HoEBHVnrnkNx1xaagbcDr4XyuGDeQUPPyi)); Pyth cross-checking and a permissionless feeder set (removing the single-feeder trust root) remain.
 
 ## Next — confidentiality & distribution
-- **Seal** threshold-IBE + **Nautilus/Nitro** TEE attestation; native **Confidential Transfers**; a real **Walrus** write of the agent's sealed reasoning (turning two of the three receipt proofs real).
+- **Seal** threshold-IBE + **Nautilus/Nitro** TEE attestation; native **Confidential Transfers**. *(The real **Walrus** write shipped: the seq-3 reasoning blob lives on Walrus testnet — [retrievable](https://aggregator.walrus-testnet.walrus.space/v1/blobs/gUICc2caGFERGeoDztYrR4GHv6XmSFlEAL-UjtcA4HI), anchored in [tx `HHhaTYCt…`](https://suiscan.xyz/testnet/tx/HHhaTYCtM9BJFDRu7qVUz8V6Q6QgvrbYQ5qgJiG7aaxn) — so two of the three receipt proofs are live; Seal-encrypting the blob and the TEE leg remain.)*
 - **x402** agent-payment rail. *(An **MCP server** (agent-runtime tools) plus typed **TypeScript** and dependency-free **Python** SDKs — live-state readers + transaction builders — have shipped in [`sdk/`](sdk/).)*
 
 ## Tooling / assurance

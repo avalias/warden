@@ -314,7 +314,7 @@
     <div class="bgrid">
       <div class="bstat rv"><div class="n grad" data-c="51">51</div><div class="l">Move tests passing</div></div>
       <div class="bstat rv"><div class="n grad" data-c="0" data-suf="%">0%</div><div class="l">of capital the agent can withdraw</div></div>
-      <div class="bstat rv"><div class="n grad" data-c="1">1</div><div class="l">on-chain proof per decision (+2 reserved: Walrus·TEE)</div></div>
+      <div class="bstat rv"><div class="n grad" data-c="2">2</div><div class="l">live proofs per decision (Sui tx · Walrus) — TEE reserved</div></div>
       <div class="bstat rv"><div class="n grad" data-c="100" data-suf="%">100%</div><div class="l">of risk numbers re-derived on-chain</div></div>
     </div>
   </div>
@@ -364,7 +364,7 @@ python scripts/verify_ledger.py    <span style="color:var(--dim2)"># re-derives 
       <div class="fc rv"><div class="fi">⚖️</div><h3>Two agents, one referee</h3><p>A separable critic capability co-signs each verdict — a distinct critic signer in the intended multi-party deployment. The chain is the final judge.</p><div class="from">module: <b>critic</b></div></div>
       <div class="fc rv"><div class="fi">📈</div><h3>It hedges itself</h3><p>A self-hedging carry position: below the hedge strike the payout offsets further losses, so the maximum drawdown is bounded by construction.</p><div class="from">module: <b>strategy</b></div></div>
       <div class="fc rv"><div class="fi">🧩</div><h3>Forkable strategies</h3><p>Compile NL / visual / YAML through a typed Financial IR, price via zero-gas devInspect, mint a composable on-chain strategy object.</p><div class="from">status: <b>roadmap</b></div></div>
-      <div class="fc rv"><div class="fi">🔏</div><h3>Proof of every action</h3><p>Three-proof receipts: the Sui digest is real; the Walrus + TEE fields are placeholders today (real proofs on the roadmap). Rejected attempts are recorded too.</p><div class="from">module: <b>ledger</b></div></div>
+      <div class="fc rv"><div class="fi">🔏</div><h3>Proof of every action</h3><p>Three-proof receipts: the Sui digest and — since seq 3 — a <b>real Walrus reasoning blob</b> are live; the TEE field is a placeholder until Nautilus lands. Rejected attempts are recorded too.</p><div class="from">module: <b>ledger</b></div></div>
       <div class="fc rv"><div class="fi">📜</div><h3>A track record you can't fake</h3><p>Append-only, non-backdated via Sui Clock, monotonic with no delete path. You can't quietly drop your losing trades.</p><div class="from">module: <b>ledger</b></div></div>
       <div class="fc rv"><div class="fi">🏛️</div><h3>Compliance, enforced</h3><p>A closed-loop KYC registry keeps regulated value moving only between verified holders, with an auditor capability for read-only oversight.</p><div class="from">module: <b>compliance</b></div></div>
       <div class="fc rv"><div class="fi">🛰️</div><h3>Real-world facts, resolved</h3><p>Ambiguous real-world outcomes resolve via a Move-native optimistic oracle with a bonded challenge window and a resolver escalation path.</p><div class="from">module: <b>oracle</b></div></div>

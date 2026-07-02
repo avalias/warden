@@ -96,6 +96,24 @@
     <div class="note">Flow: open a feed &amp; vault, post a <b>deep</b> book and propose a valid trade (accepted), then post a <b>thin</b> book and propose again claiming low risk — the Guardian reads the feed and <b>freezes</b> the vault. Owner exit still works while frozen.</div>
   </div>
 
+  <div class="eyebrow" style="margin-top:26px">Simulate the leash — no wallet, no gas</div>
+  <div class="panel">
+    <div class="note" style="margin-bottom:12px">Ask the chain itself (<span class="mono">guardian::evaluate</span> via devInspect): would this trade be approved? Prefilled from the live feed — try lying about the risk on a thin book.</div>
+    <div class="row" style="align-items:flex-end;gap:14px;flex-wrap:wrap">
+      <label>exposure after (MIST)<input id="s-exposure" value="10000000"></label>
+      <label>direction<select id="s-dir"><option value="1">1 · increase</option><option value="0">0 · reduce label</option></select></label>
+      <label>claimed risk (bps)<input id="s-claim" value="0"></label>
+      <label>price ×1e6<input id="s-price" value="1000000"></label>
+      <label>book depth<input id="s-depth" value="1000000000"></label>
+      <button class="btn fill" id="s-run">Simulate → chain verdict</button>
+    </div>
+    <div class="row" style="gap:8px;margin-top:10px">
+      <button class="btn" id="s-live">↺ use live feed values</button>
+      <button class="btn warn" id="s-thin">thin book (crash)</button>
+    </div>
+    <div class="note mono" id="s-out" style="margin-top:12px">› the verdict appears here — straight from the chain.</div>
+  </div>
+
   <div class="console" id="log"><div class="ln">› console ready. Read-only dashboard works without a wallet.</div></div>
 
   <footer>
@@ -133,7 +151,9 @@ async function refresh(){
     $('#d-vaultlink').textContent = STATE.vault.slice(0,10)+"…"; $('#d-vaultlink').href="https://suiscan.xyz/testnet/object/"+STATE.vault;
     $('#d-feedlink').textContent = STATE.feed.slice(0,10)+"…"; $('#d-feedlink').href="https://suiscan.xyz/testnet/object/"+STATE.feed;
     const [f,v,l] = await Promise.all([fields(STATE.feed), fields(STATE.vault), fields(STATE.ledger)]);
-    if(f){ $('#d-price').textContent = (Number(f.price_e6)/1e6).toFixed(3); $('#d-fresh').textContent = "depth "+Number(f.depth).toLocaleString(); }
+    if(f){ $('#d-price').textContent = (Number(f.price_e6)/1e6).toFixed(3); $('#d-fresh').textContent = "depth "+Number(f.depth).toLocaleString();
+      STATE.lastPrice = f.price_e6; STATE.lastDepth = f.depth;
+      if(!STATE.simPrefilled){ STATE.simPrefilled = true; $('#s-price').value = f.price_e6; $('#s-depth').value = f.depth; } }
     if(v){ $('#d-idle').textContent = fmtSui(v.idle); $('#d-deployed').textContent = fmtSui(v.deployed);
       const fr=$('#d-frozen'); fr.textContent = v.frozen?"FROZEN":"live"; fr.className = "pill "+(v.frozen?"frozen":"ok"); }
     if(l){ $('#d-seq').textContent = l.seq; }
@@ -244,6 +264,35 @@ async function setFeed(price, depth, label){
   const f = await sign(tx,'post '+label); if(f) log('feed updated: '+label, 'ok');
 }
 document.querySelectorAll('[data-act]').forEach(b=> b.onclick = async ()=>{ try{ await ACTS[b.dataset.act](); refresh(); }catch(e){ log('error: '+e.message,'err'); } });
+
+// ---------- guardian simulator (devInspect — no wallet, no gas, no state) ----------
+const FAULT_NAMES = ['none','diverged','ceiling','unsafe-direction'];
+async function simulate(){
+  const out = $('#s-out'); out.style.color=''; out.textContent = '… asking the chain (guardian::evaluate via devInspect)';
+  try{
+    const { Transaction } = await import('https://esm.sh/@mysten/sui@1/transactions');
+    const { SuiClient } = await import('https://esm.sh/@mysten/sui@1/client');
+    const tx = new Transaction();
+    tx.moveCall({ target: `${PKG}::guardian::evaluate`, arguments: [
+      tx.pure.u64($('#s-claim').value||'0'), tx.pure.u8(Number($('#s-dir').value)),
+      tx.pure.u64($('#s-exposure').value||'0'), tx.pure.u64($('#s-price').value||'0'),
+      tx.pure.u64($('#s-depth').value||'1') ]});
+    const client = new SuiClient({ url: RPC });
+    const res = await client.devInspectTransactionBlock({ sender: '0x'+'0'.repeat(64), transactionBlock: tx });
+    const rv = res.results?.[0]?.returnValues?.[0]?.[0];
+    if(!rv) throw new Error(res.error || 'no return value');
+    const ok = rv[0] === 1;
+    let derived = 0n; for(let i=0;i<8;i++) derived += BigInt(rv[1+i]??0) << BigInt(8*i);
+    const fault = rv[9] ?? 0;
+    out.style.color = ok ? 'var(--mint)' : 'var(--amber)';
+    out.innerHTML = ok
+      ? '✅ APPROVE — the chain re-derives <b>'+derived+'</b> bps from this market; the claim is within tolerance.'
+      : '🧊 FREEZE ('+(FAULT_NAMES[fault]||fault)+') — the chain re-derives <b>'+derived+'</b> bps; this trade would be rejected and recorded.';
+  }catch(e){ out.style.color='var(--rose)'; out.textContent = 'simulate failed: '+e.message; }
+}
+$('#s-run').onclick = simulate;
+$('#s-live').onclick = ()=>{ if(STATE.lastPrice!=null){ $('#s-price').value = STATE.lastPrice; $('#s-depth').value = STATE.lastDepth; } };
+$('#s-thin').onclick = ()=>{ $('#s-depth').value = '1000'; };
 </script>
 </body>
 </html>
